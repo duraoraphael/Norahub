@@ -1,0 +1,40 @@
+/* Importa as bases do Tailwind (AINDA É NECESSÁRIO com CDN) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* O #root controla o fundo, mas com CSS puro */
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  
+  /* Cor de fundo padrão (Modo Claro) */
+  background-color: #f3f4f6; /* bg-gray-100 */
+  color: #111827; /* text-gray-900 */
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Cor de fundo no Modo Escuro (quando <html> tem a classe .dark) */
+html.dark #root {
+  background-color: #111827; /* bg-gray-900 */
+  color: #f9fafb; /* text-white */
+}
