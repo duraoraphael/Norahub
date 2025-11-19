@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Paperclip, Upload, ArrowLeft, LogOut } from 'lucide-react'; // Adicionei LogOut
+import { Paperclip, Upload, ArrowLeft, LogOut } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useTheme } from '../context/ThemeContext';
+import Alert from '../components/Alert'; // 1. Importar o Alerta
 
 function SolicitacaoCompras() {
   const { theme } = useTheme();
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const navigate = useNavigate();
 
-  // Estados do formulário
   const [formData, setFormData] = useState({
     item: '',
     quantidade: '',
@@ -18,6 +18,9 @@ function SolicitacaoCompras() {
     justificativa: '',
     arquivo: null
   });
+  
+  // 2. Estado para o alerta
+  const [alertInfo, setAlertInfo] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,22 +30,34 @@ function SolicitacaoCompras() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Solicitação enviada:', formData);
-    alert('Solicitação de compra enviada com sucesso!');
-    navigate('/');
+    
+    // 3. Mostrar o alerta personalizado
+    setAlertInfo({ message: 'Solicitação de compra enviada com sucesso!', type: 'success' });
+    
+    // Espera 2 segundos antes de voltar para a home
+    setTimeout(() => {
+        navigate('/');
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 dark:bg-[#111827] transition-colors duration-200">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 dark:bg-[#111827] transition-colors duration-200 relative">
       
-      {/* Botão de tema com z-index alto para garantir o clique */}
+      {/* 4. Renderizar o Alerta */}
+      {alertInfo && (
+        <Alert 
+          message={alertInfo.message} 
+          type={alertInfo.type} 
+          onClose={() => setAlertInfo(null)} 
+        />
+      )}
+
       <div className="relative z-50">
         <ThemeToggle />
       </div>
 
-      {/* Cabeçalho Atualizado */}
       <header className="relative w-full flex items-center justify-center py-6 px-4 md:px-8 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-20">
         
-        {/* Botão Sair - Com mais ênfase e à ESQUERDA */}
         <button 
             onClick={() => navigate('/')} 
             className="absolute left-4 md:left-8 flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 transition-all duration-200 font-semibold text-sm border border-red-100 dark:border-red-900/30 shadow-sm"
@@ -51,7 +66,6 @@ function SolicitacaoCompras() {
              <span>Sair</span>
         </button>
 
-        {/* Logo Centralizada */}
         <Link to="/" className="flex items-center justify-center">
             <img 
                 src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"}
@@ -59,12 +73,8 @@ function SolicitacaoCompras() {
                 className="h-8 md:h-10 w-auto object-contain" 
             />
         </Link>
-
-        {/* Espaço vazio na direita para equilibrar o botão Sair (opcional, mas ajuda no layout flex) */}
-        {/* O ThemeToggle está 'fixed' na tela, então não ocupa espaço aqui dentro */}
       </header>
 
-      {/* Conteúdo Principal */}
       <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative z-10">
         
         <div className="w-full max-w-4xl bg-white dark:bg-gray-800 p-8 md:p-12 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
