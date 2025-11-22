@@ -1,39 +1,30 @@
-import { Sun, Moon, Monitor } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext'; // Importa o hook
+import { Sun, Moon, Palette } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const themes = [
-    { name: 'light', icon: Sun },
-    { name: 'dark', icon: Moon },
-    { name: 'system', icon: Monitor },
+    { name: 'light', icon: Sun, label: 'Claro' },
+    { name: 'dark', icon: Moon, label: 'Escuro' },
+    // Removida a opção 'system'
   ];
 
   return (
-    <div className="fixed top-5 right-5 z-50">
-      <div className="flex items-center p-1 bg-gray-200 dark:bg-gray-800 rounded-full border border-gray-300 dark:border-gray-700 shadow-md">
-        {themes.map((t) => {
-          const Icon = t.icon;
-          const isActive = theme === t.name;
-          return (
-            <button
-              key={t.name}
-              // Correção: Removido o 'as ...'
-              onClick={() => setTheme(t.name)}
-              className={`
-                p-2 rounded-full transition-all duration-300
-                ${isActive
-                  ? 'bg-white dark:bg-gray-900 text-[#57B952] shadow-sm'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }
-              `}
-              aria-label={`Mudar para tema ${t.name}`}
-            >
-              <Icon size={18} />
-            </button>
-          );
-        })}
+    <div className="fixed bottom-6 right-6 z-[90] group">
+      <div className="absolute bottom-0 right-0 bg-[#57B952] text-white p-3 rounded-full shadow-lg transition-all duration-300 group-hover:w-36 group-hover:h-14 w-12 h-12 flex items-center justify-end overflow-hidden">
+         <div className="absolute right-3 top-1/2 -translate-y-1/2"><Palette size={24} /></div>
+         <div className="flex items-center gap-2 mr-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+            {themes.map((t) => {
+              const Icon = t.icon;
+              const isActive = theme === t.name;
+              return (
+                <button key={t.name} onClick={() => setTheme(t.name)} className={`p-1.5 rounded-full transition-all duration-200 ${isActive ? 'bg-white text-[#57B952] shadow-sm scale-110' : 'text-white/80 hover:bg-white/20 hover:text-white'}`} title={t.label}>
+                  <Icon size={18} />
+                </button>
+              );
+            })}
+         </div>
       </div>
     </div>
   );
