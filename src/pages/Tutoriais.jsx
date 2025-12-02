@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { allTutorials } from '../data';
 import { Search, Download, ExternalLink, Lock, ArrowLeft } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext'; // 1. Importar o hook de Tema
-import { ThemeToggle } from '../components/ThemeToggle'; // 2. Importar o Botão de Tema
+import { useTheme } from '../context/ThemeContext';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 function Tutoriais() {
-  const { theme } = useTheme(); // 3. Usar o hook
+  const { theme } = useTheme();
   const [busca, setBusca] = useState('');
   const [categoriaAtiva, setCategoriaAtiva] = useState('todos');
 
-  // 4. Lógica para determinar o tema e trocar a logo
+  // Lógica para determinar o tema e trocar a logo
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   // Lógica de Categorias
@@ -25,41 +25,40 @@ function Tutoriais() {
   });
 
   return (
-    // Container Principal: Sem cores fixas, deixa o index.css controlar
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden">
       
-      <ThemeToggle /> {/* 5. Adicionar o botão de tema */}
+      <ThemeToggle />
 
-      {/* Conteúdo Central que cresce */}
       <div className="container mx-auto px-4 py-6 md:p-8 max-w-7xl flex-grow">
         
         {/* --- CABEÇALHO --- */}
         <div className="relative flex justify-center items-center border-b border-gray-200 dark:border-gray-700 pb-6 mb-8">
             
-            {/* Logo Dinâmica */}
-            <img 
-              className="h-10 md:h-12 w-auto object-contain" 
-              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} // <-- LÓGICA DA LOGO
-              alt="Logo Normatel" 
-            />
-
-            {/* BOTÃO VOLTAR ESTILIZADO (com classes de tema) */}
+            {/* BOTÃO VOLTAR (Agora na Esquerda: left-0) */}
             <Link 
                 to="/" 
-                className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-[#57B952] hover:text-white px-4 py-2 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700 hover:border-[#57B952] transition-all duration-300 group"
+                className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-[#57B952] hover:text-white px-4 py-2 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700 hover:border-[#57B952] transition-all duration-300 group"
             >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                 <span className="hidden sm:inline font-semibold text-sm">Voltar</span>
             </Link>
+
+            {/* Logo Dinâmica (Centralizada pelo flex justify-center do pai) */}
+            <img 
+              className="h-10 md:h-12 w-auto object-contain" 
+              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+              alt="Logo Normatel" 
+            />
+
         </div>
         
-        {/* Título e Subtítulo (com classes de tema) */}
+        {/* Título e Subtítulo */}
         <div className="text-center md:text-left">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Central de Tutoriais Fracttal</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2 mb-8 text-lg">Encontre guias e manuais para todos os processos da equipe.</p>
         </div>
 
-        {/* --- ÁREA DE CONTROLES (com classes de tema) --- */}
+        {/* --- ÁREA DE CONTROLES --- */}
         <div className="flex flex-col lg:flex-row justify-between items-center gap-4 mb-8 p-5 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
             
             {/* Busca */}
@@ -76,7 +75,7 @@ function Tutoriais() {
                 </div>
             </div>
             
-            {/* Filtros (Botões) (com classes de tema) */}
+            {/* Filtros (Botões) */}
             <div className="flex flex-wrap justify-center lg:justify-end gap-2 w-full lg:w-2/3">
                 {categorias.map(cat => (
                     <button 
@@ -102,10 +101,8 @@ function Tutoriais() {
                     const isCadastro = tutorial.categoria.toLowerCase() === 'cadastro';
 
                     return (
-                        // Card (com classes de tema)
                         <div key={tutorial.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl border border-gray-200 dark:border-gray-700">
                             
-                            {/* Corpo do Card (com classes de tema) */}
                             <div className="bg-white dark:bg-gray-800 p-6 flex-grow relative group">
                                 <span className={`inline-block text-white text-[10px] font-bold tracking-wider uppercase px-2 py-1 rounded mb-3 ${isEmBreve ? 'bg-gray-500' : 'bg-[#57B952]'}`}>
                                     {tutorial.categoria}
@@ -119,7 +116,6 @@ function Tutoriais() {
                                 </p>
                             </div>
                             
-                            {/* Rodapé do Card (com classes de tema) */}
                             <div className="p-5 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 flex items-center gap-1">
                                     📅 Atualizado: {tutorial.data}
@@ -149,7 +145,6 @@ function Tutoriais() {
                     );
                 })
             ) : (
-                // "Nenhum resultado" (com classes de tema)
                 <div className="col-span-full text-center py-20">
                     <div className="bg-gray-200 dark:bg-gray-800 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
                         <Search size={32} className="text-gray-400 dark:text-gray-600" />
@@ -162,7 +157,6 @@ function Tutoriais() {
 
       </div>
       
-      {/* Rodapé Full Width (sempre verde) */}
       <footer className="w-full bg-[#57B952] py-4 mt-auto shadow-inner"> 
             <div className="container mx-auto text-center">
                 <p className="text-white text-lg font-medium tracking-wide">
