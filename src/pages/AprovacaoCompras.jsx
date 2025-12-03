@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 function AprovacaoCompras() {
   useEffect(() => {
     // Redireciona para o link SAML da Microsoft fornecido
-    window.location.href = "https://normatelce.sharepoint.com/:l:/s/UTGC/JAAr4HTyoKL1Q6Yo4WZ0snOqAQcc4lds9n17S8FtSmrXL-0?e=cL1VPK";
+    window.location.href = "https://normatelce.sharepoint.com/:l:/s/Projeto743-FacilitiesMultiserviosCabinas/JACsQKjPAViPSbfkQUOC15tGAd2cfqyNH50fZdhoUaX5HG0?e=AdKqXJ";
   }, []);
 
   // Interface de carregamento enquanto redireciona

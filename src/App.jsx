@@ -5,6 +5,8 @@ import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
 import EsqueceuSenha from './pages/EsqueceuSenha';
 import SolicitacaoCompras from './pages/SolicitacaoCompras';
+import SelecaoProjeto from './pages/SelecaoProjeto';
+import PainelProjeto from './pages/PainelProjeto'; // 1. Importar
 import AdminDashboard from './pages/AdminDashboard';
 import AdminSelection from './pages/AdminSelection';
 import AprovacaoCompras from './pages/AprovacaoCompras';
@@ -15,21 +17,21 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ROTA RAIZ */}
         <Route path="/" element={<Capa />} />
         
-        {/* Rotas Públicas */}
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
         <Route path="/tutoriais" element={<Tutoriais />} />
 
-        {/* AGORA PÚBLICAS (Sem Login Exigido) */}
+        <Route path="/selecao-projeto" element={<SelecaoProjeto />} />
+        
+        {/* 2. Nova Rota */}
+        <Route path="/painel-projeto" element={<PainelProjeto />} />
+
         <Route path="/solicitacao-compras" element={<SolicitacaoCompras />} />
         <Route path="/aprovacao-compras" element={<AprovacaoCompras />} />
 
-              
-        {/* Rotas de Admin e Perfil continuam protegidas */}
         <Route path="/admin-selection" element={<PrivateRoute requiredRole="admin"><AdminSelection /></PrivateRoute>} />
         <Route path="/admin" element={<PrivateRoute requiredRole="admin"><AdminDashboard /></PrivateRoute>} />
         <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />

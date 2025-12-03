@@ -18,7 +18,7 @@ export const allTutorials = [
     },
     {
         id: 3,
-        titulo: "Cadastro de usuário",
+        titulo: "Cadastro de usuário Fracttal",
         descricao: "Cadastro.",
         categoria: "Cadastro",
         url: "https://guestportal.fracttal.com/4755b525-8400-44dc-bea0-8dde3498b04d",

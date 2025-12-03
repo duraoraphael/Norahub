@@ -44,17 +44,24 @@ function Tutoriais() {
             </Link>
 
             {/* Logo Dinâmica (Centralizada pelo flex justify-center do pai) */}
+            {/* Logos Centralizadas (Parceria) */}
+        <div className="flex items-center gap-4">
             <img 
-              className="h-10 md:h-12 w-auto object-contain" 
-              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
-              alt="Logo Normatel" 
+                src="/img/petrobras.jpg" 
+                alt="Logo Petrobras" 
+                className="h-8 md:h-10 w-auto object-contain" 
             />
-
+            <span className="text-gray-300 dark:text-gray-600 text-2xl font-light">|</span>
+            <img 
+                src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"}
+                alt="Logo Normatel" 
+                className="h-8 md:h-10 w-auto object-contain" 
+            />
         </div>
-        
+     </div>
         {/* Título e Subtítulo */}
         <div className="text-center md:text-left">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Central de Tutoriais Fracttal</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Central de Tutoriais</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2 mb-8 text-lg">Encontre guias e manuais para todos os processos da equipe.</p>
         </div>
 
