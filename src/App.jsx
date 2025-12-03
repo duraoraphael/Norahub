@@ -6,7 +6,7 @@ import Cadastro from './pages/Cadastro';
 import EsqueceuSenha from './pages/EsqueceuSenha';
 import SolicitacaoCompras from './pages/SolicitacaoCompras';
 import SelecaoProjeto from './pages/SelecaoProjeto';
-import PainelProjeto from './pages/PainelProjeto'; // 1. Importar
+import PainelProjeto from './pages/PainelProjeto';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminSelection from './pages/AdminSelection';
 import AprovacaoCompras from './pages/AprovacaoCompras';
@@ -24,11 +24,26 @@ function App() {
         <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
         <Route path="/tutoriais" element={<Tutoriais />} />
 
-        <Route path="/selecao-projeto" element={<SelecaoProjeto />} />
+        {/* Rota Protegida: Só entra se tiver login */}
+        <Route 
+          path="/selecao-projeto" 
+          element={
+            <PrivateRoute>
+              <SelecaoProjeto />
+            </PrivateRoute>
+          } 
+        />
         
-        {/* 2. Nova Rota */}
-        <Route path="/painel-projeto" element={<PainelProjeto />} />
+        <Route 
+          path="/painel-projeto" 
+          element={
+            <PrivateRoute>
+              <PainelProjeto />
+            </PrivateRoute>
+          } 
+        />
 
+        {/* As páginas de ação direta continuam públicas ou protegidas conforme sua lógica */}
         <Route path="/solicitacao-compras" element={<SolicitacaoCompras />} />
         <Route path="/aprovacao-compras" element={<AprovacaoCompras />} />
 

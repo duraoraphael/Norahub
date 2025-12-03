@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>packager.json</title>
+    
+    <!-- 1. SCRIPT DE CONFIGURAÇÃO DO TEMA (ANTES DO TAILWIND) -->
+    <script>
+      // Configura o Tailwind para usar classes (ex: <html class="dark">)
+      window.tailwind = {
+        config: {
+          darkMode: 'class',
+        },
+      };
+
+      // Script para evitar "flash" de tema errado ao carregar
+      (function() {
+        const theme = localStorage.getItem('vite-ui-theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+    
+    <!-- 2. SCRIPT DO TAILWIND (DEPOIS DA CONFIGURAÇÃO) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" crossorigin src="/assets/index-rVi-I1zL.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DpBHlusd.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
