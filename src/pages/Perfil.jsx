@@ -11,7 +11,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 function Perfil() {
   const { theme } = useTheme();
-  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDark = theme === 'dark';
   const navigate = useNavigate();
 
   const [nome, setNome] = useState('');
@@ -31,10 +31,15 @@ function Perfil() {
     const fetchUserData = async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) { navigate('/login'); return; }
+      
       setNome(currentUser.displayName || '');
       setEmail(currentUser.email || '');
-      setFotoURL(currentUser.photoURL);
+      
+      // Prioridade: 1. Foto do Auth (Microsoft/Google), 2. Null
+      let initialPhoto = currentUser.photoURL;
+      
       if (currentUser.displayName) setPrimeiroNome(currentUser.displayName.split(' ')[0]);
+      
       try {
         const docRef = doc(db, 'users', currentUser.uid);
         const docSnap = await getDoc(docRef);
@@ -42,9 +47,14 @@ function Perfil() {
           const data = docSnap.data();
           setCelular(data.celular || '');
           if (!currentUser.displayName && data.nome) { setNome(data.nome); setPrimeiroNome(data.nome.split(' ')[0]); }
-          if (data.fotoURL) setFotoURL(data.fotoURL);
+          
+          // Se tiver foto salva no Firestore (upload manual), ela tem prioridade sobre a do Auth
+          if (data.fotoURL) initialPhoto = data.fotoURL;
         }
-      } catch (error) { console.error(error); } finally { setLoading(false); }
+      } catch (error) { console.error(error); } 
+      
+      setFotoURL(initialPhoto);
+      setLoading(false);
     };
     fetchUserData();
   }, [navigate]);
@@ -56,16 +66,23 @@ function Perfil() {
     try {
       const currentUser = auth.currentUser;
       let downloadURL = fotoURL;
+      
+      // Se selecionou arquivo, faz upload
       if (novaFotoFile) {
         const storageRef = ref(storage, `users/${currentUser.uid}/profile.jpg`);
         await uploadBytes(storageRef, novaFotoFile);
         downloadURL = await getDownloadURL(storageRef);
       }
-      if (nome !== currentUser.displayName || downloadURL !== currentUser.photoURL) {
+
+      // Atualiza Auth
+      if (nome !== currentUser.displayName || (downloadURL && downloadURL !== currentUser.photoURL)) {
         await updateProfile(currentUser, { displayName: nome, photoURL: downloadURL });
         setPrimeiroNome(nome.split(' ')[0]);
       }
+      
+      // Atualiza Firestore
       await updateDoc(doc(db, 'users', currentUser.uid), { nome, celular, fotoURL: downloadURL, updatedAt: new Date() });
+      
       if (novaSenha) {
         if (!senhaAtual) throw new Error('senha-atual-vazia');
         if (novaSenha !== confirmarSenha) throw new Error('senhas-nao-batem');
@@ -116,19 +133,18 @@ function Perfil() {
                 <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-1">{nome || 'Usuário'}</h1>
                 <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-8">{email}</p>
                 <form onSubmit={handleSave} className="space-y-6">
-                    {/* Campos de formulário (Resumidos para caber, lógica idêntica) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Nome</label><input type="text" value={nome} onChange={e=>setNome(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg" /></div>
-                        <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Celular</label><input type="tel" value={celular} onChange={e=>setCelular(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg" /></div>
-                        <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Email</label><input type="email" value={email} disabled className="w-full pl-4 py-2 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-500" /></div>
+                        <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Nome</label><input type="text" value={nome} onChange={e=>setNome(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500" placeholder="Seu Nome" /></div>
+                        <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Celular</label><input type="tel" value={celular} onChange={e=>setCelular(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500" placeholder="(00) 00000-0000" /></div>
+                        <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Email</label><input type="email" value={email} disabled className="w-full pl-4 py-2 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-500 cursor-not-allowed" /></div>
                     </div>
                     <div className="md:col-span-2 pt-6 border-t border-gray-100 dark:border-gray-700">
                         <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"><KeyRound size={18} className="text-[#57B952]" /> Alterar Senha</h3>
                         <div className="grid gap-4">
-                            <div><label className="block text-xs font-medium text-gray-500 ml-1">Senha Atual</label><input type="password" value={senhaAtual} onChange={e=>setSenhaAtual(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg" /></div>
+                            <div><label className="block text-xs font-medium text-gray-500 ml-1">Senha Atual</label><input type="password" value={senhaAtual} onChange={e=>setSenhaAtual(e.target.value)} className="w-full pl-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500" placeholder="Senha atual" /></div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label className="block text-xs font-medium text-gray-500 ml-1">Nova Senha</label><input type="password" value={novaSenha} onChange={e=>setNovaSenha(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg" /></div>
-                                <div><label className="block text-xs font-medium text-gray-500 ml-1">Confirmar</label><input type="password" value={confirmarSenha} onChange={e=>setConfirmarSenha(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg" /></div>
+                                <div><label className="block text-xs font-medium text-gray-500 ml-1">Nova Senha</label><input type="password" value={novaSenha} onChange={e=>setNovaSenha(e.target.value)} className="w-full pl-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500" placeholder="Nova senha" /></div>
+                                <div><label className="block text-xs font-medium text-gray-500 ml-1">Confirmar</label><input type="password" value={confirmarSenha} onChange={e=>setConfirmarSenha(e.target.value)} className="w-full pl-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500" placeholder="Repetir senha" /></div>
                             </div>
                         </div>
                     </div>
@@ -144,4 +160,5 @@ function Perfil() {
     </div>
   );
 }
+
 export default Perfil;

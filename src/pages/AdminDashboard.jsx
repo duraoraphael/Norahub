@@ -11,7 +11,7 @@ import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firesto
 function AdminDashboard() {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDark = theme === 'dark';
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,10 @@ function AdminDashboard() {
       try {
         const querySnapshot = await getDocs(collection(db, 'users'));
         const lista = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Ordena: Pendentes primeiro
         lista.sort((a, b) => (a.statusAcesso === 'pendente' ? -1 : 1));
+        
         setUsers(lista);
       } catch (error) {
         console.error("Erro:", error);
@@ -39,19 +42,29 @@ function AdminDashboard() {
     try {
         const userRef = doc(db, 'users', user.id);
         const finalRole = newRole || user.funcao;
-        await updateDoc(userRef, { statusAcesso: 'ativo', funcao: finalRole });
+        
+        await updateDoc(userRef, { 
+            statusAcesso: 'ativo',
+            funcao: finalRole 
+        });
+        
         setUsers(prev => prev.map(u => u.id === user.id ? { ...u, statusAcesso: 'ativo', funcao: finalRole } : u));
         setAlertInfo({ message: `Usuário aprovado como ${finalRole}!`, type: "success" });
-    } catch (error) { setAlertInfo({ message: "Erro ao aprovar.", type: "error" }); }
+    } catch (error) {
+        setAlertInfo({ message: "Erro ao aprovar.", type: "error" });
+    }
   };
 
   const handleReject = async (userId) => {
     if(!window.confirm("Tem certeza que deseja recusar e remover este usuário?")) return;
+
     try {
         await deleteDoc(doc(db, 'users', userId));
         setUsers(prev => prev.filter(u => u.id !== userId));
-        setAlertInfo({ message: "Usuário recusado.", type: "success" });
-    } catch (error) { setAlertInfo({ message: "Erro ao remover.", type: "error" }); }
+        setAlertInfo({ message: "Usuário recusado e removido.", type: "success" });
+    } catch (error) {
+        setAlertInfo({ message: "Erro ao remover.", type: "error" });
+    }
   };
 
   const handleRoleChange = async (userId, newRole) => {
@@ -72,26 +85,46 @@ function AdminDashboard() {
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
       <div className="relative z-50"><ThemeToggle /></div>
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-20">
+      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 dark:border-gray-700 h-20 bg-white dark:bg-gray-800">
+        
+        {/* Esquerda: Botão Voltar + Badge Admin */}
         <div className="absolute left-4 md:left-8 flex items-center gap-4">
-            <Link to="/admin-selection" className="flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors">
-                <ArrowLeft size={20} /> <span className="hidden sm:inline font-medium">Voltar</span>
+            {/* MUDANÇA AQUI: Link aponta para /selecao-projeto */}
+            <Link to="/selecao-projeto" className="flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors">
+                <ArrowLeft size={20} />
+                <span className="hidden sm:inline font-medium">Voltar</span>
             </Link>
-            <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider border border-purple-200 dark:border-purple-800">Admin</span>
+            <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider border border-purple-200 dark:border-purple-800">
+                Admin
+            </span>
         </div>
-        <div className="flex items-center justify-center"><img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-8 md:h-10 w-auto object-contain" /></div>
+        
+        {/* Centro: Logo */}
+        <div className="flex items-center justify-center">
+            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-8 md:h-10 w-auto object-contain" />
+        </div>
+
       </header>
 
       <main className="flex-grow flex flex-col items-center p-4 md:p-8">
         <div className="w-full max-w-6xl">
+            
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2"><Users className="text-[#57B952]" /> Gestão de Usuários</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <Users className="text-[#57B952]" /> Gestão de Usuários
+                    </h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-1">Aprove cadastros pendentes e gerencie permissões.</p>
                 </div>
                 <div className="relative w-full md:w-72">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3"><Search className="h-5 w-5 text-gray-400" /></span>
-                    <input type="text" placeholder="Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-[#57B952] outline-none shadow-sm" />
+                    <input 
+                        type="text" 
+                        placeholder="Buscar usuário..." 
+                        value={searchTerm} 
+                        onChange={(e) => setSearchTerm(e.target.value)} 
+                        className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-[#57B952] outline-none shadow-sm placeholder-gray-400 dark:placeholder-gray-500" 
+                    />
                 </div>
             </div>
 
@@ -111,25 +144,65 @@ function AdminDashboard() {
                             {loading ? (
                                 <tr><td colSpan="5" className="p-8 text-center text-gray-500">Carregando...</td></tr>
                             ) : filteredUsers.length === 0 ? (
-                                <tr><td colSpan="5" className="p-8 text-center text-gray-500">Nenhum usuário.</td></tr>
+                                <tr><td colSpan="5" className="p-8 text-center text-gray-500">Nenhum usuário encontrado.</td></tr>
                             ) : (
                                 filteredUsers.map((user) => (
                                     <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-50 dark:bg-yellow-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'}`}>
+                                        
                                         <td className="p-4">
-                                            {user.statusAcesso === 'pendente' ? <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold border border-yellow-200"><AlertTriangle size={12} /> Pendente</span> : <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-bold border border-green-200"><CheckCircle size={12} /> Ativo</span>}
+                                            {user.statusAcesso === 'pendente' ? (
+                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold border border-yellow-200">
+                                                    <AlertTriangle size={12} /> Pendente
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-bold border border-green-200">
+                                                    <CheckCircle size={12} /> Ativo
+                                                </span>
+                                            )}
                                         </td>
+
                                         <td className="p-4 font-medium text-gray-900 dark:text-white">{user.nome}</td>
                                         <td className="p-4 text-sm text-gray-600 dark:text-gray-300">{user.cargo || '-'}</td>
                                         <td className="p-4 text-sm text-gray-500 dark:text-gray-400">{user.email}</td>
+                                        
                                         <td className="p-4">
                                             {user.statusAcesso === 'pendente' ? (
                                                 <div className="flex items-center gap-2">
-                                                    <select defaultValue={user.funcao} id={`role-${user.id}`} className="text-sm p-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"><option value="solicitante">Solicitante</option><option value="comprador">Comprador</option><option value="admin">Admin</option></select>
-                                                    <button onClick={() => handleApprove(user, document.getElementById(`role-${user.id}`).value)} className="p-1.5 bg-green-500 text-white rounded hover:bg-green-600" title="Aprovar"><CheckCircle size={16} /></button>
-                                                    <button onClick={() => handleReject(user.id)} className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600" title="Recusar"><XCircle size={16} /></button>
+                                                    <select 
+                                                        defaultValue={user.funcao}
+                                                        id={`role-${user.id}`}
+                                                        className="text-sm p-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                    >
+                                                        <option value="solicitante">Solicitante</option>
+                                                        <option value="comprador">Comprador</option>
+                                                        <option value="admin">Admin</option>
+                                                    </select>
+                                                    
+                                                    <button 
+                                                        onClick={() => handleApprove(user, document.getElementById(`role-${user.id}`).value)}
+                                                        className="p-1.5 bg-green-500 text-white rounded hover:bg-green-600" title="Aprovar"
+                                                    >
+                                                        <CheckCircle size={16} />
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => handleReject(user.id)}
+                                                        className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600" title="Recusar"
+                                                    >
+                                                        <XCircle size={16} />
+                                                    </button>
                                                 </div>
                                             ) : (
-                                                <div className="relative w-40"><select value={user.funcao} onChange={(e) => handleRoleChange(user.id, e.target.value)} className="w-full pl-2 pr-8 py-1 rounded-md text-sm border border-gray-300 dark:border-gray-600 bg-transparent outline-none cursor-pointer"><option value="solicitante">Solicitante</option><option value="comprador">Comprador</option><option value="admin">Administrador</option></select></div>
+                                                <div className="relative w-40">
+                                                    <select 
+                                                        value={user.funcao} 
+                                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                                        className="w-full pl-2 pr-8 py-1 rounded-md text-sm border border-gray-300 dark:border-gray-600 bg-transparent outline-none cursor-pointer text-gray-900 dark:text-white"
+                                                    >
+                                                        <option value="solicitante">Solicitante</option>
+                                                        <option value="comprador">Comprador</option>
+                                                        <option value="admin">Administrador</option>
+                                                    </select>
+                                                </div>
                                             )}
                                         </td>
                                     </tr>
@@ -144,4 +217,5 @@ function AdminDashboard() {
     </div>
   );
 }
+
 export default AdminDashboard;

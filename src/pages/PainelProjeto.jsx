@@ -1,15 +1,21 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, CheckCircle, ArrowLeft, ExternalLink } from 'lucide-react';
+import { FileText, CheckCircle, ArrowLeft, ExternalLink, User } from 'lucide-react'; // Adicionado User
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext'; // Importar Auth
 
 function PainelProjeto() {
   const { theme } = useTheme();
+  const { currentUser, userProfile } = useAuth(); // Pegar usuário
   const isDark = theme === 'dark';
   const navigate = useNavigate();
   const location = useLocation();
   
   const projeto = location.state?.projeto;
+
+  // Dados Perfil
+  const primeiroNome = userProfile?.nome?.split(' ')[0] || currentUser?.displayName?.split(' ')[0] || 'Usuário';
+  const fotoURL = userProfile?.fotoURL || currentUser?.photoURL;
 
   if (!projeto) {
       return (
@@ -19,7 +25,7 @@ function PainelProjeto() {
       );
   }
 
-  // Fallback seguro caso o projeto seja antigo e não tenha os campos novos
+  // Fallback seguro
   const linkSolicitacao = projeto.urlForms || projeto.url || '#';
   const linkAprovacao = projeto.urlSharePoint || 'https://normatelce.sharepoint.com/';
 
@@ -31,23 +37,40 @@ function PainelProjeto() {
         <button onClick={() => navigate('/selecao-projeto')} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm">
              <ArrowLeft size={18} /> <span className="hidden sm:inline">Trocar Projeto</span>
         </button>
+        
         <div className="flex items-center gap-4">
-           <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
+            <img src="/img/petrobras.jpg" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
+            <span className="text-gray-300 dark:text-gray-600 text-2xl font-light">|</span>
+            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
         </div>
+
+        {/* PERFIL NO CANTO DIREITO */}
+        {currentUser && (
+            <div className="absolute right-4 md:right-8 flex items-center gap-3">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-200 hidden md:block">Olá, {primeiroNome}</span>
+                <Link to="/perfil" className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-600 hover:border-[#57B952] transition-all bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                    {fotoURL ? <img src={fotoURL} alt="Perfil" className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500 dark:text-gray-400" />}
+                </Link>
+            </div>
+        )}
       </header>
 
       <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
         <div className="w-full max-w-5xl">
             
             <div className="text-center mb-12">
-                <h2 className="text-sm font-bold text-[#57B952] uppercase tracking-widest mb-2">Ambiente de Trabalho</h2>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{projeto.nome}</h1>
+                <h2 className="text-sm font-bold text-[#57B952] uppercase tracking-widest mb-2">
+                    Ambiente de Trabalho
+                </h2>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                    {projeto.nome}
+                </h1>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">Selecione a operação desejada para esta base.</p>
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 justify-center">
                 
-                {/* Card 1: Solicitação (Link Específico do Projeto) */}
+                {/* Card 1: Solicitação */}
                 <a 
                     href={linkSolicitacao}
                     target="_blank"
@@ -58,13 +81,15 @@ function PainelProjeto() {
                         <FileText size={48} />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">Nova Solicitação</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mb-6">Preencher formulário de requisição para {projeto.nome}.</p>
+                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                        Preencher formulário de requisição para {projeto.nome}.
+                    </p>
                     <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-colors shadow-md">
                         Acessar Formulário <ExternalLink size={16} />
                     </div>
                 </a>
 
-                {/* Card 2: Aprovação (Link Específico do Projeto) */}
+                {/* Card 2: Aprovação */}
                 <a 
                     href={linkAprovacao}
                     target="_blank"
@@ -75,7 +100,9 @@ function PainelProjeto() {
                         <CheckCircle size={48} />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">Aprovação / Painel</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mb-6">Acessar lista de pedidos e aprovações desta base.</p>
+                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                        Acessar lista de pedidos e aprovações desta base.
+                    </p>
                     <div className="mt-auto flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-bold transition-colors shadow-md">
                         Acessar Painel <ExternalLink size={16} />
                     </div>
@@ -84,8 +111,12 @@ function PainelProjeto() {
             </div>
         </div>
       </main>
-      <footer className="w-full py-6 text-center text-gray-500 text-xs shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">&copy; 2025 Parceria Petrobras & Normatel Engenharia</footer>
+      
+      <footer className="w-full py-6 text-center text-gray-500 text-xs shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+        &copy; 2025 Parceria Petrobras & Normatel Engenharia
+      </footer>
     </div>
   );
 }
+
 export default PainelProjeto;
