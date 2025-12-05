@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Mail, Send, ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react'; // Adicionei AlertTriangle
 import { useState } from 'react';
-import { ThemeToggle } from '../components/ThemeToggle';
+// ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
 
 // Imports do Firebase
@@ -10,7 +10,6 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 
 function EsqueceuSenha() {
   const { theme } = useTheme();
-  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -55,41 +54,37 @@ function EsqueceuSenha() {
   return (
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden">
       
-      <ThemeToggle />
+      {/* ThemeToggle removed */}
 
-      <header className="w-full flex justify-center py-8 md:py-12 shrink-0">
+        <header className="w-full flex justify-center py-8 md:py-12 shrink-0">
         <Link to="/">
-          <img 
-              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"}
-              alt="Logo Normatel" 
-              className="w-40 md:w-48 h-auto object-contain"
-          />
+          <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo Normatel" className="w-40 md:w-48 h-auto object-contain" />
         </Link>
       </header>
 
       <main className="flex-grow flex flex-col items-center justify-center p-4">
         
-        <div className="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+        <div className="w-full max-w-sm bg-white p-8 rounded-xl shadow-2xl border border-gray-200">
           
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Recuperar Senha</h2>
-            {!success && <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Digite seu e-mail para enviarmos o link de recuperação.</p>}
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Recuperar Senha</h2>
+            {!success && <p className="text-sm text-gray-600 mb-6">Digite seu e-mail para enviarmos o link de recuperação.</p>}
           </div>
 
           {success ? (
             // Tela de Sucesso (Com aviso de Spam reforçado)
             <div className="flex flex-col items-center text-center animate-fade-in">
-              <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-full mb-4">
-                <CheckCircle size={48} className="text-green-600 dark:text-green-400" />
+              <div className="bg-green-100 p-4 rounded-full mb-4">
+                <CheckCircle size={48} className="text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">E-mail Enviado!</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">E-mail Enviado!</h3>
               
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3 mb-6 w-full">
-                <div className="flex items-center justify-center gap-2 text-yellow-700 dark:text-yellow-400 font-semibold mb-1">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6 w-full">
+                <div className="flex items-center justify-center gap-2 text-yellow-700 font-semibold mb-1">
                     <AlertTriangle size={18} />
                     <span>Atenção</span>
                 </div>
-                <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                <p className="text-sm text-yellow-800">
                   Verifique sua pasta de <strong>Spam</strong> ou <strong>Lixo Eletrônico</strong>.
                 </p>
               </div>
@@ -112,7 +107,7 @@ function EsqueceuSenha() {
             // Formulário
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                 <div className="relative mt-1">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                     <Mail className="h-5 w-5 text-gray-400" />
@@ -123,7 +118,7 @@ function EsqueceuSenha() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="seu.email@normatel.com.br"
-                    className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
                     required
                   />
                 </div>
@@ -143,7 +138,7 @@ function EsqueceuSenha() {
               </button>
               
               <div className="text-center mt-6 text-sm">
-                <Link to="/login" className="font-medium text-gray-600 dark:text-gray-400 hover:text-[#57B952] dark:hover:text-[#57B952] transition-colors flex items-center justify-center gap-1">
+                <Link to="/login" className="font-medium text-gray-600 text-gray-400 hover:text-[#57B952] hover:text-[#57B952] transition-colors flex items-center justify-center gap-1">
                   <ArrowLeft size={16} />
                   Voltar para o Login
                 </Link>

@@ -14,10 +14,10 @@ function Alert({ message, type, onClose }) {
   const isSuccess = type === 'success';
   
   // Cores para Sucesso (Verde Normatel)
-  const successClasses = "bg-green-50 dark:bg-green-900/20 border-green-500 text-green-800 dark:text-green-200";
+  const successClasses = "bg-green-50 border-green-500 text-green-800";
   
   // Cores para Erro (Vermelho)
-  const errorClasses = "bg-red-50 dark:bg-red-900/20 border-red-500 text-red-800 dark:text-red-200";
+  const errorClasses = "bg-red-50 border-red-500 text-red-800";
 
   return (
     <div className={`fixed top-4 right-4 z-[100] flex items-center p-4 rounded-lg border-l-4 shadow-xl transition-all duration-500 transform translate-y-0 animate-fade-in ${isSuccess ? successClasses : errorClasses} max-w-sm w-full`}>
@@ -44,7 +44,7 @@ function Alert({ message, type, onClose }) {
       {/* Botão Fechar */}
       <button 
         onClick={onClose}
-        className={`ml-4 inline-flex flex-shrink-0 justify-center items-center h-5 w-5 rounded-md hover:opacity-50 focus:outline-none ${isSuccess ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`}
+        className={`ml-4 inline-flex flex-shrink-0 justify-center items-center h-5 w-5 rounded-md hover:opacity-50 focus:outline-none ${isSuccess ? 'text-green-800' : 'text-red-800'}`}
       >
         <X size={16} />
       </button>

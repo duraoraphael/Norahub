@@ -1,19 +1,23 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, UserCheck, BookOpen, LogIn, Building2, HardHat, ChevronRight } from 'lucide-react';
-import { ThemeToggle } from '../components/ThemeToggle';
-import { useTheme } from '../context/ThemeContext';
+import { useEffect } from 'react';
+import { auth } from '../services/firebase';
+import { signOut } from 'firebase/auth';
 
 function Capa() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
   const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative">
-      
-      <div className="relative z-50"><ThemeToggle /></div>
+    // Desloga usuário sempre que entrar na página inicial (Capa)
+    useEffect(() => {
+        signOut(auth).catch(() => {});
+    }, []);
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 dark:border-gray-700 h-20 bg-white dark:bg-gray-800">
+  return (
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200">
+      
+    {/* ThemeToggle removed */}
+
+    <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white transition-colors duration-200">
         <button 
             onClick={() => navigate('/login')} 
             className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm"
@@ -23,26 +27,18 @@ function Capa() {
 
         {/* Logos Centralizadas (Parceria) */}
         <div className="flex items-center gap-4">
-            <img 
-                src="/img/petrobras.jpg" 
-                alt="Logo Petrobras" 
-                className="h-8 md:h-10 w-auto object-contain" 
-            />
-            <span className="text-gray-300 dark:text-gray-600 text-2xl font-light">|</span>
-            <img 
-                src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"}
-                alt="Logo Normatel" 
-                className="h-8 md:h-10 w-auto object-contain" 
-            />
+            <img src="/img/petrobras.jpg" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
+            <span className="text-gray-300 text-2xl font-light">|</span>
+            <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
+    <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
         <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 Bem-vindo ao Portal Integrado
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Selecione sua organização para acessar os serviços.
             </p>
         </div>
@@ -87,7 +83,7 @@ function Capa() {
 
         </div>
       </main>
-      <footer className="w-full py-4 text-center text-gray-500 text-xs shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+        <footer className="w-full py-4 text-center text-gray-500 text-xs shrink-0 bg-white border-t border-gray-200 transition-colors duration-200">
         &copy; 2025 Parceria Petrobras & Normatel Engenharia
       </footer>
     </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Users, Shield, Search, CheckCircle, XCircle, AlertTriangle, ArrowLeft } from 'lucide-react';
-import { ThemeToggle } from '../components/ThemeToggle';
+// ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
 import Alert from '../components/Alert';
 
@@ -81,11 +81,11 @@ function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 dark:bg-[#111827] transition-colors duration-200 relative">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 bg-[#111827] transition-colors duration-200 relative text-black">
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
-      <div className="relative z-50"><ThemeToggle /></div>
+    {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 dark:border-gray-700 h-20 bg-white dark:bg-gray-800">
+      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 border-gray-700 h-20 bg-white bg-gray-800">
         
         {/* Esquerda: Botão Voltar + Badge Admin */}
         <div className="absolute left-4 md:left-8 flex items-center gap-4">
@@ -94,7 +94,7 @@ function AdminDashboard() {
                 <ArrowLeft size={20} />
                 <span className="hidden sm:inline font-medium">Voltar</span>
             </Link>
-            <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider border border-purple-200 dark:border-purple-800">
+            <span className="px-3 py-1 rounded-full bg-purple-100 bg-purple-900/30 text-purple-700 text-purple-300 text-xs font-bold uppercase tracking-wider border border-purple-200 border-purple-800">
                 Admin
             </span>
         </div>
@@ -111,10 +111,10 @@ function AdminDashboard() {
             
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
                         <Users className="text-[#57B952]" /> Gestão de Usuários
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">Aprove cadastros pendentes e gerencie permissões.</p>
+                    <p className="text-gray-500 mt-1">Aprove cadastros pendentes e gerencie permissões.</p>
                 </div>
                 <div className="relative w-full md:w-72">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3"><Search className="h-5 w-5 text-gray-400" /></span>
@@ -123,31 +123,31 @@ function AdminDashboard() {
                         placeholder="Buscar usuário..." 
                         value={searchTerm} 
                         onChange={(e) => setSearchTerm(e.target.value)} 
-                        className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-[#57B952] outline-none shadow-sm placeholder-gray-400 dark:placeholder-gray-500" 
+                        className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none shadow-sm placeholder-gray-400" 
                     />
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="bg-white bg-gray-800 rounded-xl shadow-lg border border-gray-200 border-gray-700 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                                <th className="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Usuário</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Cargo</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Email</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Ações / Permissão</th>
+                            <tr className="bg-gray-50 bg-gray-700/50 border-b border-gray-200 border-gray-700">
+                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Status</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Usuário</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Cargo</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Email</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Ações / Permissão</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                        <tbody className="divide-y divide-gray-100 divide-gray-700">
                             {loading ? (
                                 <tr><td colSpan="5" className="p-8 text-center text-gray-500">Carregando...</td></tr>
                             ) : filteredUsers.length === 0 ? (
                                 <tr><td colSpan="5" className="p-8 text-center text-gray-500">Nenhum usuário encontrado.</td></tr>
                             ) : (
                                 filteredUsers.map((user) => (
-                                    <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-50 dark:bg-yellow-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'}`}>
+                                    <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-50 bg-yellow-900/10' : 'hover:bg-gray-50 hover:bg-gray-700/30'}`}>
                                         
                                         <td className="p-4">
                                             {user.statusAcesso === 'pendente' ? (
@@ -161,9 +161,9 @@ function AdminDashboard() {
                                             )}
                                         </td>
 
-                                        <td className="p-4 font-medium text-gray-900 dark:text-white">{user.nome}</td>
-                                        <td className="p-4 text-sm text-gray-600 dark:text-gray-300">{user.cargo || '-'}</td>
-                                        <td className="p-4 text-sm text-gray-500 dark:text-gray-400">{user.email}</td>
+                                        <td className="p-4 font-medium text-gray-900">{user.nome}</td>
+                                        <td className="p-4 text-sm text-gray-600">{user.cargo || '-'}</td>
+                                        <td className="p-4 text-sm text-gray-500">{user.email}</td>
                                         
                                         <td className="p-4">
                                             {user.statusAcesso === 'pendente' ? (
@@ -171,7 +171,7 @@ function AdminDashboard() {
                                                     <select 
                                                         defaultValue={user.funcao}
                                                         id={`role-${user.id}`}
-                                                        className="text-sm p-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                        className="text-sm p-1 rounded border border-gray-300 bg-white text-gray-900"
                                                     >
                                                         <option value="solicitante">Solicitante</option>
                                                         <option value="comprador">Comprador</option>
@@ -196,8 +196,7 @@ function AdminDashboard() {
                                                     <select 
                                                         value={user.funcao} 
                                                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                                        className="w-full pl-2 pr-8 py-1 rounded-md text-sm border border-gray-300 dark:border-gray-600 bg-transparent outline-none cursor-pointer text-gray-900 dark:text-white"
-                                                    >
+                                                        className="w-full pl-2 pr-8 py-1 rounded-md text-sm border border-gray-300 bg-transparent outline-none cursor-pointer text-gray-900">
                                                         <option value="solicitante">Solicitante</option>
                                                         <option value="comprador">Comprador</option>
                                                         <option value="admin">Administrador</option>
