@@ -34,7 +34,7 @@ function Login() {
     if (!authLoading && currentUser && userProfile) {
         if (userProfile.statusAcesso === 'pendente') return;
         
-        if (userProfile.funcao === 'admin') navigate('/selecao-projeto');
+        if (userProfile.funcao === 'admin') navigate('/admin-selection');
         else navigate('/selecao-projeto');
     }
   }, [authLoading, currentUser, userProfile, navigate]);

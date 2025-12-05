@@ -35,8 +35,8 @@ function Cadastro() {
     setLoading(true);
     setAlertInfo(null);
 
-    if (!email || !email.endsWith('@normatel.com.br')) {
-        setAlertInfo({ message: "Use email corporativo (@normatel.com.br).", type: 'error' });
+    if (!email) {
+        setAlertInfo({ message: "O campo e-mail é obrigatório.", type: 'error' });
         setLoading(false);
         return;
     }
@@ -50,7 +50,12 @@ function Cadastro() {
       setTimeout(() => { navigate('/login'); }, 3000);
     } catch (error) {
       console.error("Erro:", error);
-      setAlertInfo({ message: "Erro ao criar conta.", type: 'error' });
+      let mensagemErro = "Erro ao criar conta.";
+      if (error.code === 'auth/email-already-in-use') mensagemErro = "Este e-mail já está cadastrado.";
+      if (error.code === 'auth/weak-password') mensagemErro = "A senha deve ter pelo menos 6 caracteres.";
+      if (error.code === 'auth/invalid-email') mensagemErro = "O e-mail é inválido.";
+      
+      setAlertInfo({ message: mensagemErro, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -59,16 +64,24 @@ function Cadastro() {
   const handleMicrosoftRegister = async () => {
     setLoading(true); setAlertInfo(null);
     const provider = new OAuthProvider('microsoft.com');
+    
+    // CORREÇÃO: Adiciona escopos para garantir que o email venha
+    provider.addScope('email');
+    provider.addScope('openid');
+    provider.addScope('profile');
     provider.setCustomParameters({ prompt: 'select_account' });
 
     try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         
-        if (!user.email || !user.email.endsWith('@normatel.com.br')) {
-            await user.delete().catch(()=>{}); 
+        // Tenta pegar o email do objeto principal ou dos dados do provedor
+        const userEmail = user.email || user.providerData[0]?.email;
+        
+        if (!userEmail) {
+            if (user) await user.delete().catch(()=>{}); 
             await signOut(auth);
-            throw new Error("dominio-invalido");
+            throw new Error("email-indisponivel");
         }
         
         const docRef = doc(db, 'users', user.uid);
@@ -80,12 +93,12 @@ function Cadastro() {
         } else {
             await setDoc(docRef, { 
                 nome: user.displayName || 'Usuário Microsoft', 
-                email: user.email, 
+                email: userEmail, // Usa o email recuperado com segurança
                 cpfMatricula: '', 
                 cargo: 'Colaborador', 
                 funcao: 'solicitante', 
-                statusAcesso: 'ativo', // Microsoft entra como ativo
-                fotoURL: user.photoURL || null, // Salva a foto da Microsoft se existir
+                statusAcesso: 'ativo', 
+                fotoURL: user.photoURL || null,
                 uid: user.uid, 
                 createdAt: new Date() 
             });
@@ -95,8 +108,15 @@ function Cadastro() {
         }
     } catch (error) {
         console.error("Erro Microsoft:", error);
-        if (error.message === 'dominio-invalido') setAlertInfo({ message: "Acesso restrito a @normatel.com.br", type: 'error' });
-        else setAlertInfo({ message: "Erro no cadastro.", type: 'error' });
+        if (error.message === 'email-indisponivel') {
+             setAlertInfo({ message: "A Microsoft não forneceu seu e-mail. Verifique as permissões da conta.", type: 'error' });
+        } else if (error.code === 'auth/invalid-credential') {
+             setAlertInfo({ message: "Credenciais inválidas. Verifique o Client Secret.", type: 'error' });
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
+             setAlertInfo({ message: "E-mail já cadastrado com senha. Faça login normal.", type: 'warning' });
+        } else {
+            setAlertInfo({ message: "Erro no cadastro.", type: 'error' });
+        }
     } finally { setLoading(false); }
   };
 
@@ -119,25 +139,12 @@ function Cadastro() {
           <div className="flex items-center gap-4 mb-6"><div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div><span className="text-sm text-gray-500">ou manual</span><div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div></div>
           <form onSubmit={handleRegisterSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
-                 <input type="text" value={nome} onChange={e=>setNome(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400" placeholder="Ex: João da Silva" required /></div>
-                 
-                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                 <input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400" placeholder="exemplo@normatel.com.br" required /></div>
-                 
-                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Senha</label>
-                 <input type="password" value={senha} onChange={e=>setSenha(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400" placeholder="******" required /></div>
-                 
-                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">CPF</label>
-                 <input type="text" value={cpfMatricula} onChange={e=>setCpfMatricula(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400" placeholder="000.000.000-00" required /></div>
-                 
-                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cargo</label>
-                 <input type="text" value={funcao} onChange={e=>setFuncao(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400" placeholder="Ex: Analista" required /></div>
-                 
-                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Perfil</label>
-                 <select value={perfilAcesso} onChange={e=>setPerfilAcesso(e.target.value)} className="w-full pl-4 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] cursor-pointer" required>
-                    <option value="" disabled>Selecione...</option><option value="comprador">Comprador</option><option value="solicitante">Solicitante</option>
-                 </select></div>
+                 <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label><input type="text" value={nome} onChange={e=>setNome(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 dark:placeholder-gray-500" placeholder="Ex: João Silva" required /></div>
+                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 dark:placeholder-gray-500" placeholder="email@exemplo.com" required /></div>
+                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Senha</label><input type="password" value={senha} onChange={e=>setSenha(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 dark:placeholder-gray-500" placeholder="******" required /></div>
+                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">CPF</label><input type="text" value={cpfMatricula} onChange={e=>setCpfMatricula(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 dark:placeholder-gray-500" placeholder="000.000.000-00" required /></div>
+                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cargo</label><input type="text" value={funcao} onChange={e=>setFuncao(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 dark:placeholder-gray-500" placeholder="Ex: Analista" required /></div>
+                 <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Perfil</label><select value={perfilAcesso} onChange={e=>setPerfilAcesso(e.target.value)} className="w-full pl-4 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-[#57B952] cursor-pointer" required><option value="" disabled>Selecione...</option><option value="comprador">Comprador</option><option value="solicitante">Solicitante</option></select></div>
               </div>
               <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 mt-6 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50">{loading ? '...' : 'Cadastrar'}</button>
           </form>
