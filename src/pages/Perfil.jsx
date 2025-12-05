@@ -35,7 +35,7 @@ function Perfil() {
       setNome(currentUser.displayName || '');
       setEmail(currentUser.email || '');
       
-      // Prioridade: 1. Foto do Auth (Microsoft/Google), 2. Null
+      // Prioridade: 1. Foto do Auth (Microsoft/Google - sempre tem prioridade), 2. Foto do Firestore (upload manual)
       let initialPhoto = currentUser.photoURL;
       
       if (currentUser.displayName) setPrimeiroNome(currentUser.displayName.split(' ')[0]);
@@ -48,8 +48,8 @@ function Perfil() {
           setCelular(data.celular || '');
           if (!currentUser.displayName && data.nome) { setNome(data.nome); setPrimeiroNome(data.nome.split(' ')[0]); }
           
-          // Se tiver foto salva no Firestore (upload manual), ela tem prioridade sobre a do Auth
-          if (data.fotoURL) initialPhoto = data.fotoURL;
+          // Se Auth não tem foto mas Firestore tem (upload manual), use do Firestore
+          if (!initialPhoto && data.fotoURL) initialPhoto = data.fotoURL;
         }
       } catch (error) { console.error(error); } 
       

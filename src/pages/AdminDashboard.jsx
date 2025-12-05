@@ -81,11 +81,11 @@ function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 bg-[#111827] transition-colors duration-200 relative text-black">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 relative text-black">
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 border-gray-700 h-20 bg-white bg-gray-800">
+      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
         
         {/* Esquerda: Botão Voltar + Badge Admin */}
         <div className="absolute left-4 md:left-8 flex items-center gap-4">
@@ -94,7 +94,7 @@ function AdminDashboard() {
                 <ArrowLeft size={20} />
                 <span className="hidden sm:inline font-medium">Voltar</span>
             </Link>
-            <span className="px-3 py-1 rounded-full bg-purple-100 bg-purple-900/30 text-purple-700 text-purple-300 text-xs font-bold uppercase tracking-wider border border-purple-200 border-purple-800">
+            <span className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider border border-purple-200">
                 Admin
             </span>
         </div>
@@ -128,26 +128,26 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            <div className="bg-white bg-gray-800 rounded-xl shadow-lg border border-gray-200 border-gray-700 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-gray-50 bg-gray-700/50 border-b border-gray-200 border-gray-700">
-                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Status</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Usuário</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Cargo</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Email</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 text-gray-400 uppercase">Ações / Permissão</th>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Status</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Usuário</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Cargo</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Email</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Ações / Permissão</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 divide-gray-700">
+                        <tbody className="divide-y divide-gray-100">
                             {loading ? (
                                 <tr><td colSpan="5" className="p-8 text-center text-gray-500">Carregando...</td></tr>
                             ) : filteredUsers.length === 0 ? (
                                 <tr><td colSpan="5" className="p-8 text-center text-gray-500">Nenhum usuário encontrado.</td></tr>
                             ) : (
                                 filteredUsers.map((user) => (
-                                    <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-50 bg-yellow-900/10' : 'hover:bg-gray-50 hover:bg-gray-700/30'}`}>
+                                    <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-50' : 'hover:bg-gray-50'}`}>
                                         
                                         <td className="p-4">
                                             {user.statusAcesso === 'pendente' ? (

@@ -6,7 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import Alert from '../components/Alert';
 import { auth, db } from '../services/firebase';
-import { signInWithEmailAndPassword, signOut, OAuthProvider, signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, OAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 function Login() {
@@ -58,12 +58,22 @@ function Login() {
         if (data.statusAcesso === 'pendente') { 
             // Se for Microsoft, atualiza para ativo automaticamente para não travar
             if (user.providerData[0]?.providerId === 'microsoft.com') {
-                await updateDoc(doc(db, 'users', user.uid), { statusAcesso: 'ativo' });
+                await updateDoc(doc(db, 'users', user.uid), { statusAcesso: 'ativo', fotoURL: user.photoURL || null });
+                // Força atualização do Auth com a foto
+                if (user.photoURL) {
+                  await updateProfile(user, { photoURL: user.photoURL });
+                }
                 navigate('/selecao-projeto');
                 return;
             }
             await signOut(auth); 
             throw new Error("pendente"); 
+        }
+        
+        // Se for Microsoft e ativo, atualiza foto
+        if (user.providerData[0]?.providerId === 'microsoft.com' && user.photoURL) {
+          await updateDoc(doc(db, 'users', user.uid), { fotoURL: user.photoURL });
+          await updateProfile(user, { photoURL: user.photoURL });
         }
         
         // Redireciona para seleção
@@ -74,12 +84,17 @@ function Login() {
         await setDoc(doc(db, 'users', user.uid), {
           nome: user.displayName || 'Usuário Microsoft',
           email: effectiveEmail,
-            cargo: 'Colaborador',
-            funcao: 'solicitante', // Padrão seguro
-            statusAcesso: 'ativo', // Já entra aprovado
-            uid: user.uid,
-            createdAt: new Date()
+          cargo: 'Colaborador',
+          funcao: 'solicitante', // Padrão seguro
+          statusAcesso: 'ativo', // Já entra aprovado
+          uid: user.uid,
+          fotoURL: user.photoURL || null, // Salva a foto da conta Microsoft
+          createdAt: new Date()
         });
+        // Força atualização do Auth com a foto
+        if (user.photoURL) {
+          await updateProfile(user, { photoURL: user.photoURL });
+        }
         navigate('/selecao-projeto');
       }
   };
