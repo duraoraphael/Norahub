@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, LogIn, ArrowLeft, User } from 'lucide-react'; // Adicionado User
+import { Mail, Lock, LogIn, ArrowLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useTheme } from '../context/ThemeContext';
@@ -20,44 +20,86 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [alertInfo, setAlertInfo] = useState(null);
 
-  // Variáveis para exibição no header
-  const fotoURL = currentUser?.photoURL || userProfile?.fotoURL;
-  const primeiroNome = userProfile?.nome?.split(' ')[0] || currentUser?.displayName?.split(' ')[0] || 'Usuário';
-
-  // CORREÇÃO 1: O signOut roda APENAS UMA VEZ ao montar a página (lista de dependências vazia [])
+  // CORREÇÃO CRÍTICA: Array de dependências vazio []
+  // Isso garante que o logout só aconteça ao ENTRAR na página, e não após o login
   useEffect(() => {
     signOut(auth).catch(() => {});
   }, []);
 
-  // Lógica de Redirecionamento Automático (caso o login seja via email/senha ou recuperação de sessão)
+  // Redirecionamento Automático
   useEffect(() => {
+    // Se já carregou e tem usuário válido
     if (!authLoading && currentUser && userProfile) {
         if (userProfile.statusAcesso === 'pendente') return;
         
-        if (userProfile.funcao === 'admin') navigate('/admin-selection');
-        else navigate('/selecao-projeto');
+        // TODOS (Inclusive Admin) vão para a seleção de projeto
+        navigate('/selecao-projeto');
     }
   }, [authLoading, currentUser, userProfile, navigate]);
+
+  const checkUserProfile = async (user) => {
+      // Validação de domínio para Microsoft
+      if (user.providerData[0]?.providerId === 'microsoft.com' && !user.email.endsWith('@normatel.com.br')) { 
+          await signOut(auth); 
+          throw new Error("dominio-invalido"); 
+      }
+      
+      const docSnap = await getDoc(doc(db, 'users', user.uid));
+      
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.statusAcesso === 'pendente') { 
+            // Se for Microsoft, atualiza para ativo automaticamente para não travar
+            if (user.providerData[0]?.providerId === 'microsoft.com') {
+                await updateDoc(doc(db, 'users', user.uid), { statusAcesso: 'ativo' });
+                navigate('/selecao-projeto');
+                return;
+            }
+            await signOut(auth); 
+            throw new Error("pendente"); 
+        }
+        
+        // Redireciona para seleção
+        navigate('/selecao-projeto');
+        
+      } else { 
+        // Cria perfil se não existir (Primeiro acesso Microsoft -> Ativo)
+        await setDoc(doc(db, 'users', user.uid), {
+            nome: user.displayName || 'Usuário Microsoft',
+            email: user.email,
+            cargo: 'Colaborador',
+            funcao: 'solicitante', // Padrão seguro
+            statusAcesso: 'ativo', // Já entra aprovado
+            uid: user.uid,
+            createdAt: new Date()
+        });
+        navigate('/selecao-projeto');
+      }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setLoading(true); setAlertInfo(null);
     if (!email.endsWith('@normatel.com.br')) { setAlertInfo({ message: "Use email corporativo.", type: 'error' }); setLoading(false); return; }
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-      // Verifica perfil
+      
+      // Verificação específica para senha (mantém a regra de pendente)
       const docSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
       if (docSnap.exists()) {
          if (docSnap.data().statusAcesso === 'pendente') {
             await signOut(auth);
-            setAlertInfo({ message: "Conta em análise. Aguarde aprovação.", type: 'error' });
+            throw new Error("pendente");
          }
+         // Se ativo, o useEffect lá em cima redireciona
       } else {
          await signOut(auth);
-         setAlertInfo({ message: "Perfil não encontrado.", type: 'error' });
+         throw new Error("sem-perfil");
       }
     } catch (error) {
       console.error("Erro:", error);
-      setAlertInfo({ message: "Email ou senha incorretos.", type: 'error' });
+      if (error.message === 'pendente') setAlertInfo({ message: "Conta em análise. Aguarde aprovação.", type: 'error' });
+      else if (error.message === 'sem-perfil') setAlertInfo({ message: "Perfil não encontrado.", type: 'error' });
+      else setAlertInfo({ message: "Email ou senha incorretos.", type: 'error' });
     } finally { setLoading(false); }
   };
 
@@ -68,47 +110,12 @@ function Login() {
 
     try {
         const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-
-        if (!user.email.endsWith('@normatel.com.br')) {
-            await user.delete().catch(()=>{}); 
-            await signOut(auth);
-            throw new Error("dominio-invalido");
-        }
-
-        const userRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(userRef);
-
-        // CORREÇÃO 2: Aprovação Automática e Redirecionamento Expresso
-        if (docSnap.exists()) {
-            // Se já existe mas estava pendente, libera agora
-            if (docSnap.data().statusAcesso === 'pendente') {
-                await updateDoc(userRef, { statusAcesso: 'ativo' });
-            }
-            // Verifica cargo para redirecionar certo
-            const data = docSnap.data();
-            if (data.funcao === 'admin') navigate('/admin-selection');
-            else navigate('/selecao-projeto');
-        } else {
-            // Se é novo, cria como ATIVO e entra
-            // ADICIONADO: fotoURL para salvar a foto da Microsoft
-            await setDoc(userRef, {
-                nome: user.displayName || 'Usuário Microsoft',
-                email: user.email,
-                fotoURL: user.photoURL, // <--- Salva a foto aqui
-                cargo: 'Colaborador',
-                funcao: 'solicitante',
-                statusAcesso: 'ativo', // <--- IMPORTANTE: Entra direto
-                uid: user.uid,
-                createdAt: new Date()
-            });
-            navigate('/selecao-projeto');
-        }
-
+        await checkUserProfile(result.user);
     } catch (error) {
         console.error("Erro Microsoft:", error);
         if (error.message === 'dominio-invalido') setAlertInfo({ message: "Acesso restrito a @normatel.com.br", type: 'error' });
-        else if (error.code === 'auth/account-exists-with-different-credential') setAlertInfo({ message: "E-mail já existe com senha. Use o login normal.", type: 'warning' });
+        else if (error.message === 'pendente') setAlertInfo({ message: "Conta em análise.", type: 'error' });
+        else if (error.code === 'auth/account-exists-with-different-credential') setAlertInfo({ message: "E-mail já existe com senha.", type: 'warning' });
         else if (error.code === 'auth/popup-closed-by-user') setAlertInfo({ message: "Login cancelado.", type: 'error' });
         else setAlertInfo({ message: `Erro: ${error.code}`, type: 'error' });
     } finally { setLoading(false); }
@@ -120,24 +127,12 @@ function Login() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 dark:bg-[#111827] transition-colors duration-200">
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
       <div className="relative z-50"><ThemeToggle /></div>
-      
       <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 dark:border-gray-700 h-20 bg-white dark:bg-gray-800">
         <button onClick={() => navigate('/')} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm">
              <ArrowLeft size={18} /> <span className="hidden sm:inline">Voltar</span>
         </button>
         <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-10 w-auto object-contain" />
-        
-        {/* MOSTRAR PERFIL NO CANTO SUPERIOR DIREITO SE LOGADO */}
-        {currentUser && (
-            <div className="absolute right-4 md:right-8 flex items-center gap-3 mr-16">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200 hidden md:block fade-in">Olá, {primeiroNome}</span>
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-600 hover:border-[#57B952] transition-all bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                    {fotoURL ? <img src={fotoURL} alt="Perfil" className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500 dark:text-gray-400" />}
-                </div>
-            </div>
-        )}
       </header>
-
       <main className="flex-grow flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-sm bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
           <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">Acessar Sistema</h2>
