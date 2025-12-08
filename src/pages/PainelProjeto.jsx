@@ -39,7 +39,7 @@ function PainelProjeto() {
         </button>
         
         <div className="flex items-center gap-4">
-            <img src="/img/petrobras.jpg" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
+                <img src="/img/Noralogoo.jpg" alt="Logo Nora" className="h-8 md:h-10 w-auto object-contain" />
             <span className="text-gray-600 text-2xl font-light">|</span>
             <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
         </div>

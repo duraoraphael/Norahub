@@ -22,22 +22,22 @@ function MenuNormatel() {
   const LINK_SOLICITANTE = "https://normatelce.sharepoint.com/:l:/s/Projeto743-FacilitiesMultiserviosCabinas/JACsQKjPAViPSbfkQUOC15tGARSUJt6NWklSnGKDPKx3DUA?nav=MjcyYzUzOTAtZTkzYi00Y2I1LTg1MDMtMDFkMWQwZmU1MGE4";
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 bg-[#111827] transition-colors duration-200 text-black">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200 text-black">
       {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 border-gray-700 h-20 bg-white bg-gray-800">
+      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
         <button onClick={handleLogout} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors font-medium text-sm">
              <LogOut size={18} /> <span className="hidden sm:inline">Sair</span>
         </button>
         
         <div className="flex items-center gap-4">
-        <img src="/img/petrobras.png" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
+        <img src="/img/Noralogoo.jpg" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
         <span className="text-gray-600 text-2xl font-light">|</span>
         <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
       </div>
 
         <div className="absolute right-4 md:right-8 flex items-center gap-3 mr-16">
-             <Link to="/perfil" className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 border-gray-600 hover:border-[#57B952] transition-all bg-gray-100 bg-gray-700 flex items-center justify-center">{userProfile?.fotoURL ? <img src={userProfile.fotoURL} className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500 text-gray-400" />}</Link>
+             <Link to="/perfil" className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-[#57B952] transition-all bg-gray-100 flex items-center justify-center">{userProfile?.fotoURL ? <img src={userProfile.fotoURL} className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500" />}</Link>
         </div>
       </header>
 

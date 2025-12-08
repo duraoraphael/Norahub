@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Users, Shield, Search, CheckCircle, XCircle, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { Users, Shield, Search, CheckCircle, XCircle, AlertTriangle, ArrowLeft, Trash2 } from 'lucide-react';
 // ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
 import Alert from '../components/Alert';
@@ -17,6 +17,7 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [alertInfo, setAlertInfo] = useState(null);
+    const [confirmDelete, setConfirmDelete] = useState({ open: false, userId: null, userName: '' });
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -56,16 +57,25 @@ function AdminDashboard() {
   };
 
   const handleReject = async (userId) => {
-    if(!window.confirm("Tem certeza que deseja recusar e remover este usuário?")) return;
-
-    try {
-        await deleteDoc(doc(db, 'users', userId));
-        setUsers(prev => prev.filter(u => u.id !== userId));
-        setAlertInfo({ message: "Usuário recusado e removido.", type: "success" });
-    } catch (error) {
-        setAlertInfo({ message: "Erro ao remover.", type: "error" });
-    }
+        // Abre modal de confirmação mais atraente
+        const user = users.find(u => u.id === userId);
+        setConfirmDelete({ open: true, userId, userName: user?.nome || user?.email || 'Usuário' });
   };
+
+    const cancelDelete = () => setConfirmDelete({ open: false, userId: null, userName: '' });
+
+    const deleteUser = async (userId) => {
+        try {
+            await deleteDoc(doc(db, 'users', userId));
+            setUsers(prev => prev.filter(u => u.id !== userId));
+            setAlertInfo({ message: 'Usuário removido com sucesso.', type: 'success' });
+        } catch (error) {
+            console.error('Erro ao remover usuário:', error);
+            setAlertInfo({ message: 'Erro ao remover usuário.', type: 'error' });
+        } finally {
+            cancelDelete();
+        }
+    };
 
   const handleRoleChange = async (userId, newRole) => {
     try {
@@ -81,8 +91,27 @@ function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 relative text-black">
-      {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
+        <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 relative text-black">
+            {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
+            {confirmDelete.open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 mx-4">
+                        <div className="flex items-start gap-4">
+                            <div className="flex-shrink-0 bg-yellow-100 rounded-full p-2">
+                                <AlertTriangle size={28} className="text-yellow-600" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-lg font-bold text-gray-900">Confirmar exclusão</h3>
+                                <p className="text-sm text-gray-600 mt-1">Você tem certeza que deseja remover <span className="font-medium text-gray-800">{confirmDelete.userName}</span>? Esta ação não pode ser desfeita.</p>
+                                <div className="mt-5 flex gap-3 justify-end">
+                                    <button onClick={cancelDelete} className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700">Cancelar</button>
+                                    <button onClick={() => deleteUser(confirmDelete.userId)} className="px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold">Excluir</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
     {/* ThemeToggle removed */}
 
       <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
@@ -190,6 +219,12 @@ function AdminDashboard() {
                                                     >
                                                         <XCircle size={16} />
                                                     </button>
+                                                    <button 
+                                                        onClick={() => handleReject(user.id)}
+                                                        className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600" title="Excluir"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
                                                 </div>
                                             ) : (
                                                 <div className="relative w-40">
@@ -201,6 +236,11 @@ function AdminDashboard() {
                                                         <option value="comprador">Comprador</option>
                                                         <option value="admin">Administrador</option>
                                                     </select>
+                                                    <div className="absolute right-0 top-0 mt-1">
+                                                        <button onClick={() => handleReject(user.id)} className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600" title="Excluir">
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             )}
                                         </td>

@@ -27,7 +27,7 @@ function Capa() {
 
         {/* Logos Centralizadas (Parceria) */}
         <div className="flex items-center gap-4">
-            <img src="/img/petrobras.jpg" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
+            <img src="/img/NoraHub.png" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
             <span className="text-gray-300 text-2xl font-light">|</span>
             <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
         </div>
