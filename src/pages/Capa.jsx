@@ -22,7 +22,7 @@ function Capa() {
             onClick={() => navigate('/login')} 
             className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm"
         >
-            <LogIn size={18} /> <span className="hidden sm:inline">Login Admin</span>
+            <LogIn size={18} /> <span className="hidden sm:inline">Login</span>
         </button>
 
         {/* Logos Centralizadas (Parceria) */}
