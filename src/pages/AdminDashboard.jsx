@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Users, Shield, Search, CheckCircle, XCircle, AlertTriangle, ArrowLeft, Trash2 } from 'lucide-react';
+import { Users, Search, CheckCircle, XCircle, AlertTriangle, ArrowLeft, Trash2 } from 'lucide-react';
 // ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
 import Alert from '../components/Alert';
@@ -137,6 +137,15 @@ function AdminDashboard() {
 
       <main className="flex-grow flex flex-col items-center p-4 md:p-8">
         <div className="w-full max-w-6xl">
+            
+            <div className="mb-8 flex flex-col md:flex-row gap-4">
+                <button 
+                    onClick={() => navigate('/admin')}
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors"
+                >
+                    <Users size={18} /> Usuários
+                </button>
+            </div>
             
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>

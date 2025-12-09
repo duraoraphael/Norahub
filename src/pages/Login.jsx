@@ -6,7 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import Alert from '../components/Alert';
 import { auth, db } from '../services/firebase';
-import { signInWithEmailAndPassword, signOut, OAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, OAuthProvider, signInWithPopup, signInWithRedirect, updateProfile } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 function Login() {
@@ -135,6 +135,18 @@ function Login() {
         await checkUserProfile(result.user);
     } catch (error) {
         console.error("Erro Microsoft:", error);
+      // Alguns navegadores com COOP/COEP bloqueiam o polling do popup; usamos redirect como fallback seguro
+      const coopBlocked = error?.message?.includes('window.closed');
+      if (coopBlocked) {
+        try {
+          await signInWithRedirect(auth, provider);
+          return;
+        } catch (redirectError) {
+          console.error('Erro Microsoft (redirect):', redirectError);
+          setAlertInfo({ message: 'Erro ao redirecionar para login Microsoft.', type: 'error' });
+          return;
+        }
+      }
       if (error?.message === 'dominio-invalido') {
         setAlertInfo({ message: "Acesso restrito a @normatel.com.br", type: 'error' });
       } else if (error?.message === 'email-indisponivel') {

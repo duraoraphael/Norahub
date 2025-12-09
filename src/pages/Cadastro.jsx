@@ -41,13 +41,36 @@ function Cadastro() {
         return;
     }
 
+    // Validar domínio normatel.com.br
+    if (!email.toLowerCase().endsWith('@normatel.com.br')) {
+        setAlertInfo({ message: "Apenas emails do domínio @normatel.com.br são permitidos.", type: 'error' });
+        setLoading(false);
+        return;
+    }
+
+    if (!nome || !funcao || !perfilAcesso) {
+        setAlertInfo({ message: "Todos os campos são obrigatórios.", type: 'error' });
+        setLoading(false);
+        return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-      await setDoc(doc(db, 'users', userCredential.user.uid), {
-        nome, email, cpfMatricula, cargo: funcao, funcao: perfilAcesso, statusAcesso: 'pendente', uid: userCredential.user.uid, createdAt: new Date()
+      const userId = userCredential.user.uid;
+      
+      // Aguarda um pequeno delay para garantir que o Auth está sincronizado
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      await setDoc(doc(db, 'users', userId), {
+        nome, email, cpfMatricula, cargo: funcao, funcao: perfilAcesso, statusAcesso: 'ativo', uid: userId, createdAt: new Date()
       });
-      setAlertInfo({ message: "Solicitado! Aguarde aprovação.", type: 'success' });
-      setTimeout(() => { navigate('/login'); }, 3000);
+      
+      setAlertInfo({ message: "Cadastro realizado com sucesso! Redirecionando...", type: 'success' });
+      
+      // Aguarda mais um pouco antes de redirecionar para garantir sincronização
+      setTimeout(() => { 
+        navigate('/selecao-projeto', { replace: true }); 
+      }, 1500);
     } catch (error) {
       console.error("Erro:", error);
       let mensagemErro = "Erro ao criar conta.";
@@ -62,7 +85,8 @@ function Cadastro() {
   };
 
   const handleMicrosoftRegister = async () => {
-    setLoading(true); setAlertInfo(null);
+    setLoading(true); 
+    setAlertInfo(null);
     const provider = new OAuthProvider('microsoft.com');
     
     // CORREÇÃO: Adiciona escopos para garantir que o email venha
@@ -91,9 +115,20 @@ function Cadastro() {
             setAlertInfo({ message: "Conta já existe! Faça Login.", type: 'warning' });
             setTimeout(() => navigate('/login'), 2000);
         } else {
+            // Validar domínio normatel.com.br para Microsoft também
+            if (!userEmail.toLowerCase().endsWith('@normatel.com.br')) {
+                await signOut(auth);
+                setAlertInfo({ message: "Apenas emails do domínio @normatel.com.br são permitidos.", type: 'error' });
+                setLoading(false);
+                return;
+            }
+
+            // Aguarda um pequeno delay para sincronização
+            await new Promise(resolve => setTimeout(resolve, 500));
+
             await setDoc(docRef, { 
                 nome: user.displayName || 'Usuário Microsoft', 
-                email: userEmail, // Usa o email recuperado com segurança
+                email: userEmail,
                 cpfMatricula: '', 
                 cargo: 'Colaborador', 
                 funcao: 'solicitante', 
@@ -103,8 +138,8 @@ function Cadastro() {
                 createdAt: new Date() 
             });
             
-            setAlertInfo({ message: "Cadastro realizado! Redirecionando...", type: 'success' });
-            setTimeout(() => navigate('/selecao-projeto'), 1500);
+            setAlertInfo({ message: "Cadastro realizado com sucesso! Redirecionando...", type: 'success' });
+            setTimeout(() => navigate('/selecao-projeto', { replace: true }), 1500);
         }
     } catch (error) {
         console.error("Erro Microsoft:", error);
@@ -114,10 +149,14 @@ function Cadastro() {
              setAlertInfo({ message: "Credenciais inválidas. Verifique o Client Secret.", type: 'error' });
         } else if (error.code === 'auth/account-exists-with-different-credential') {
              setAlertInfo({ message: "E-mail já cadastrado com senha. Faça login normal.", type: 'warning' });
+        } else if (error.code === 'auth/popup-closed-by-user') {
+             setAlertInfo({ message: "Janela de login fechada. Tente novamente.", type: 'warning' });
         } else {
-            setAlertInfo({ message: "Erro no cadastro.", type: 'error' });
+            setAlertInfo({ message: "Erro no cadastro: " + error.message, type: 'error' });
         }
-    } finally { setLoading(false); }
+    } finally { 
+        setLoading(false); 
+    }
   };
 
   return (
@@ -133,8 +172,21 @@ function Cadastro() {
       <main className="flex-grow flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-lg bg-white p-8 rounded-xl shadow-2xl border border-gray-200">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">Criar Conta</h2>
-          <button type="button" onClick={handleMicrosoftRegister} disabled={loading} className="w-full flex items-center justify-center gap-3 bg-[#2F2F2F] hover:bg-[#1a1a1a] text-white font-medium py-3 px-4 rounded-md transition-colors mb-6 border border-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>Cadastrar com Microsoft
+          <button type="button" onClick={handleMicrosoftRegister} disabled={loading} className="w-full flex items-center justify-center gap-3 bg-[#2F2F2F] hover:bg-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-md transition-colors mb-6 border border-gray-600">
+            {loading ? (
+              <>
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processando...
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>
+                Cadastrar com Microsoft
+              </>
+            )}
           </button>
           <div className="flex items-center gap-4 mb-6"><div className="h-px bg-gray-300 flex-1"></div><span className="text-sm text-gray-500">ou manual</span><div className="h-px bg-gray-300 flex-1"></div></div>
           <form onSubmit={handleRegisterSubmit}>
@@ -146,7 +198,19 @@ function Cadastro() {
                  <div><label className="block text-sm font-medium text-gray-700">Cargo</label><input type="text" value={funcao} onChange={e=>setFuncao(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="Ex: Analista" required /></div>
                  <div><label className="block text-sm font-medium text-gray-700">Perfil</label><select value={perfilAcesso} onChange={e=>setPerfilAcesso(e.target.value)} className="w-full pl-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] cursor-pointer" required><option value="" disabled>Selecione...</option><option value="comprador">Comprador</option><option value="solicitante">Solicitante</option></select></div>
               </div>
-              <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 mt-6 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50">{loading ? '...' : 'Cadastrar'}</button>
+              <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 mt-6 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Cadastrando...
+                  </span>
+                ) : (
+                  'Cadastrar'
+                )}
+              </button>
           </form>
           <div className="text-center mt-6 text-sm"><Link to="/login" className="text-gray-500 hover:text-[#57B952]">Já tem conta? Fazer Login</Link></div>
         </div>

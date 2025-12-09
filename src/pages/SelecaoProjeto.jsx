@@ -34,8 +34,9 @@ function SelecaoProjeto() {
   const fetchProjetos = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'projetos'));
-      const listaDoBanco = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProjetos(listaDoBanco);
+            const listaDoBanco = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Todos os usuários visualizam todas as bases (remoção do filtro por membros/projeto)
+            setProjetos(listaDoBanco);
     } catch (error) {
       console.error("Erro ao buscar projetos:", error);
     } finally {
