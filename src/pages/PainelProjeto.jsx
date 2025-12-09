@@ -17,38 +17,12 @@ function PainelProjeto() {
   const primeiroNome = userProfile?.nome?.split(' ')[0] || currentUser?.displayName?.split(' ')[0] || 'Usuário';
   const fotoURL = userProfile?.fotoURL || currentUser?.photoURL;
 
-  // VALIDAÇÃO: Verifica se o usuário tem acesso a este projeto
-  const temAcesso = () => {
-    if (!projeto || !userProfile) return false;
-    
-    // Admin tem acesso a tudo
-    if (userProfile.funcao === 'admin') return true;
-    
-    // Usuário comum: verificar se está em membros ou se o projeto bate com seu projeto
-    const membrosDoProjeto = projeto.membros || [];
-    const projetoDoProjeto = projeto.projeto || projeto.nome;
-    const projetoDoUsuario = userProfile.projeto || userProfile.departamento;
-    
-    return membrosDoProjeto.includes(currentUser?.uid) || projetoDoProjeto === projetoDoUsuario;
-  };
-
   if (!projeto) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <button onClick={() => navigate('/selecao-projeto')} className="text-[#57B952]">Voltar para Seleção</button>
         </div>
       );
-  }
-
-  // Se não tem acesso, redireciona
-  if (!temAcesso()) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 flex-col gap-4">
-        <h1 className="text-2xl font-bold text-red-600">Acesso Negado</h1>
-        <p className="text-gray-600">Você não tem permissão para acessar este projeto.</p>
-        <button onClick={() => navigate('/selecao-projeto')} className="px-4 py-2 bg-[#57B952] text-white rounded hover:bg-green-600">Voltar</button>
-      </div>
-    );
   }
 
   // Fallback seguro

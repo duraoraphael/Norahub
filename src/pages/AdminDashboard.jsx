@@ -66,9 +66,11 @@ function AdminDashboard() {
 
     const deleteUser = async (userId) => {
         try {
+            // Remove o perfil do Firestore
             await deleteDoc(doc(db, 'users', userId));
+            
             setUsers(prev => prev.filter(u => u.id !== userId));
-            setAlertInfo({ message: 'Usuário removido com sucesso.', type: 'success' });
+            setAlertInfo({ message: 'Usuário removido do Firebase!', type: 'success' });
         } catch (error) {
             console.error('Erro ao remover usuário:', error);
             setAlertInfo({ message: 'Erro ao remover usuário.', type: 'error' });
