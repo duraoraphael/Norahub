@@ -8,9 +8,13 @@ import SolicitacaoCompras from './pages/SolicitacaoCompras';
 import SelecaoProjeto from './pages/SelecaoProjeto';
 import PainelProjeto from './pages/PainelProjeto';
 import AdminDashboard from './pages/AdminDashboard';
-import AdminSelection from './pages/AdminSelection';
+import AdminCargos from './pages/AdminCargos';
 import AprovacaoCompras from './pages/AprovacaoCompras';
 import Perfil from './pages/Perfil';
+import Gerencia from './pages/Gerencia';
+import GerenciaUsuarios from './pages/GerenciaUsuarios';
+import GerenciaProjetos from './pages/GerenciaProjetos';
+import GerenciaCargos from './pages/GerenciaCargos';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -47,8 +51,13 @@ function App() {
         <Route path="/solicitacao-compras" element={<SolicitacaoCompras />} />
         <Route path="/aprovacao-compras" element={<AprovacaoCompras />} />
 
-        <Route path="/admin-selection" element={<PrivateRoute requiredRole="admin"><AdminSelection /></PrivateRoute>} />
+        <Route path="/admin-selection" element={<Navigate to="/admin" replace />} />
+        <Route path="/gerencia" element={<PrivateRoute><Gerencia /></PrivateRoute>} />
+        <Route path="/gerencia-usuarios" element={<PrivateRoute><GerenciaUsuarios /></PrivateRoute>} />
+        <Route path="/gerencia-projetos" element={<PrivateRoute><GerenciaProjetos /></PrivateRoute>} />
+        <Route path="/gerencia-cargos" element={<PrivateRoute><GerenciaCargos /></PrivateRoute>} />
         <Route path="/admin" element={<PrivateRoute requiredRole="admin"><AdminDashboard /></PrivateRoute>} />
+        <Route path="/admin-cargos" element={<PrivateRoute requiredRole="admin"><AdminCargos /></PrivateRoute>} />
         <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
       </Routes>
     </BrowserRouter>

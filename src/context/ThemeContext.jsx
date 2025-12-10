@@ -7,28 +7,46 @@ const initialState = {
 
 const ThemeProviderContext = createContext(initialState);
 
-export function ThemeProvider({
-  children,
-  defaultTheme = 'light',
-  storageKey = 'vite-ui-theme',
-  ...props
-}) {
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem(storageKey) || defaultTheme
-  );
+export function ThemeProvider({ children, ...props }) {
+  // Forçar tema claro: o app deve rodar apenas em modo claro.
+  const theme = 'light';
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.add('light');
-    }
-    localStorage.setItem(storageKey, theme);
-  }, [theme, storageKey]);
 
-  const value = { theme, setTheme: (newTheme) => setTheme(newTheme) };
+    const applyLight = () => {
+      // remove any dark class and ensure light is present
+      root.classList.remove('dark');
+      root.classList.add('light');
+      try { localStorage.setItem('vite-ui-theme', 'light'); } catch (e) {}
+    };
+
+    // Aplica imediatamente (independente do modo do sistema)
+    applyLight();
+
+    // Detecta mudanças no modo do sistema e, se o sistema ficar em dark,
+    // garante que a aplicação permaneça em modo claro (branco).
+    const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e) => {
+      // sempre aplicar tema claro, mesmo se sistema estiver em dark
+      applyLight();
+    };
+
+    if (mq) {
+      // addEventListener preferred, fallback to addListener for older browsers
+      if (typeof mq.addEventListener === 'function') mq.addEventListener('change', handler);
+      else if (typeof mq.addListener === 'function') mq.addListener(handler);
+    }
+
+    return () => {
+      if (mq) {
+        if (typeof mq.removeEventListener === 'function') mq.removeEventListener('change', handler);
+        else if (typeof mq.removeListener === 'function') mq.removeListener(handler);
+      }
+    };
+  }, []);
+
+  const value = { theme, setTheme: () => null };
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
