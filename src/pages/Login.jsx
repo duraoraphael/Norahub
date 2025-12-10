@@ -85,7 +85,7 @@ function Login() {
           nome: user.displayName || 'Usuário Microsoft',
           email: effectiveEmail,
           cargo: 'Colaborador',
-          funcao: 'solicitante', // Padrão seguro
+          funcao: 'colaborador', // Padrão seguro
           statusAcesso: 'ativo', // Já entra aprovado
           uid: user.uid,
           fotoURL: user.photoURL || null, // Salva a foto da conta Microsoft

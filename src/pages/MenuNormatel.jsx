@@ -8,7 +8,8 @@ import { signOut } from 'firebase/auth';
 
 function MenuNormatel() {
   const { theme } = useTheme();
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
+  const fotoURL = currentUser?.photoURL || userProfile?.fotoURL;
   const isDark = theme === 'dark';
   const navigate = useNavigate();
 
@@ -31,13 +32,13 @@ function MenuNormatel() {
         </button>
         
         <div className="flex items-center gap-4">
-        <img src="/img/Noralogoo.jpg" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
+        <img src="/img/NoraHub.png" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
         <span className="text-gray-600 text-2xl font-light">|</span>
         <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
       </div>
 
         <div className="absolute right-4 md:right-8 flex items-center gap-3 mr-16">
-             <Link to="/perfil" className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-[#57B952] transition-all bg-gray-100 flex items-center justify-center">{userProfile?.fotoURL ? <img src={userProfile.fotoURL} className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500" />}</Link>
+             <Link to="/perfil" className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-[#57B952] transition-all bg-gray-100 flex items-center justify-center">{fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500" />}</Link>
         </div>
       </header>
 

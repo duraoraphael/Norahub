@@ -25,6 +25,7 @@ function Perfil() {
   const [novaFotoFile, setNovaFotoFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [syncingMsPhoto, setSyncingMsPhoto] = useState(false);
   const [alertInfo, setAlertInfo] = useState(null);
 
   useEffect(() => {
@@ -65,6 +66,10 @@ function Perfil() {
     e.preventDefault(); setSaving(true); setAlertInfo(null);
     try {
       const currentUser = auth.currentUser;
+      if (!currentUser) {
+        setAlertInfo({ message: 'Sessão expirada. Entre novamente.', type: 'error' });
+        return;
+      }
       let downloadURL = fotoURL;
       
       // Se selecionou arquivo, faz upload
@@ -99,6 +104,8 @@ function Perfil() {
       if (error.message === 'senha-atual-vazia') msg = "Digite a senha atual.";
       if (error.message === 'senhas-nao-batem') msg = "As senhas não conferem.";
       if (error.code === 'auth/wrong-password') msg = "Senha atual incorreta.";
+      if (error.code === 'auth/requires-recent-login') msg = "Refaça o login para alterar dados sensíveis.";
+      console.error('Erro ao salvar perfil:', error);
       setAlertInfo({ message: msg, type: 'error' });
     } finally { setSaving(false); }
   };
@@ -106,6 +113,48 @@ function Perfil() {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) { setNovaFotoFile(file); setFotoURL(URL.createObjectURL(file)); }
+  };
+
+  const formatCelular = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    const part1 = digits.slice(0, 2);
+    const part2 = digits.slice(2, 7);
+    const part3 = digits.slice(7, 11);
+    if (digits.length > 7) return `(${part1}) ${part2}-${part3}`;
+    if (digits.length > 2) return `(${part1}) ${part2}`;
+    if (digits.length > 0) return `(${part1}`;
+    return '';
+  };
+
+
+  const handleSyncMicrosoftPhoto = async () => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+    const hasMicrosoftProvider = currentUser.providerData.some((p) => p.providerId === 'microsoft.com');
+    if (!hasMicrosoftProvider) {
+      setAlertInfo({ message: 'Disponível apenas para contas Microsoft.', type: 'error' });
+      return;
+    }
+    setSyncingMsPhoto(true);
+    setAlertInfo(null);
+    try {
+      await currentUser.reload();
+      const providerMs = currentUser.providerData.find((p) => p.providerId === 'microsoft.com');
+      const msPhoto = providerMs?.photoURL || currentUser.photoURL;
+      if (!msPhoto) {
+        setAlertInfo({ message: 'Não foi possível obter a foto da Microsoft.', type: 'error' });
+        return;
+      }
+      setFotoURL(msPhoto);
+      await updateProfile(currentUser, { photoURL: msPhoto });
+      await updateDoc(doc(db, 'users', currentUser.uid), { fotoURL: msPhoto, updatedAt: new Date() });
+      setAlertInfo({ message: 'Foto sincronizada com a conta Microsoft.', type: 'success' });
+    } catch (error) {
+      console.error('Erro ao sincronizar foto Microsoft:', error);
+      setAlertInfo({ message: 'Erro ao sincronizar foto da Microsoft.', type: 'error' });
+    } finally {
+      setSyncingMsPhoto(false);
+    }
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952]"></div></div>;
@@ -124,20 +173,31 @@ function Perfil() {
             <div className="h-32 bg-gradient-to-r from-[#57B952] to-green-600 relative"></div>
             <div className="px-8 pb-8">
                 <div className="relative -mt-16 mb-6 flex justify-center">
-              <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-gray-200 flex items-center justify-center shadow-lg group relative">
-                        {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" /> : <User size={48} className="text-gray-400" />}
-                        <label htmlFor="foto-upload" className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white"><Camera size={24} /></label>
-                        <input type="file" id="foto-upload" className="hidden" accept="image/*" onChange={handlePhotoChange} />
-                    </div>
+                <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-gray-200 flex items-center justify-center shadow-lg group relative">
+                          {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" /> : <User size={48} className="text-gray-400" />}
+                          <label htmlFor="foto-upload" className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white"><Camera size={24} /></label>
+                          <input type="file" id="foto-upload" className="hidden" accept="image/*" onChange={handlePhotoChange} />
+                      </div>
                 </div>
+              <div className="flex flex-col sm:flex-row gap-3 items-center justify-center mb-4">
+                <button
+                  type="button"
+                  onClick={handleSyncMicrosoftPhoto}
+                  disabled={syncingMsPhoto}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50"
+                >
+                  <Camera size={16} /> {syncingMsPhoto ? 'Sincronizando...' : 'Usar foto da Microsoft'}
+                </button>
+                <span className="text-xs text-gray-500 text-center">O site sempre prioriza a foto da sua conta Microsoft.</span>
+              </div>
             <h1 className="text-2xl font-bold text-center text-gray-900 mb-1">{nome || 'Usuário'}</h1>
             <p className="text-sm text-center text-gray-500 mb-8">{email}</p>
                 <form onSubmit={handleSave} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div><label className="block text-sm font-medium text-gray-700 ml-1">Nome</label><input type="text" value={nome} onChange={e=>setNome(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Seu Nome" /></div>
-                <div><label className="block text-sm font-medium text-gray-700 ml-1">Celular</label><input type="tel" value={celular} onChange={e=>setCelular(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="(00) 00000-0000" /></div>
-                <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 ml-1">Email</label><input type="email" value={email} disabled className="w-full pl-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed" /></div>
-                    </div>
+                    <div><label className="block text-sm font-medium text-gray-700 ml-1">Nome</label><input type="text" value={nome} onChange={e=>setNome(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Seu Nome" /></div>
+                    <div><label className="block text-sm font-medium text-gray-700 ml-1">Celular</label><input type="tel" value={celular} onChange={e=>setCelular(formatCelular(e.target.value))} className="w-full pl-4 py-2 bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="(00) 00000-0000" /></div>
+                    <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 ml-1">Email</label><input type="email" value={email} disabled className="w-full pl-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed" /></div>
+                      </div>
                     <div className="md:col-span-2 pt-6 border-t border-gray-100 border-gray-700">
                 <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2"><KeyRound size={18} className="text-[#57B952]" /> Alterar Senha</h3>
                         <div className="grid gap-4">

@@ -1,46 +1,143 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Users, Search, CheckCircle, XCircle, AlertTriangle, ArrowLeft, Trash2 } from 'lucide-react';
+import { Users, Search, CheckCircle, XCircle, AlertTriangle, ArrowLeft, Trash2, X, Briefcase } from 'lucide-react';
 // ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import Alert from '../components/Alert';
 
 import { auth, db } from '../services/firebase';
-import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore'; 
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore'; 
 
 function AdminDashboard() {
   const { theme } = useTheme();
+  const { userProfile } = useAuth();
   const navigate = useNavigate();
   const isDark = theme === 'dark';
 
   const [users, setUsers] = useState([]);
+  const [projetos, setProjetos] = useState([]);
+  const [cargos, setCargos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [alertInfo, setAlertInfo] = useState(null);
-    const [confirmDelete, setConfirmDelete] = useState({ open: false, userId: null, userName: '' });
+  const [confirmDelete, setConfirmDelete] = useState({ open: false, userId: null, userName: '' });
+  const [modalProjetos, setModalProjetos] = useState({ open: false, userId: null, userName: '', projetosAtuais: [] });
+  const [searchProjetos, setSearchProjetos] = useState('');
+  const [cargoPermitidos, setCargoPermitidos] = useState([]);
+
+  const isAdmin = userProfile?.funcao === 'admin';
+  const isGerenteProjeto = userProfile?.funcao === 'gerente-projeto';
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'users'));
-        const lista = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Se for gerente de projeto, redireciona (não tem acesso a admin)
+        if (userProfile?.funcao === 'gerente-projeto') {
+          navigate('/');
+          return;
+        }
+
+        // Se for gerente de usuário, verifica permissão
+        if (userProfile?.funcao === 'gerente-usuario') {
+          const cargosQuery = query(
+            collection(db, 'cargos'),
+            where('nome', '==', userProfile.funcao)
+          );
+          const cargosSnapshot = await getDocs(cargosQuery);
+          if (cargosSnapshot.empty || (!cargosSnapshot.docs[0].data().canManageUsers && !cargosSnapshot.docs[0].data().canManagePermissions)) {
+            navigate('/');
+            return;
+          }
+        }
+
+        // Se não for admin e não tiver permissão, redireciona
+        if (!isAdmin && userProfile?.funcao !== 'gerente-usuario') {
+          navigate('/');
+          return;
+        }
+
+        // Buscar cargos permitidos para gerente de projeto
+        if (userProfile?.funcao === 'gerente-projeto') {
+          const cargosQuery = query(
+            collection(db, 'cargos'),
+            where('nome', '==', userProfile.funcao)
+          );
+          const cargosSnapshot = await getDocs(cargosQuery);
+          if (!cargosSnapshot.empty) {
+            const cargoData = cargosSnapshot.docs[0].data();
+            setCargoPermitidos(cargoData.projetos || []);
+          }
+        }
+
+        const userSnapshot = await getDocs(collection(db, 'users'));
+        let userLista = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
-        // Ordena: Pendentes primeiro
-        lista.sort((a, b) => (a.statusAcesso === 'pendente' ? -1 : 1));
+        // Gerente de usuário só vê usuários que não são admin
+        if (userProfile?.funcao === 'gerente-usuario' && !isAdmin) {
+          userLista = userLista.filter(u => u.funcao !== 'admin');
+        }
         
-        setUsers(lista);
+        userLista.sort((a, b) => (a.statusAcesso === 'pendente' ? -1 : 1));
+        setUsers(userLista);
+
+        const projetoSnapshot = await getDocs(collection(db, 'projetos'));
+        const projetoLista = projetoSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setProjetos(projetoLista);
+
+        const cargosSnapshot = await getDocs(collection(db, 'cargos'));
+        const cargosList = cargosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        console.log('Cargos carregados:', cargosList);
+        
+        // Garantir que sempre tenha opções de cargo
+        if (cargosList.length === 0) {
+          setCargos([
+            { id: 'default-colaborador', nome: 'Colaborador' },
+            { id: 'default-gerente', nome: 'Gerente' }
+          ]);
+        } else {
+          // Ordenar cargos por quantidade de permissões (decrescente)
+          const cargosOrdenados = cargosList.sort((a, b) => {
+            const permissoesA = [
+              a.canManageUsers,
+              a.canManagePermissions,
+              a.canCreateCargos,
+              a.canCreateProjetos,
+              a.canEditCardsProjetos
+            ].filter(Boolean).length;
+            
+            const permissoesB = [
+              b.canManageUsers,
+              b.canManagePermissions,
+              b.canCreateCargos,
+              b.canCreateProjetos,
+              b.canEditCardsProjetos
+            ].filter(Boolean).length;
+            
+            return permissoesB - permissoesA; // Ordem decrescente
+          });
+          
+          setCargos(cargosOrdenados);
+        }
       } catch (error) {
         console.error("Erro:", error);
-        setAlertInfo({ message: "Erro ao carregar usuários.", type: "error" });
+        setAlertInfo({ message: "Erro ao carregar dados.", type: "error" });
       } finally {
         setLoading(false);
       }
     };
-    fetchUsers();
-  }, []);
+    fetchData();
+  }, [isAdmin, userProfile, navigate]);
 
   const handleApprove = async (user, newRole) => {
     try {
+        // Apenas admin pode aprovar como admin
+        if (!isAdmin && newRole === 'admin') {
+          setAlertInfo({ message: "Você não tem permissão para criar um administrador.", type: "error" });
+          return;
+        }
+        
         const userRef = doc(db, 'users', user.id);
         const finalRole = newRole || user.funcao;
         
@@ -66,6 +163,14 @@ function AdminDashboard() {
 
     const deleteUser = async (userId) => {
         try {
+            // Impedir exclusão de administradores por não-admins
+            const user = users.find(u => u.id === userId);
+            if (!isAdmin && user?.funcao === 'admin') {
+              setAlertInfo({ message: "Você não pode excluir um administrador.", type: "error" });
+              cancelDelete();
+              return;
+            }
+            
             // Remove o perfil do Firestore
             await deleteDoc(doc(db, 'users', userId));
             
@@ -81,11 +186,119 @@ function AdminDashboard() {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
+        // Gerente de projeto não pode alterar cargos
+        if (isGerenteProjeto) {
+          setAlertInfo({ message: "Você não tem permissão para alterar cargos.", type: "error" });
+          return;
+        }
+
+        // Gerente de usuário não pode alterar para ou de admin
+        if (!isAdmin && newRole === 'admin') {
+          setAlertInfo({ message: "Você não tem permissão para atribuir cargo de administrador.", type: "error" });
+          return;
+        }
+
+        const user = users.find(u => u.id === userId);
+        if (!isAdmin && user.funcao === 'admin') {
+          setAlertInfo({ message: "Você não pode modificar um administrador.", type: "error" });
+          return;
+        }
+        
         await updateDoc(doc(db, 'users', userId), { funcao: newRole });
         setUsers(prev => prev.map(u => u.id === userId ? { ...u, funcao: newRole } : u));
         setAlertInfo({ message: "Função alterada.", type: "success" });
     } catch (error) { setAlertInfo({ message: "Erro ao alterar.", type: "error" }); }
   };
+
+  const handleAssignProject = async (userId, projetoId) => {
+    try {
+        // Gerente de projeto só pode atribuir seus próprios projetos
+        if (isGerenteProjeto && !cargoPermitidos.includes(projetoId)) {
+          setAlertInfo({ message: "Você não tem permissão para atribuir este projeto.", type: "error" });
+          return;
+        }
+
+        const user = users.find(u => u.id === userId);
+        const projetosPorUsuario = user.projetos || [];
+        
+        // Se já está na lista, remove; se não, adiciona
+        let novosProjetos;
+        if (projetosPorUsuario.includes(projetoId)) {
+            novosProjetos = projetosPorUsuario.filter(p => p !== projetoId);
+        } else {
+            novosProjetos = [...projetosPorUsuario, projetoId];
+        }
+        
+        await updateDoc(doc(db, 'users', userId), { projetos: novosProjetos });
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, projetos: novosProjetos } : u));
+        
+        const projeto = projetos.find(p => p.id === projetoId);
+        const acao = projetosPorUsuario.includes(projetoId) ? 'removido de' : 'adicionado a';
+        setAlertInfo({ message: `Usuário ${acao} "${projeto?.nome}"!`, type: "success" });
+    } catch (error) { 
+        console.error('Erro:', error);
+        setAlertInfo({ message: "Erro ao atribuir projeto.", type: "error" }); 
+    }
+  };
+
+  const abrirModalProjetos = (userId) => {
+    const user = users.find(u => u.id === userId);
+    setModalProjetos({
+      open: true,
+      userId,
+      userName: user?.nome || user?.email || 'Usuário',
+      projetosAtuais: user?.projetos || []
+    });
+    setSearchProjetos('');
+  };
+
+  const fecharModalProjetos = () => {
+    setModalProjetos({ open: false, userId: null, userName: '', projetosAtuais: [] });
+    setSearchProjetos('');
+  };
+
+  const salvarProjetosModal = async () => {
+    try {
+      // Gerente de projeto só pode atribuir seus próprios projetos
+      if (isGerenteProjeto) {
+        const projetosInvalidos = modalProjetos.projetosAtuais.filter(p => !cargoPermitidos.includes(p));
+        if (projetosInvalidos.length > 0) {
+          setAlertInfo({ message: "Você não tem permissão para atribuir alguns desses projetos.", type: "error" });
+          return;
+        }
+      }
+
+      await updateDoc(doc(db, 'users', modalProjetos.userId), { projetos: modalProjetos.projetosAtuais });
+      setUsers(prev => prev.map(u => u.id === modalProjetos.userId ? { ...u, projetos: modalProjetos.projetosAtuais } : u));
+      setAlertInfo({ message: `${modalProjetos.userName} agora tem ${modalProjetos.projetosAtuais.length} projeto(s)!`, type: "success" });
+      fecharModalProjetos();
+    } catch (error) {
+      console.error('Erro:', error);
+      setAlertInfo({ message: "Erro ao salvar projetos.", type: "error" });
+    }
+  };
+
+  const toggleProjetoModal = (projetoId) => {
+    // Gerente de projeto não pode selecionar projetos que não são seus
+    if (isGerenteProjeto && !cargoPermitidos.includes(projetoId)) {
+      return;
+    }
+
+    const novosProjetos = modalProjetos.projetosAtuais.includes(projetoId)
+      ? modalProjetos.projetosAtuais.filter(p => p !== projetoId)
+      : [...modalProjetos.projetosAtuais, projetoId];
+    
+    setModalProjetos({ ...modalProjetos, projetosAtuais: novosProjetos });
+  };
+
+  const projetosFiltrados = isGerenteProjeto
+    ? projetos.filter(p => 
+        cargoPermitidos.includes(p.id) && 
+        p.nome?.toLowerCase().includes(searchProjetos.toLowerCase())
+      )
+    : projetos.filter(p => 
+        p.nome?.toLowerCase().includes(searchProjetos.toLowerCase())
+      );
 
   const filteredUsers = users.filter(user => 
     (user.nome?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
@@ -147,6 +360,12 @@ function AdminDashboard() {
                 >
                     <Users size={18} /> Usuários
                 </button>
+                <button 
+                    onClick={() => navigate('/admin-cargos')}
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold transition-colors"
+                >
+                    <Briefcase size={18} /> Gerenciar Cargos
+                </button>
             </div>
             
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
@@ -176,15 +395,17 @@ function AdminDashboard() {
                                 <th className="p-4 text-xs font-bold text-gray-500 uppercase">Status</th>
                                 <th className="p-4 text-xs font-bold text-gray-500 uppercase">Usuário</th>
                                 <th className="p-4 text-xs font-bold text-gray-500 uppercase">Cargo</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Projeto</th>
                                 <th className="p-4 text-xs font-bold text-gray-500 uppercase">Email</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Ações / Permissão</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Cargo / Permissão</th>
+                                <th className="p-4 text-xs font-bold text-gray-500 uppercase text-right">Excluir</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {loading ? (
-                                <tr><td colSpan="5" className="p-8 text-center text-gray-500">Carregando...</td></tr>
+                                <tr><td colSpan="7" className="p-8 text-center text-gray-500">Carregando...</td></tr>
                             ) : filteredUsers.length === 0 ? (
-                                <tr><td colSpan="5" className="p-8 text-center text-gray-500">Nenhum usuário encontrado.</td></tr>
+                                <tr><td colSpan="7" className="p-8 text-center text-gray-500">Nenhum usuário encontrado.</td></tr>
                             ) : (
                                 filteredUsers.map((user) => (
                                     <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-50' : 'hover:bg-gray-50'}`}>
@@ -202,58 +423,80 @@ function AdminDashboard() {
                                         </td>
 
                                         <td className="p-4 font-medium text-gray-900">{user.nome}</td>
-                                        <td className="p-4 text-sm text-gray-600">{user.cargo || '-'}</td>
+                                        <td className="p-4">
+                                          <span className={`inline-flex px-2 py-1 rounded text-xs font-semibold ${
+                                            user.funcao === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                                          }`}>
+                                            {user.funcao === 'admin' ? 'Administrador' : user.funcao || 'colaborador'}
+                                          </span>
+                                        </td>
+                                        <td className="p-4 text-sm text-gray-600">
+                                          <button 
+                                            onClick={() => abrirModalProjetos(user.id)}
+                                            className="px-3 py-1 bg-[#57B952] hover:bg-green-600 text-white rounded text-xs font-semibold transition-colors"
+                                          >
+                                            {(user.projetos || []).length > 0 ? `${user.projetos.length} projeto(s)` : 'Atribuir'}
+                                          </button>
+                                        </td>
                                         <td className="p-4 text-sm text-gray-500">{user.email}</td>
                                         
                                         <td className="p-4">
                                             {user.statusAcesso === 'pendente' ? (
                                                 <div className="flex items-center gap-2">
                                                     <select 
-                                                        defaultValue={user.funcao}
+                                                        defaultValue={user.funcao || 'Colaborador'}
                                                         id={`role-${user.id}`}
-                                                        className="text-sm p-1 rounded border border-gray-300 bg-white text-gray-900"
+                                                        className="text-sm p-2 rounded border border-gray-300 bg-white text-gray-900 font-medium min-w-[160px]"
                                                     >
-                                                        <option value="solicitante">Solicitante</option>
-                                                        <option value="comprador">Comprador</option>
-                                                        <option value="admin">Admin</option>
+                                                        {cargos.length === 0 ? (
+                                                            <option value="Colaborador">Colaborador</option>
+                                                        ) : (
+                                                            cargos.map(cargo => (
+                                                                <option key={cargo.id} value={cargo.nome}>{cargo.nome}</option>
+                                                            ))
+                                                        )}
+                                                        <option value="admin">Administrador</option>
                                                     </select>
                                                     
                                                     <button 
                                                         onClick={() => handleApprove(user, document.getElementById(`role-${user.id}`).value)}
-                                                        className="p-1.5 bg-green-500 text-white rounded hover:bg-green-600" title="Aprovar"
+                                                        className="p-1.5 bg-green-500 text-white rounded hover:bg-green-600 transition-colors" title="Aprovar"
                                                     >
                                                         <CheckCircle size={16} />
                                                     </button>
                                                     <button 
                                                         onClick={() => handleReject(user.id)}
-                                                        className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600" title="Recusar"
+                                                        className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors" title="Recusar"
                                                     >
                                                         <XCircle size={16} />
                                                     </button>
-                                                    <button 
-                                                        onClick={() => handleReject(user.id)}
-                                                        className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600" title="Excluir"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
                                                 </div>
                                             ) : (
-                                                <div className="relative w-40">
-                                                    <select 
-                                                        value={user.funcao} 
-                                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                                        className="w-full pl-2 pr-8 py-1 rounded-md text-sm border border-gray-300 bg-transparent outline-none cursor-pointer text-gray-900">
-                                                        <option value="solicitante">Solicitante</option>
-                                                        <option value="comprador">Comprador</option>
-                                                        <option value="admin">Administrador</option>
-                                                    </select>
-                                                    <div className="absolute right-0 top-0 mt-1">
-                                                        <button onClick={() => handleReject(user.id)} className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600" title="Excluir">
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                <select 
+                                                    value={user.funcao || 'Colaborador'} 
+                                                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                                    disabled={user.funcao === 'admin' && !isAdmin}
+                                                    className={`w-full px-3 py-2 rounded-md text-sm border border-gray-300 ${user.funcao === 'admin' && !isAdmin ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white hover:bg-gray-50 cursor-pointer'} focus:ring-2 focus:ring-[#57B952] focus:border-transparent outline-none text-gray-900 font-medium transition-colors min-w-[160px]`}>
+                                                    {cargos.length === 0 ? (
+                                                        <option value="Colaborador">Colaborador</option>
+                                                    ) : (
+                                                        cargos.map(cargo => (
+                                                            <option key={cargo.id} value={cargo.nome}>{cargo.nome}</option>
+                                                        ))
+                                                    )}
+                                                    <option value="admin">Administrador</option>
+                                                </select>
                                             )}
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <button 
+                                                onClick={() => handleReject(user.id)} 
+                                                disabled={user.funcao === 'admin' && !isAdmin}
+                                                className={`p-1.5 rounded ${user.funcao === 'admin' && !isAdmin ? 'bg-gray-300 cursor-not-allowed opacity-50' : 'bg-red-500 hover:bg-red-600'} text-white`} 
+                                                title={user.funcao === 'admin' && !isAdmin ? 'Não pode excluir administrador' : 'Excluir'}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))
@@ -264,6 +507,86 @@ function AdminDashboard() {
             </div>
         </div>
       </main>
+
+      {/* MODAL DE ATRIBUIÇÃO DE PROJETOS */}
+      {modalProjetos.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Atribuir Projetos</h2>
+                <p className="text-sm text-gray-500 mt-1">{modalProjetos.userName}</p>
+              </div>
+              <button 
+                onClick={fecharModalProjetos} 
+                className="text-gray-400 hover:text-red-500 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Barra de busca */}
+            <div className="px-6 pt-4 pb-2">
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </span>
+                <input 
+                  type="text" 
+                  placeholder="Buscar projetos..." 
+                  value={searchProjetos} 
+                  onChange={(e) => setSearchProjetos(e.target.value)} 
+                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Lista de projetos */}
+            <div className="flex-1 overflow-y-auto px-6 py-4">
+              <div className="space-y-2">
+                {projetosFiltrados.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">Nenhum projeto encontrado</p>
+                ) : (
+                  projetosFiltrados.map(projeto => (
+                    <label 
+                      key={projeto.id} 
+                      className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      <input 
+                        type="checkbox" 
+                        checked={modalProjetos.projetosAtuais.includes(projeto.id)} 
+                        onChange={() => toggleProjetoModal(projeto.id)}
+                        className="w-5 h-5 rounded border-gray-300 text-[#57B952] focus:ring-[#57B952]"
+                      />
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{projeto.nome}</p>
+                        <p className="text-xs text-gray-500">{projeto.descricao || '-'}</p>
+                      </div>
+                    </label>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50">
+              <button 
+                onClick={fecharModalProjetos}
+                className="flex-1 py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={salvarProjetosModal}
+                className="flex-1 py-2 px-4 bg-[#57B952] hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+              >
+                Salvar ({modalProjetos.projetosAtuais.length})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

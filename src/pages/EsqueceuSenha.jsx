@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Send, ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react'; // Adicionei AlertTriangle
+import { Mail, Send, ArrowLeft, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import { useState } from 'react';
 // ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
@@ -13,7 +13,13 @@ function EsqueceuSenha() {
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false); 
+  const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'error' });
+
+  const showToast = (message, type = 'error') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: '', type: 'error' }), 3000);
+  }; 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +51,7 @@ function EsqueceuSenha() {
         mensagem = "Muitas tentativas. Aguarde um pouco.";
       }
 
-      alert(mensagem);
+      showToast(mensagem, 'error');
     } finally {
       setLoading(false);
     }
@@ -148,6 +154,21 @@ function EsqueceuSenha() {
 
         </div>
       </main>
+
+      {/* TOAST NOTIFICATION */}
+      {toast.show && (
+        <div className="fixed top-8 right-8 z-[200] animate-fade-in">
+          <div className="bg-white border-l-4 border-red-500 rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px]">
+            <div className="bg-red-100 p-2 rounded-full">
+              <X size={24} className="text-red-500" />
+            </div>
+            <div>
+              <p className="font-bold text-gray-900">Erro!</p>
+              <p className="text-sm text-gray-600">{toast.message}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="w-full py-4 text-center text-gray-500 text-xs shrink-0">
         &copy; 2025 Normatel Engenharia

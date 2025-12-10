@@ -19,6 +19,19 @@ function Cadastro() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [cpfMatricula, setCpfMatricula] = useState('');
+
+  const formatCPF = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    const part1 = digits.slice(0, 3);
+    const part2 = digits.slice(3, 6);
+    const part3 = digits.slice(6, 9);
+    const part4 = digits.slice(9, 11);
+    let result = part1;
+    if (part2) result += `.${part2}`;
+    if (part3) result += `.${part3}`;
+    if (part4) result += `-${part4}`;
+    return result;
+  };
   const [funcao, setFuncao] = useState(''); 
   const [perfilAcesso, setPerfilAcesso] = useState(''); 
   const [loading, setLoading] = useState(false);
@@ -52,6 +65,14 @@ function Cadastro() {
         setAlertInfo({ message: "Todos os campos são obrigatórios.", type: 'error' });
         setLoading(false);
         return;
+    }
+
+    // CPF formatado precisa ter 11 dígitos
+    const cpfDigits = cpfMatricula.replace(/\D/g, '');
+    if (cpfDigits.length !== 11) {
+      setAlertInfo({ message: "CPF inválido. Use o formato 000.000.000-00.", type: 'error' });
+      setLoading(false);
+      return;
     }
 
     try {
@@ -131,7 +152,7 @@ function Cadastro() {
                 email: userEmail,
                 cpfMatricula: '', 
                 cargo: 'Colaborador', 
-                funcao: 'solicitante', 
+                funcao: 'colaborador', 
                 statusAcesso: 'ativo', 
                 fotoURL: user.photoURL || null,
                 uid: user.uid, 
@@ -194,9 +215,9 @@ function Cadastro() {
                  <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700">Nome</label><input type="text" value={nome} onChange={e=>setNome(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="Ex: João Silva" required /></div>
                  <div><label className="block text-sm font-medium text-gray-700">Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="email@exemplo.com" required /></div>
                  <div><label className="block text-sm font-medium text-gray-700">Senha</label><input type="password" value={senha} onChange={e=>setSenha(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="******" required /></div>
-                 <div><label className="block text-sm font-medium text-gray-700">CPF</label><input type="text" value={cpfMatricula} onChange={e=>setCpfMatricula(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="000.000.000-00" required /></div>
+                 <div><label className="block text-sm font-medium text-gray-700">CPF</label><input type="text" value={cpfMatricula} onChange={e=>setCpfMatricula(formatCPF(e.target.value))} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="000.000.000-00" required /></div>
                  <div><label className="block text-sm font-medium text-gray-700">Cargo</label><input type="text" value={funcao} onChange={e=>setFuncao(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="Ex: Analista" required /></div>
-                 <div><label className="block text-sm font-medium text-gray-700">Perfil</label><select value={perfilAcesso} onChange={e=>setPerfilAcesso(e.target.value)} className="w-full pl-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] cursor-pointer" required><option value="" disabled>Selecione...</option><option value="comprador">Comprador</option><option value="solicitante">Solicitante</option></select></div>
+                 <div><label className="block text-sm font-medium text-gray-700">Perfil</label><select value={perfilAcesso} onChange={e=>setPerfilAcesso(e.target.value)} className="w-full pl-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] cursor-pointer" required><option value="" disabled>Selecione...</option><option value="colaborador">Colaborador</option></select></div>
               </div>
               <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 mt-6 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? (
