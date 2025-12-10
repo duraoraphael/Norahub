@@ -7,24 +7,43 @@
   line-height: 1.5;
   font-weight: 400;
   
-  /* Cores globais garantidas */
+  /* MODO CLARO: Fundo Branco Puro e Texto Preto */
   --bg-page: #ffffff;
   --text-page: #000000;
+  
+  /* Cores de Borda para separar cabeçalho/conteúdo */
+  --border-color: #e5e7eb; 
 }
 
 .dark {
+  /* MODO ESCURO: Preto Puro e Texto Branco */
   --bg-page: #000000;
   --text-page: #ffffff;
+  --border-color: #374151;
 }
 
-html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
+/* Garante que HTML e BODY ocupem tudo e tenham a cor certa */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--bg-page);
+  color: var(--text-page);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
+/* O #root também precisa herdar ou definir explicitamente */
 #root {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-page); /* Fundamental */
+  background-color: var(--bg-page);
   color: var(--text-page);
-  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Classes utilitárias para bordas que mudam com o tema */
+.border-theme {
+  border-color: var(--border-color);
 }
