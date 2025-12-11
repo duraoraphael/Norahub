@@ -30,32 +30,44 @@ function Perfil() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const currentUser = auth.currentUser;
-      if (!currentUser) { navigate('/login'); return; }
-      
-      setNome(currentUser.displayName || '');
-      setEmail(currentUser.email || '');
-      
-      // Prioridade: 1. Foto do Auth (Microsoft/Google - sempre tem prioridade), 2. Foto do Firestore (upload manual)
-      let initialPhoto = currentUser.photoURL;
-      
-      if (currentUser.displayName) setPrimeiroNome(currentUser.displayName.split(' ')[0]);
-      
       try {
-        const docRef = doc(db, 'users', currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setCelular(data.celular || '');
-          if (!currentUser.displayName && data.nome) { setNome(data.nome); setPrimeiroNome(data.nome.split(' ')[0]); }
-          
-          // Se Auth não tem foto mas Firestore tem (upload manual), use do Firestore
-          if (!initialPhoto && data.fotoURL) initialPhoto = data.fotoURL;
+        const currentUser = auth.currentUser;
+        if (!currentUser) { 
+          console.log('Usuário não autenticado, redirecionando...');
+          navigate('/login'); 
+          return; 
         }
-      } catch (error) { console.error(error); } 
-      
-      setFotoURL(initialPhoto);
-      setLoading(false);
+        
+        setNome(currentUser.displayName || '');
+        setEmail(currentUser.email || '');
+        
+        // Prioridade: 1. Foto do Auth (Microsoft/Google - sempre tem prioridade), 2. Foto do Firestore (upload manual)
+        let initialPhoto = currentUser.photoURL;
+        
+        if (currentUser.displayName) setPrimeiroNome(currentUser.displayName.split(' ')[0]);
+        
+        try {
+          const docRef = doc(db, 'users', currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setCelular(data.celular || '');
+            if (!currentUser.displayName && data.nome) { setNome(data.nome); setPrimeiroNome(data.nome.split(' ')[0]); }
+            
+            // Se Auth não tem foto mas Firestore tem (upload manual), use do Firestore
+            if (!initialPhoto && data.fotoURL) initialPhoto = data.fotoURL;
+          }
+        } catch (error) { 
+          console.error('Erro ao buscar dados do Firestore:', error); 
+        } 
+        
+        setFotoURL(initialPhoto);
+      } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+        setAlertInfo({ message: 'Erro ao carregar perfil. Tente novamente.', type: 'error' });
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUserData();
   }, [navigate]);
@@ -188,7 +200,23 @@ function Perfil() {
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    if (file) { setNovaFotoFile(file); setFotoURL(URL.createObjectURL(file)); }
+    if (!file) return;
+    
+    // Validação de tamanho (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setAlertInfo({ message: 'A foto deve ter no máximo 5MB.', type: 'error' });
+      return;
+    }
+    
+    // Validação de tipo
+    if (!file.type.startsWith('image/')) {
+      setAlertInfo({ message: 'Apenas imagens são permitidas.', type: 'error' });
+      return;
+    }
+    
+    setNovaFotoFile(file);
+    setFotoURL(URL.createObjectURL(file));
+    setAlertInfo({ message: 'Foto selecionada! Clique em "Salvar Alterações" para confirmar.', type: 'success' });
   };
 
   const formatCelular = (value) => {
@@ -242,18 +270,29 @@ function Perfil() {
       <header className="relative w-full flex items-center justify-between py-6 px-4 md:px-8 bg-white shadow-sm border-b border-gray-200 h-20">
         <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm flex items-center gap-1"><ArrowLeft size={18} /> <span className="hidden sm:inline">Voltar</span></button>
         <Link to="/" className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2"><img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-8 md:h-10 w-auto object-contain" /></Link>
-        <div className="flex items-center gap-3"><span className="text-sm font-medium text-gray-700 hidden md:block">Olá, {primeiroNome}</span><div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center">{fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500" />}</div></div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center">
+            {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={20} className="text-gray-500" />}
+          </div>
+          <span className="text-sm font-medium text-gray-700 hidden sm:block">Olá, {primeiroNome}</span>
+        </div>
       </header>
       <main className="flex-grow flex flex-col items-center justify-start p-4 md:p-8 relative z-10">
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden mb-10">
             <div className="h-32 bg-gradient-to-r from-[#57B952] to-green-600 relative"></div>
             <div className="px-8 pb-8">
-                <div className="relative -mt-16 mb-6 flex justify-center">
+                <div className="relative -mt-16 mb-6 flex flex-col items-center">
                 <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-gray-200 flex items-center justify-center shadow-lg group relative">
-                          {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" /> : <User size={48} className="text-gray-400" />}
-                          <label htmlFor="foto-upload" className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white"><Camera size={24} /></label>
+                          {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Foto de perfil" /> : <User size={48} className="text-gray-400" />}
+                          <label htmlFor="foto-upload" className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white">
+                            <Camera size={24} />
+                          </label>
                           <input type="file" id="foto-upload" className="hidden" accept="image/*" onChange={handlePhotoChange} />
                       </div>
+                      <label htmlFor="foto-upload" className="mt-3 px-4 py-2 bg-[#57B952] hover:bg-green-600 text-white text-sm font-medium rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                        <Camera size={16} />
+                        Escolher Foto
+                      </label>
                 </div>
               <div className="flex flex-col sm:flex-row gap-3 items-center justify-center mb-4">
                 <button

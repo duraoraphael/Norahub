@@ -14,6 +14,7 @@ import Gerencia from './pages/Gerencia';
 import GerenciaUsuarios from './pages/GerenciaUsuarios';
 import GerenciaProjetos from './pages/GerenciaProjetos';
 import GerenciaCargos from './pages/GerenciaCargos';
+import Perfil from './pages/Perfil';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
         <Route path="/solicitacao-compras" element={<SolicitacaoCompras />} />
         <Route path="/aprovacao-compras" element={<AprovacaoCompras />} />
 
+        <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
         <Route path="/admin-selection" element={<Navigate to="/admin" replace />} />
         <Route path="/gerencia" element={<PrivateRoute><Gerencia /></PrivateRoute>} />
         <Route path="/gerencia-usuarios" element={<PrivateRoute><GerenciaUsuarios /></PrivateRoute>} />

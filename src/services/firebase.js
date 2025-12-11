@@ -13,7 +13,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCem70AILpaNNyWWFJgEm5RzDDFxyOVJUA",
   authDomain: "norahub-2655f.firebaseapp.com",
   projectId: "norahub-2655f",
-  storageBucket: "norahub-2655f.appspot.com",
+  storageBucket: "norahub-2655f.firebasestorage.app",
   messagingSenderId: "827808998482",
   appId: "1:827808998482:web:8c6d7aa175fa3aee1aeb8b"
 };

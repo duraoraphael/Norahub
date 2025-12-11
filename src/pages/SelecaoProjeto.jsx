@@ -233,6 +233,12 @@ function SelecaoProjeto() {
         
         {currentUser && (
             <div className="absolute right-4 md:right-8 flex items-center gap-3">
+                <button 
+                    onClick={() => navigate('/perfil')} 
+                    className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer"
+                >
+                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={20} className="text-gray-500" />}
+                </button>
                 <span className="text-base md:text-lg font-semibold text-gray-800">Olá, {primeiroNome}</span>
             </div>
         )}
