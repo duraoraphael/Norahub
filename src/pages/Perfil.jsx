@@ -63,32 +63,100 @@ function Perfil() {
   const handleLogout = async () => { await signOut(auth); navigate('/login'); };
 
   const handleSave = async (e) => {
-    e.preventDefault(); setSaving(true); setAlertInfo(null);
+    e.preventDefault(); 
+    setSaving(true); 
+    setAlertInfo(null);
+    
     try {
       const currentUser = auth.currentUser;
       if (!currentUser) {
         setAlertInfo({ message: 'Sessão expirada. Entre novamente.', type: 'error' });
+        setSaving(false);
         return;
       }
+      
       let downloadURL = fotoURL;
       
       // Se selecionou arquivo, faz upload
       if (novaFotoFile) {
-        const storageRef = ref(storage, `users/${currentUser.uid}/profile.jpg`);
-        await uploadBytes(storageRef, novaFotoFile);
-        downloadURL = await getDownloadURL(storageRef);
+        console.log('Iniciando upload da foto...');
+        try {
+          const storageRef = ref(storage, `users/${currentUser.uid}/profile.jpg`);
+          
+          // Upload com metadata
+          const metadata = {
+            contentType: novaFotoFile.type,
+            customMetadata: {
+              uploadedBy: currentUser.uid,
+              uploadedAt: new Date().toISOString()
+            }
+          };
+          
+          console.log('Fazendo upload para:', `users/${currentUser.uid}/profile.jpg`);
+          const uploadResult = await uploadBytes(storageRef, novaFotoFile, metadata);
+          console.log('Upload concluído:', uploadResult);
+          
+          console.log('Obtendo URL de download...');
+          downloadURL = await getDownloadURL(storageRef);
+          console.log('URL obtida:', downloadURL);
+          
+          // Revoga o URL temporário criado pelo createObjectURL
+          if (fotoURL && fotoURL.startsWith('blob:')) {
+            URL.revokeObjectURL(fotoURL);
+          }
+          
+          // Atualiza com a URL permanente do Firebase
+          setFotoURL(downloadURL);
+          
+        } catch (storageError) {
+          console.error('Erro no upload da foto:', storageError);
+          console.error('Código do erro:', storageError.code);
+          console.error('Mensagem do erro:', storageError.message);
+          
+          // Retorna erro específico baseado no código
+          if (storageError.code === 'storage/unauthorized') {
+            setAlertInfo({ message: 'Sem permissão para upload. Configure as regras do Firebase Storage.', type: 'error' });
+          } else if (storageError.code === 'storage/quota-exceeded') {
+            setAlertInfo({ message: 'Cota de armazenamento excedida.', type: 'error' });
+          } else {
+            setAlertInfo({ message: `Erro no upload: ${storageError.message}`, type: 'error' });
+          }
+          setSaving(false);
+          return; // Para aqui e não continua
+        }
       }
 
-      // Atualiza Auth
+      console.log('Atualizando Firestore...');
+      
+      // Prepara objeto de atualização do Firestore (não inclui fotoURL se for null)
+      const firestoreUpdate = { 
+        nome, 
+        celular, 
+        updatedAt: new Date() 
+      };
+      
+      // Só adiciona fotoURL se tiver valor válido
+      if (downloadURL) {
+        firestoreUpdate.fotoURL = downloadURL;
+      }
+
+      // Atualiza Auth (só se tiver mudança)
       if (nome !== currentUser.displayName || (downloadURL && downloadURL !== currentUser.photoURL)) {
-        await updateProfile(currentUser, { displayName: nome, photoURL: downloadURL });
+        console.log('Atualizando perfil do Auth...');
+        await updateProfile(currentUser, { 
+          displayName: nome, 
+          ...(downloadURL && { photoURL: downloadURL })
+        });
         setPrimeiroNome(nome.split(' ')[0]);
       }
       
       // Atualiza Firestore
-      await updateDoc(doc(db, 'users', currentUser.uid), { nome, celular, fotoURL: downloadURL, updatedAt: new Date() });
+      console.log('Salvando no Firestore:', firestoreUpdate);
+      await updateDoc(doc(db, 'users', currentUser.uid), firestoreUpdate);
+      console.log('Firestore atualizado com sucesso!');
       
       if (novaSenha) {
+        console.log('Alterando senha...');
         if (!senhaAtual) throw new Error('senha-atual-vazia');
         if (novaSenha !== confirmarSenha) throw new Error('senhas-nao-batem');
         if (novaSenha.length < 6) throw new Error('senha-curta');
@@ -96,18 +164,26 @@ function Perfil() {
         await reauthenticateWithCredential(currentUser, credential);
         await updatePassword(currentUser, novaSenha);
         setSenhaAtual(''); setNovaSenha(''); setConfirmarSenha('');
+        console.log('Senha alterada com sucesso!');
       }
+      
+      console.log('Perfil salvo com sucesso!');
       setAlertInfo({ message: 'Perfil atualizado!', type: 'success' });
       setNovaFotoFile(null);
+      
     } catch (error) {
+      console.error('Erro ao salvar perfil:', error);
       let msg = "Erro ao atualizar.";
       if (error.message === 'senha-atual-vazia') msg = "Digite a senha atual.";
       if (error.message === 'senhas-nao-batem') msg = "As senhas não conferem.";
+      if (error.message === 'senha-curta') msg = "A senha deve ter pelo menos 6 caracteres.";
       if (error.code === 'auth/wrong-password') msg = "Senha atual incorreta.";
       if (error.code === 'auth/requires-recent-login') msg = "Refaça o login para alterar dados sensíveis.";
-      console.error('Erro ao salvar perfil:', error);
       setAlertInfo({ message: msg, type: 'error' });
-    } finally { setSaving(false); }
+    } finally { 
+      console.log('Finalizando save - setSaving(false)');
+      setSaving(false); 
+    }
   };
 
   const handlePhotoChange = (e) => {

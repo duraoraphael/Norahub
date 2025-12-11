@@ -10,7 +10,6 @@ import PainelProjeto from './pages/PainelProjeto';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminCargos from './pages/AdminCargos';
 import AprovacaoCompras from './pages/AprovacaoCompras';
-import Perfil from './pages/Perfil';
 import Gerencia from './pages/Gerencia';
 import GerenciaUsuarios from './pages/GerenciaUsuarios';
 import GerenciaProjetos from './pages/GerenciaProjetos';
@@ -58,7 +57,6 @@ function App() {
         <Route path="/gerencia-cargos" element={<PrivateRoute><GerenciaCargos /></PrivateRoute>} />
         <Route path="/admin" element={<PrivateRoute requiredRole="admin"><AdminDashboard /></PrivateRoute>} />
         <Route path="/admin-cargos" element={<PrivateRoute requiredRole="admin"><AdminCargos /></PrivateRoute>} />
-        <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
       </Routes>
     </BrowserRouter>
   );

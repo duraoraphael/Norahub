@@ -336,7 +336,7 @@ function AdminCargos() {
         </Link>
         <div className="flex items-center gap-3">
           <Link 
-            to="/perfil" 
+            onClick={(e) => e.preventDefault()} 
             className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-[#57B952] transition-all bg-gray-100 flex items-center justify-center"
           >
             {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={20} className="text-gray-500" />}

@@ -10,6 +10,7 @@ function MenuNormatel() {
   const { theme } = useTheme();
   const { currentUser, userProfile } = useAuth();
   const fotoURL = currentUser?.photoURL || userProfile?.fotoURL;
+  const primeiroNome = (currentUser?.displayName || userProfile?.nome || 'Usuário').split(' ')[0];
   const isDark = theme === 'dark';
   const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ function MenuNormatel() {
       </div>
 
         <div className="absolute right-4 md:right-8 flex items-center gap-3 mr-16">
-             <Link to="/perfil" className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-[#57B952] transition-all bg-gray-100 flex items-center justify-center">{fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" /> : <User size={20} className="text-gray-500" />}</Link>
+             <span className="text-base md:text-lg font-semibold text-gray-800">Olá, {primeiroNome}</span>
         </div>
       </header>
 
