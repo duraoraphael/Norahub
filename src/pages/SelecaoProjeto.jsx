@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Building2, ArrowLeft, Plus, Briefcase, X, Save, FileText, Share, Trash2, User, Shield } from 'lucide-react'; // Adicionado Shield
+import { Building2, ArrowLeft, Plus, Briefcase, X, Save, FileText, Share, Trash2, User, Shield, Upload, FolderOpen, FileSpreadsheet, File } from 'lucide-react';
 // ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -126,7 +126,7 @@ function SelecaoProjeto() {
     try {
                 const extras = extraFields
                     .filter(f => f.name.trim() && f.url.trim())
-                    .map(f => ({ name: f.name.trim(), description: f.description.trim(), url: f.url.trim() }));
+                    .map(f => ({ name: f.name.trim(), description: f.description.trim(), url: f.url.trim(), type: f.type || 'link' }));
 
                 if (editingProject) {
                     await updateDoc(doc(db, 'projetos', editingProject.id), {
@@ -151,7 +151,7 @@ function SelecaoProjeto() {
                 setNewProjectName('');
                 setUrlForms('');
                 setUrlSharePoint('');
-                setExtraFields([{ name: '', description: '', url: '' }]);
+                setExtraFields([{ name: '', description: '', url: '', type: 'link' }]);
                 setEditingProject(null);
                 setIsModalOpen(false);
                 fetchProjetos(); 
@@ -159,7 +159,7 @@ function SelecaoProjeto() {
   };
 
     const addExtraField = () => {
-        setExtraFields(prev => [...prev, { name: '', description: '', url: '' }]);
+        setExtraFields(prev => [...prev, { name: '', description: '', url: '', type: 'link' }]);
     };
 
     const updateExtraField = (index, key, newValue) => {
@@ -204,7 +204,7 @@ function SelecaoProjeto() {
         setNewProjectName('');
         setUrlForms('');
         setUrlSharePoint('');
-        setExtraFields([{ name: '', description: '', url: '' }]);
+        setExtraFields([{ name: '', description: '', url: '', type: 'link' }]);
         setIsModalOpen(true);
     };
 
@@ -213,7 +213,7 @@ function SelecaoProjeto() {
         setNewProjectName(projeto.nome || '');
         setUrlForms(projeto.urlForms || '');
         setUrlSharePoint(projeto.urlSharePoint || '');
-        setExtraFields(projeto.extras && projeto.extras.length > 0 ? projeto.extras.map(e => ({ name: e.name || '', description: e.description || '', url: e.url || '' })) : [{ name: '', description: '', url: '' }]);
+        setExtraFields(projeto.extras && projeto.extras.length > 0 ? projeto.extras.map(e => ({ name: e.name || '', description: e.description || '', url: e.url || '', type: e.type || 'link' })) : [{ name: '', description: '', url: '', type: 'link' }]);
         setIsModalOpen(true);
     };
 
@@ -327,15 +327,15 @@ function SelecaoProjeto() {
 
       {/* MODAL (criar/editar base) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200 animate-fade-in">
-                <div className="flex justify-between items-center p-6 border-b border-gray-100">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 animate-fade-in my-8 max-h-[90vh] flex flex-col">
+                <div className="flex justify-between items-center p-6 border-b border-gray-100 flex-shrink-0">
                     <h2 className="text-xl font-bold text-gray-900">
                         {editingProject ? 'Editar Base' : 'Adicionar Nova Base'}
                     </h2>
                     <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-500 transition-colors"><X size={20} /></button>
                 </div>
-                <form onSubmit={handleSaveProject} className="p-6 space-y-4">
+                <form onSubmit={handleSaveProject} className="flex-1 overflow-y-auto p-6 space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Nome do Projeto</label>
                         <input type="text" placeholder="Ex: Projeto 743 - Facilities" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none" required />
@@ -364,21 +364,42 @@ function SelecaoProjeto() {
                                         placeholder="Nome do Card"
                                         value={field.name}
                                         onChange={(e) => updateExtraField(idx, 'name', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
                                     />
+                                    
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-600 mb-1">Tipo de Card</label>
+                                        <select
+                                            value={field.type || 'link'}
+                                            onChange={(e) => updateExtraField(idx, 'type', e.target.value)}
+                                            className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                                        >
+                                            <option value="link">🔗 Link Externo</option>
+                                            <option value="documents">📁 Pasta de Documentos</option>
+                                            <option value="reports">📊 Relatórios e Dashboards</option>
+                                            <option value="files">📄 Arquivos PDF</option>
+                                            <option value="spreadsheets">📈 Planilhas Excel</option>
+                                            <option value="forms">📝 Formulários</option>
+                                            <option value="approvals">✅ Centro de Aprovações</option>
+                                            <option value="inventory">📦 Controle de Estoque</option>
+                                            <option value="financial">💰 Financeiro</option>
+                                            <option value="hr">👥 Recursos Humanos</option>
+                                        </select>
+                                    </div>
+                                    
                                     <input
                                         type="text"
                                         placeholder="Descrição (opcional)"
                                         value={field.description}
                                         onChange={(e) => updateExtraField(idx, 'description', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
                                     />
                                     <input
                                         type="url"
                                         placeholder="URL (https://...)"
                                         value={field.url}
                                         onChange={(e) => updateExtraField(idx, 'url', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
                                     />
                                     <button
                                         type="button"
@@ -390,7 +411,17 @@ function SelecaoProjeto() {
                                 </div>
                             ))}
                         </div>
-                        <p className="text-xs text-gray-400 mt-1">Cards com nome e URL preenchidos aparecerão no painel do projeto.</p>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+                            <p className="text-xs text-blue-700 font-semibold mb-1">💡 Dicas de uso:</p>
+                            <ul className="text-xs text-blue-600 space-y-1 ml-4 list-disc">
+                                <li><strong>Documentos:</strong> Link para OneDrive, SharePoint ou pasta compartilhada</li>
+                                <li><strong>Relatórios:</strong> Link para Power BI, Tableau ou dashboards</li>
+                                <li><strong>Planilhas:</strong> Excel Online, Google Sheets</li>
+                                <li><strong>Formulários:</strong> Microsoft Forms, Google Forms</li>
+                                <li><strong>Estoque:</strong> Sistema de controle de inventário</li>
+                                <li><strong>Financeiro:</strong> Sistema de gestão financeira/orçamento</li>
+                            </ul>
+                        </div>
                     </div>
                     <div className="pt-4 flex gap-3">
                         <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors">Cancelar</button>

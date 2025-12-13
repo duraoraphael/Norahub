@@ -15,6 +15,9 @@ import GerenciaUsuarios from './pages/GerenciaUsuarios';
 import GerenciaProjetos from './pages/GerenciaProjetos';
 import GerenciaCargos from './pages/GerenciaCargos';
 import Perfil from './pages/Perfil';
+import GerenciamentoArquivos from './pages/GerenciamentoArquivos';
+import VisualizadorArquivo from './pages/VisualizadorArquivo';
+import ConstrutorFormulario from './pages/ConstrutorFormulario';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -43,6 +46,33 @@ function App() {
           element={
             <PrivateRoute>
               <PainelProjeto />
+            </PrivateRoute>
+          } 
+        />
+        
+        <Route 
+          path="/gerenciamento-arquivos" 
+          element={
+            <PrivateRoute>
+              <GerenciamentoArquivos />
+            </PrivateRoute>
+          } 
+        />
+        
+        <Route 
+          path="/visualizador-arquivo" 
+          element={
+            <PrivateRoute>
+              <VisualizadorArquivo />
+            </PrivateRoute>
+          } 
+        />
+        
+        <Route 
+          path="/construtor-formulario" 
+          element={
+            <PrivateRoute>
+              <ConstrutorFormulario />
             </PrivateRoute>
           } 
         />

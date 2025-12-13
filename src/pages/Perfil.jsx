@@ -27,6 +27,7 @@ function Perfil() {
   const [saving, setSaving] = useState(false);
   const [syncingMsPhoto, setSyncingMsPhoto] = useState(false);
   const [alertInfo, setAlertInfo] = useState(null);
+  const [isPasswordProvider, setIsPasswordProvider] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,6 +41,12 @@ function Perfil() {
         
         setNome(currentUser.displayName || '');
         setEmail(currentUser.email || '');
+        
+        // Verificar se é autenticação por senha (não Microsoft)
+        const hasPasswordProvider = currentUser.providerData.some(
+          provider => provider.providerId === 'password'
+        );
+        setIsPasswordProvider(hasPasswordProvider);
         
         // Prioridade: 1. Foto do Auth (Microsoft/Google - sempre tem prioridade), 2. Foto do Firestore (upload manual)
         let initialPhoto = currentUser.photoURL;
@@ -313,16 +320,20 @@ function Perfil() {
                     <div><label className="block text-sm font-medium text-gray-700 ml-1">Celular</label><input type="tel" value={celular} onChange={e=>setCelular(formatCelular(e.target.value))} className="w-full pl-4 py-2 bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="(00) 00000-0000" /></div>
                     <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 ml-1">Email</label><input type="email" value={email} disabled className="w-full pl-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed" /></div>
                       </div>
-                    <div className="md:col-span-2 pt-6 border-t border-gray-100 border-gray-700">
-                <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2"><KeyRound size={18} className="text-[#57B952]" /> Alterar Senha</h3>
+                    
+                    {/* Seção de Alterar Senha - Apenas para login com senha */}
+                    {isPasswordProvider && (
+                      <div className="md:col-span-2 pt-6 border-t border-gray-100 border-gray-700">
+                        <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2"><KeyRound size={18} className="text-[#57B952]" /> Alterar Senha</h3>
                         <div className="grid gap-4">
-                  <div><label className="block text-xs font-medium text-gray-500 ml-1">Senha Atual</label><input type="password" value={senhaAtual} onChange={e=>setSenhaAtual(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Senha atual" /></div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label className="block text-xs font-medium text-gray-500 ml-1">Nova Senha</label><input type="password" value={novaSenha} onChange={e=>setNovaSenha(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Nova senha" /></div>
-                    <div><label className="block text-xs font-medium text-gray-500 ml-1">Confirmar</label><input type="password" value={confirmarSenha} onChange={e=>setConfirmarSenha(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Repetir senha" /></div>
-                  </div>
+                          <div><label className="block text-xs font-medium text-gray-500 ml-1">Senha Atual</label><input type="password" value={senhaAtual} onChange={e=>setSenhaAtual(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Senha atual" /></div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label className="block text-xs font-medium text-gray-500 ml-1">Nova Senha</label><input type="password" value={novaSenha} onChange={e=>setNovaSenha(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Nova senha" /></div>
+                            <div><label className="block text-xs font-medium text-gray-500 ml-1">Confirmar</label><input type="password" value={confirmarSenha} onChange={e=>setConfirmarSenha(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Repetir senha" /></div>
+                          </div>
                         </div>
-                    </div>
+                      </div>
+                    )}
                     <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-100 border-gray-700">
                 <button type="submit" disabled={saving} className="flex-1 bg-[#57B952] hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md">{saving?'Salvando...':'Salvar Alterações'}</button>
                 <button type="button" onClick={handleLogout} className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-6 rounded-lg border border-red-100">Sair da Conta</button>
