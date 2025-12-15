@@ -335,42 +335,42 @@ function PainelProjeto() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 text-black">
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
-        <button onClick={() => navigate('/selecao-projeto')} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm">
-             <ArrowLeft size={18} /> <span className="hidden sm:inline">Trocar Projeto</span>
+      <header className="relative w-full flex items-center justify-between py-4 px-4 md:px-8 border-b border-gray-200 min-h-[64px] bg-white">
+        <button onClick={() => navigate('/selecao-projeto')} className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
+             <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Trocar</span><span className="hidden md:inline"> Projeto</span>
         </button>
         
-        <div className="flex items-center gap-4">
-                <img src="/img/NoraHub.png" alt="Logo Nora" className="h-8 md:h-10 w-auto object-contain" />
-            <span className="text-gray-600 text-2xl font-light">|</span>
-            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2 md:gap-4">
+                <img src="/img/NoraHub.png" alt="Logo Nora" className="h-6 md:h-10 w-auto object-contain" />
+            <span className="text-gray-600 text-xl md:text-2xl font-light">|</span>
+            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-6 md:h-10 w-auto object-contain" />
         </div>
 
         {/* PERFIL NO CANTO DIREITO */}
         {currentUser && (
-            <div className="absolute right-4 md:right-8 flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3 shrink-0 z-10">
                 <button 
                     onClick={() => navigate('/perfil')} 
-                    className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
                 >
-                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={20} className="text-gray-500" />}
+                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
                 </button>
-                <span className="text-base md:text-lg font-semibold text-gray-800">Olá, {primeiroNome}</span>
+                <span className="text-xs md:text-base font-semibold text-gray-800 hidden xs:block truncate max-w-[80px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
             </div>
         )}
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
+      <main className="flex-grow flex flex-col items-center justify-center p-3 md:p-8">
         <div className="w-full max-w-5xl">
             
-            <div className="text-center mb-12">
-                <h2 className="text-sm font-bold text-[#57B952] uppercase tracking-widest mb-2">
+            <div className="text-center mb-6 md:mb-12">
+                <h2 className="text-xs md:text-sm font-bold text-[#57B952] uppercase tracking-widest mb-1 md:mb-2">
                     Ambiente de Trabalho
                 </h2>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="text-xl md:text-3xl lg:text-4xl font-bold text-gray-900">
                     {projeto.nome}
                 </h1>
-                <p className="text-gray-500 mt-2">Selecione a operação desejada para esta base.</p>
+                <p className="text-xs md:text-base text-gray-500 mt-1 md:mt-2">Selecione a operação desejada para esta base.</p>
                 {canEdit && (
                   <button
                     onClick={openEditModal}

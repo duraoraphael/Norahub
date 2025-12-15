@@ -329,51 +329,51 @@ function AdminDashboard() {
             )}
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
         
         {/* Esquerda: Botão Voltar + Badge Admin */}
-        <div className="absolute left-4 md:left-8 flex items-center gap-4">
+        <div className="absolute left-3 md:left-8 flex items-center gap-2 md:gap-4">
             {/* MUDANÇA AQUI: Link aponta para /selecao-projeto */}
-            <Link to="/selecao-projeto" className="flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors">
-                <ArrowLeft size={20} />
+            <Link to="/selecao-projeto" className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors text-xs md:text-sm">
+                <ArrowLeft size={16} className="md:w-5 md:h-5" />
                 <span className="hidden sm:inline font-medium">Voltar</span>
             </Link>
-            <span className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider border border-purple-200">
+            <span className="px-2 md:px-3 py-0.5 md:py-1 rounded-full bg-purple-100 text-purple-700 text-[10px] md:text-xs font-bold uppercase tracking-wider border border-purple-200">
                 Admin
             </span>
         </div>
         
         {/* Centro: Logo */}
         <div className="flex items-center justify-center">
-            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-8 md:h-10 w-auto object-contain" />
+            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-6 md:h-10 w-auto object-contain" />
         </div>
 
       </header>
 
-      <main className="flex-grow flex flex-col items-center p-4 md:p-8">
+      <main className="flex-grow flex flex-col items-center p-3 md:p-8">
         <div className="w-full max-w-6xl">
             
-            <div className="mb-8 flex flex-col md:flex-row gap-4">
+            <div className="mb-4 md:mb-8 flex flex-col sm:flex-row gap-3 md:gap-4">
                 <button 
                     onClick={() => navigate('/admin')}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors"
+                    className="flex items-center justify-center gap-1.5 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors text-sm md:text-base min-h-[44px]"
                 >
-                    <Users size={18} /> Usuários
+                    <Users size={16} className="md:w-[18px] md:h-[18px]" /> Usuários
                 </button>
                 <button 
                     onClick={() => navigate('/admin-cargos')}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold transition-colors"
+                    className="flex items-center justify-center gap-1.5 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold transition-colors text-sm md:text-base min-h-[44px]"
                 >
-                    <Briefcase size={18} /> Gerenciar Cargos
+                    <Briefcase size={16} className="md:w-[18px] md:h-[18px]" /> Gerenciar Cargos
                 </button>
             </div>
             
-            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-4 md:mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-                        <Users className="text-[#57B952]" /> Gestão de Usuários
+                    <h1 className="text-xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
+                        <Users className="text-[#57B952]" size={20} /> Gestão de Usuários
                     </h1>
-                    <p className="text-gray-500 mt-1">Aprove cadastros pendentes e gerencie permissões.</p>
+                    <p className="text-sm md:text-base text-gray-500 mt-1">Aprove cadastros pendentes e gerencie permissões.</p>
                 </div>
                 <div className="relative w-full md:w-72">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3"><Search className="h-5 w-5 text-gray-400" /></span>
@@ -387,8 +387,9 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden -mx-4 md:mx-0">
                 <div className="overflow-x-auto">
+                    <div className="min-w-[900px]">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-200">
@@ -503,6 +504,7 @@ function AdminDashboard() {
                             )}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>

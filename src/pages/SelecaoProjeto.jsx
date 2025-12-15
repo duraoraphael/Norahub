@@ -221,35 +221,35 @@ function SelecaoProjeto() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200 text-black">
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
-        <button onClick={() => navigate('/')} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm">
-             <ArrowLeft size={18} /> <span className="hidden sm:inline">Voltar</span>
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
+        <button onClick={() => navigate('/')} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
+             <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
         </button>
-            <div className="flex items-center gap-4">
-            <img src="/img/NoraHub.png" alt="Logo Nora" className="h-8 md:h-10 w-auto object-contain" />
-            <span className="text-gray-600 text-2xl font-light">|</span>
-            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
+            <div className="flex items-center gap-2 md:gap-4">
+            <img src="/img/NoraHub.png" alt="Logo Nora" className="h-6 md:h-10 w-auto object-contain" />
+            <span className="text-gray-600 text-lg md:text-2xl font-light">|</span>
+            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-6 md:h-10 w-auto object-contain" />
         </div>
         
         {currentUser && (
-            <div className="absolute right-4 md:right-8 flex items-center gap-3">
+            <div className="absolute right-3 md:right-8 flex items-center gap-1.5 md:gap-3 shrink-0">
                 <button 
                     onClick={() => navigate('/perfil')} 
-                    className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
                 >
-                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={20} className="text-gray-500" />}
+                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
                 </button>
-                <span className="text-base md:text-lg font-semibold text-gray-800">Olá, {primeiroNome}</span>
+                <span className="text-xs md:text-base lg:text-lg font-semibold text-gray-800 truncate max-w-[60px] sm:max-w-[100px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
             </div>
         )}
       </header>
 
-      <main className="flex-grow flex flex-col items-center p-8">
+      <main className="flex-grow flex flex-col items-center p-3 md:p-8">
         <div className="w-full max-w-6xl">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-4 md:mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Seleção de projetos</h1>
-                    <p className="text-gray-500 mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
+                    <h1 className="text-xl md:text-3xl font-bold text-gray-900">Seleção de projetos</h1>
+                    <p className="text-sm md:text-base text-gray-500 mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
                 </div>
                 
                 <div className="flex gap-3">
@@ -301,19 +301,20 @@ function SelecaoProjeto() {
                             onClick={() => handleSelectProject(projeto)} 
                             className="group bg-white p-8 rounded-xl shadow-md hover:shadow-xl border border-gray-200 text-left transition-all hover:-translate-y-1 flex flex-col h-full relative cursor-pointer"
                         >
-                            {canEditProject(projeto.id) && (
-                                <button 
-                                    onClick={(e) => handleDeleteProject(e, projeto.id)}
-                                    className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 hover:bg-red-900/20 rounded-full transition-colors z-10"
-                                    title="Excluir Base"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            )}
-
                             <div className="flex items-start justify-between mb-4">
                                 <div className="bg-green-100 p-3 rounded-lg text-[#57B952]"><Briefcase size={24} /></div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Base Ativa</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Base Ativa</span>
+                                    {canEditProject(projeto.id) && (
+                                        <button 
+                                            onClick={(e) => handleDeleteProject(e, projeto.id)}
+                                            className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                            title="Excluir Base"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#57B952] transition-colors">{projeto.nome}</h3>
                             <p className="text-sm text-gray-500 mb-6 flex-grow">{projeto.descricao || 'Acesso ao portal.'}</p>

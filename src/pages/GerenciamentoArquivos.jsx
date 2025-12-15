@@ -133,29 +133,30 @@ function GerenciamentoArquivos() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-6 px-8 border-b border-gray-200 bg-white">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px] md:h-20">
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm"
+          className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
         >
-          <ArrowLeft size={18} /> Voltar
+          <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> 
+          <span className="hidden sm:inline">Voltar</span>
         </button>
-        <h1 className="text-2xl font-bold text-gray-800">{card.name}</h1>
-        <div className="w-20"></div>
+        <h1 className="text-base md:text-2xl font-bold text-gray-800 truncate px-2">{card.name}</h1>
+        <div className="w-12 md:w-20 shrink-0"></div>
       </header>
 
       {/* Content */}
-      <main className="flex-1 w-full max-w-6xl mx-auto p-8">
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+      <main className="flex-1 w-full max-w-6xl mx-auto p-3 md:p-8">
+        <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8">
           {/* Upload Area */}
-          <div className="mb-8">
-            <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#57B952] transition-colors bg-gray-50 hover:bg-green-50">
+          <div className="mb-6 md:mb-8">
+            <label className="flex flex-col items-center justify-center w-full h-32 md:h-48 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#57B952] transition-colors bg-gray-50 hover:bg-green-50">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-12 h-12 mb-3 text-gray-400" />
-                <p className="mb-2 text-sm text-gray-500">
-                  <span className="font-semibold">Clique para enviar</span> ou arraste arquivos
+                <Upload className="w-8 h-8 md:w-12 md:h-12 mb-2 md:mb-3 text-gray-400" />
+                <p className="mb-1 md:mb-2 text-xs md:text-sm text-gray-500">
+                  <span className="font-semibold">Clique para enviar</span> <span className="hidden sm:inline">ou arraste arquivos</span>
                 </p>
-                <p className="text-xs text-gray-400">PDF, DOC, XLS, imagens (máx. 10MB por arquivo)</p>
+                <p className="text-[10px] md:text-xs text-gray-400">PDF, DOC, XLS, imagens (máx. 10MB)</p>
               </div>
               <input 
                 type="file" 
@@ -186,36 +187,36 @@ function GerenciamentoArquivos() {
                 <p>Nenhum arquivo enviado ainda</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {files.map((file, idx) => (
                   <div 
                     key={idx} 
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
+                    className="border border-gray-200 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow bg-white"
                   >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="text-3xl">{getFileIcon(file.name)}</div>
-                      <div className="flex gap-2">
+                    <div className="flex items-start justify-between mb-2 md:mb-3">
+                      <div className="text-2xl md:text-3xl">{getFileIcon(file.name)}</div>
+                      <div className="flex gap-1.5 md:gap-2">
                         <button
                           onClick={() => navigate('/visualizador-arquivo', { state: { fileUrl: file.url, fileName: file.name } })}
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          className="p-2 md:p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
                           title="Visualizar"
                         >
-                          <Eye size={16} />
+                          <Eye size={18} className="md:w-4 md:h-4" />
                         </button>
                         <a
                           href={file.url}
                           download
-                          className="p-1.5 text-green-600 hover:bg-green-50 rounded transition-colors"
+                          className="p-2 md:p-1.5 text-green-600 hover:bg-green-50 rounded transition-colors min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
                           title="Baixar"
                         >
-                          <Download size={16} />
+                          <Download size={18} className="md:w-4 md:h-4" />
                         </a>
                         <button
                           onClick={() => handleDeleteFile(file.fullPath)}
-                          className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          className="p-2 md:p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
                           title="Excluir"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={18} className="md:w-4 md:h-4" />
                         </button>
                       </div>
                     </div>

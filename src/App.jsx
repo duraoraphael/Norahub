@@ -19,10 +19,12 @@ import GerenciamentoArquivos from './pages/GerenciamentoArquivos';
 import VisualizadorArquivo from './pages/VisualizadorArquivo';
 import ConstrutorFormulario from './pages/ConstrutorFormulario';
 import PrivateRoute from './components/PrivateRoute';
+import InstallPWA from './components/InstallPWA';
 
 function App() {
   return (
     <BrowserRouter>
+      <InstallPWA />
       <Routes>
         <Route path="/" element={<Capa />} />
         

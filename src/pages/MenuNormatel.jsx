@@ -27,33 +27,33 @@ function MenuNormatel() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200 text-black">
       {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
-        <button onClick={handleLogout} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors font-medium text-sm">
-             <LogOut size={18} /> <span className="hidden sm:inline">Sair</span>
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
+        <button onClick={handleLogout} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-500 hover:text-red-500 transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
+             <LogOut size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Sair</span>
         </button>
         
-        <div className="flex items-center gap-4">
-        <img src="/img/NoraHub.png" alt="Logo Petrobras" className="h-8 md:h-10 w-auto object-contain" />
-        <span className="text-gray-600 text-2xl font-light">|</span>
-        <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-8 md:h-10 w-auto object-contain" />
+        <div className="flex items-center gap-2 md:gap-4">
+        <img src="/img/NoraHub.png" alt="Logo Petrobras" className="h-6 md:h-10 w-auto object-contain" />
+        <span className="text-gray-600 text-lg md:text-2xl font-light">|</span>
+        <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-6 md:h-10 w-auto object-contain" />
       </div>
 
-        <div className="absolute right-4 md:right-8 flex items-center gap-3 mr-16">
+        <div className="absolute right-3 md:right-8 flex items-center gap-2 md:gap-3 mr-12 md:mr-16 shrink-0 z-10">
              <button 
                  onClick={() => navigate('/perfil')} 
-                 className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer"
+                 className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
              >
-                 {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={20} className="text-gray-500" />}
+                 {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
              </button>
-             <span className="text-base md:text-lg font-semibold text-gray-800">Olá, {primeiroNome}</span>
+             <span className="text-xs md:text-base lg:text-lg font-semibold text-gray-800 truncate max-w-[60px] sm:max-w-[100px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
+      <main className="flex-grow flex flex-col items-center justify-center p-3 md:p-8">
         <div className="w-full max-w-4xl">
-            <div className="text-center mb-12">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">Menu Principal</h1>
-              <p className="text-gray-500">Selecione seu perfil de acesso.</p>
+            <div className="text-center mb-6 md:mb-12">
+              <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-4">Menu Principal</h1>
+              <p className="text-sm md:text-base text-gray-500">Selecione seu perfil de acesso.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

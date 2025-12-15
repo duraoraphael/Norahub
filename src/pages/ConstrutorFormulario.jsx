@@ -391,15 +391,15 @@ function ConstrutorFormulario() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-6 px-8 border-b border-gray-200 bg-white">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm"
+          className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
         >
-          <ArrowLeft size={18} /> Voltar
+          <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden xs:inline">Voltar</span>
         </button>
         
-        <h1 className="text-2xl font-bold text-gray-800">{card.name}</h1>
+        <h1 className="text-sm md:text-xl lg:text-2xl font-bold text-gray-800 absolute left-1/2 transform -translate-x-1/2 max-w-[50%] truncate">{card.name}</h1>
         
         <div className="flex gap-2">
           {canEdit && (
@@ -699,7 +699,7 @@ function ConstrutorFormulario() {
 
                         {/* Preview dos arquivos */}
                         {currentResponse[field.id] && currentResponse[field.id].length > 0 && (
-                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                             {currentResponse[field.id].map((file, idx) => (
                               <div key={idx} className="relative group">
                                 <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-gray-200">

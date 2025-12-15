@@ -4,8 +4,23 @@
     <meta charset="UTF-8" />
     <!-- Primary favicon (clean filename) -->
     <link rel="icon" type="image/png" href="/img/noraicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NoraHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Sistema de gestão de projetos e documentos Normatel" />
+    <meta name="theme-color" content="#57B952" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="NoraHub" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/img/noraicon.png" />
+    
+    <title>NoraHub - Gestão de Projetos</title>
     
     <!-- 1. SCRIPT DE CONFIGURAÇÃO DO TEMA (ANTES DO TAILWIND) -->
     <script>
@@ -33,5 +48,20 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker registrado com sucesso:', registration.scope);
+            })
+            .catch(error => {
+              console.log('Falha ao registrar Service Worker:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

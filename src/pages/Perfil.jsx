@@ -25,7 +25,6 @@ function Perfil() {
   const [novaFotoFile, setNovaFotoFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [syncingMsPhoto, setSyncingMsPhoto] = useState(false);
   const [alertInfo, setAlertInfo] = useState(null);
   const [isPasswordProvider, setIsPasswordProvider] = useState(false);
 
@@ -238,35 +237,7 @@ function Perfil() {
   };
 
 
-  const handleSyncMicrosoftPhoto = async () => {
-    const currentUser = auth.currentUser;
-    if (!currentUser) return;
-    const hasMicrosoftProvider = currentUser.providerData.some((p) => p.providerId === 'microsoft.com');
-    if (!hasMicrosoftProvider) {
-      setAlertInfo({ message: 'Disponível apenas para contas Microsoft.', type: 'error' });
-      return;
-    }
-    setSyncingMsPhoto(true);
-    setAlertInfo(null);
-    try {
-      await currentUser.reload();
-      const providerMs = currentUser.providerData.find((p) => p.providerId === 'microsoft.com');
-      const msPhoto = providerMs?.photoURL || currentUser.photoURL;
-      if (!msPhoto) {
-        setAlertInfo({ message: 'Não foi possível obter a foto da Microsoft.', type: 'error' });
-        return;
-      }
-      setFotoURL(msPhoto);
-      await updateProfile(currentUser, { photoURL: msPhoto });
-      await updateDoc(doc(db, 'users', currentUser.uid), { fotoURL: msPhoto, updatedAt: new Date() });
-      setAlertInfo({ message: 'Foto sincronizada com a conta Microsoft.', type: 'success' });
-    } catch (error) {
-      console.error('Erro ao sincronizar foto Microsoft:', error);
-      setAlertInfo({ message: 'Erro ao sincronizar foto da Microsoft.', type: 'error' });
-    } finally {
-      setSyncingMsPhoto(false);
-    }
-  };
+
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952]"></div></div>;
 
@@ -274,14 +245,14 @@ function Perfil() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 relative text-black">
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
       {/* ThemeToggle removed */}
-      <header className="relative w-full flex items-center justify-between py-6 px-4 md:px-8 bg-white shadow-sm border-b border-gray-200 h-20">
-        <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm flex items-center gap-1"><ArrowLeft size={18} /> <span className="hidden sm:inline">Voltar</span></button>
-        <Link to="/" className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2"><img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-8 md:h-10 w-auto object-contain" /></Link>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center">
-            {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={20} className="text-gray-500" />}
+      <header className="relative w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 bg-white shadow-sm border-b border-gray-200 min-h-[56px] md:h-20">
+        <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm flex items-center gap-1 shrink-0 z-10"><ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span></button>
+        <Link to="/" className="hidden sm:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2"><img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-8 md:h-10 w-auto object-contain" /></Link>
+        <div className="flex items-center gap-1.5 md:gap-3 shrink-0 z-10">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center shrink-0">
+            {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
           </div>
-          <span className="text-sm font-medium text-gray-700 hidden sm:block">Olá, {primeiroNome}</span>
+          <span className="text-xs md:text-sm font-medium text-gray-700 hidden sm:block truncate max-w-[60px] sm:max-w-[100px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
         </div>
       </header>
       <main className="flex-grow flex flex-col items-center justify-start p-4 md:p-8 relative z-10">
@@ -301,18 +272,7 @@ function Perfil() {
                         Escolher Foto
                       </label>
                 </div>
-              <div className="flex flex-col sm:flex-row gap-3 items-center justify-center mb-4">
-                <button
-                  type="button"
-                  onClick={handleSyncMicrosoftPhoto}
-                  disabled={syncingMsPhoto}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50"
-                >
-                  <Camera size={16} /> {syncingMsPhoto ? 'Sincronizando...' : 'Usar foto da Microsoft'}
-                </button>
-                <span className="text-xs text-gray-500 text-center">O site sempre prioriza a foto da sua conta Microsoft.</span>
-              </div>
-            <h1 className="text-2xl font-bold text-center text-gray-900 mb-1">{nome || 'Usuário'}</h1>
+            <h1 className="text-2xl font-bold text-center text-gray-900 mb-1 mt-4">{nome || 'Usuário'}</h1>
             <p className="text-sm text-center text-gray-500 mb-8">{email}</p>
                 <form onSubmit={handleSave} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -329,14 +289,19 @@ function Perfil() {
                           <div><label className="block text-xs font-medium text-gray-500 ml-1">Senha Atual</label><input type="password" value={senhaAtual} onChange={e=>setSenhaAtual(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Senha atual" /></div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><label className="block text-xs font-medium text-gray-500 ml-1">Nova Senha</label><input type="password" value={novaSenha} onChange={e=>setNovaSenha(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Nova senha" /></div>
-                            <div><label className="block text-xs font-medium text-gray-500 ml-1">Confirmar</label><input type="password" value={confirmarSenha} onChange={e=>setConfirmarSenha(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Repetir senha" /></div>
+                            <div><label className="block text-xs font-medium text-gray-500 ml-1">Confirmar Nova Senha</label><input type="password" value={confirmarSenha} onChange={e=>setConfirmarSenha(e.target.value)} className="w-full pl-4 py-2 bg-white border border-gray-200 rounded-lg placeholder-gray-400 text-gray-900" placeholder="Confirmar senha" /></div>
                           </div>
                         </div>
                       </div>
                     )}
-                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-100 border-gray-700">
-                <button type="submit" disabled={saving} className="flex-1 bg-[#57B952] hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md">{saving?'Salvando...':'Salvar Alterações'}</button>
-                <button type="button" onClick={handleLogout} className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-6 rounded-lg border border-red-100">Sair da Conta</button>
+
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                      <button type="submit" disabled={saving} className="flex-1 flex items-center justify-center gap-2 bg-[#57B952] hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <Save size={18} /> {saving ? 'Salvando...' : 'Salvar Alterações'}
+                      </button>
+                      <button type="button" onClick={handleLogout} className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors">
+                        <LogOut size={18} /> Sair
+                      </button>
                     </div>
                 </form>
             </div>

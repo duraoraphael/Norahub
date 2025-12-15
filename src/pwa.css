@@ -1,0 +1,35 @@
+/* Animação para o prompt de instalação PWA */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Estilos para PWA instalado */
+@media (display-mode: standalone) {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Ocultar barra de endereço simulada em PWA */
+  #root {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+/* Suporte a Safe Area (notch de iPhone) */
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
