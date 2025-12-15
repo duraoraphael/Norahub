@@ -330,9 +330,9 @@ function AdminCargos() {
 
   return (
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50">
-      <header className="w-full flex items-center justify-between py-6 px-8 bg-white shadow-sm border-b border-gray-200">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 bg-white shadow-sm border-b border-gray-200 min-h-[56px]">
         <Link to="/admin">
-          <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-8 w-auto object-contain" />
+          <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-6 md:h-8 w-auto object-contain" />
         </Link>
         <div className="flex items-center gap-3">
           <Link 
@@ -344,18 +344,18 @@ function AdminCargos() {
         </div>
       </header>
 
-      <main className="flex-grow p-8">
+      <main className="flex-grow p-3 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-8 gap-4">
             <div>
               <Link 
                 to="/admin" 
-                className="inline-flex items-center gap-2 text-gray-600 hover:text-[#57B952] mb-4 transition-colors"
+                className="inline-flex items-center gap-2 text-gray-600 hover:text-[#57B952] mb-4 transition-colors text-sm"
               >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={18} className="md:w-5 md:h-5" />
                 Voltar
               </Link>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <h1 className="text-xl md:text-3xl font-bold text-gray-900 flex items-center gap-2 md:gap-3">
                 <Briefcase size={32} className="text-purple-600" />
                 Gerenciar Cargos
               </h1>

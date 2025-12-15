@@ -17,7 +17,7 @@ function Capa() {
       
     {/* ThemeToggle removed */}
 
-    <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white transition-colors duration-200">
+    <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white transition-colors duration-200">
         <button 
             onClick={() => navigate('/login')} 
             className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm"

@@ -388,17 +388,17 @@ function PainelProjeto() {
                     href={linkSolicitacao}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer h-[320px]"
+                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer min-h-[280px] md:h-[320px]"
                 >
-                    <div className="bg-green-100 p-6 rounded-full mb-6 group-hover:scale-110 transition-transform text-green-600">
-                        <FileText size={48} />
+                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-green-600">
+                        <FileText size={36} className="md:w-12 md:h-12" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-3">Nova Solicitação</h2>
-                    <p className="text-gray-500 mb-6">
+                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">Nova Solicitação</h2>
+                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
                         Preencher formulário de requisição para {projeto.nome}.
                     </p>
-                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-colors shadow-md">
-                        Acessar Formulário <ExternalLink size={16} />
+                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
+                        Acessar Formulário <ExternalLink size={14} className="md:w-4 md:h-4" />
                     </div>
                 </a>
 
@@ -407,17 +407,17 @@ function PainelProjeto() {
                     href={linkAprovacao}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer h-[320px]"
+                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer min-h-[280px] md:h-[320px]"
                 >
-                    <div className="bg-green-100 p-6 rounded-full mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
-                        <CheckCircle size={48} />
+                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                        <CheckCircle size={36} className="md:w-12 md:h-12" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-3">Aprovação / Painel</h2>
-                    <p className="text-gray-500 mb-6">
+                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">Aprovação / Painel</h2>
+                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
                         Acessar lista de pedidos e aprovações desta base.
                     </p>
-                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-colors shadow-md">
-                        Acessar Painel <ExternalLink size={16} />
+                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
+                        Acessar Painel <ExternalLink size={14} className="md:w-4 md:h-4" />
                     </div>
                 </a>
 
@@ -442,12 +442,12 @@ function PainelProjeto() {
                             {config.isCustomForm ? (
                                 <div 
                                     onClick={() => navigate('/construtor-formulario', { state: { card: extra, projeto } })}
-                                    className="group bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer h-[320px] w-full"
+                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
                                 >
-                                    <div className="bg-green-100 p-6 rounded-full mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
-                                        <CardIcon size={48} />
+                                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                                        <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-3">{extra.name}</h2>
+                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
                                     <p className="text-gray-500 mb-6">
                                         {extra.description || 'Criar e gerenciar formulário personalizado.'}
                                     </p>
@@ -458,16 +458,16 @@ function PainelProjeto() {
                             ) : config.needsUpload ? (
                                 <div 
                                     onClick={() => navigate('/gerenciamento-arquivos', { state: { card: extra, projeto } })}
-                                    className="group bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer h-[320px] w-full"
+                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
                                 >
-                                    <div className="bg-green-100 p-6 rounded-full mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
-                                        <CardIcon size={48} />
+                                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                                        <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-3">{extra.name}</h2>
-                                    <p className="text-gray-500 mb-6">
+                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
+                                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
                                         {extra.description || 'Gerenciar arquivos deste card.'}
                                     </p>
-                                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-colors shadow-md">
+                                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
                                         {config.label}
                                     </div>
                                 </div>
@@ -476,17 +476,17 @@ function PainelProjeto() {
                                     href={extra.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="group bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer h-[320px] block w-full"
+                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] block w-full"
                                 >
-                                    <div className="bg-green-100 p-6 rounded-full mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
-                                        <CardIcon size={48} />
+                                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                                        <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-3">{extra.name}</h2>
-                                    <p className="text-gray-500 mb-6">
+                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
+                                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
                                         {extra.description || 'Acesse este recurso adicional.'}
                                     </p>
-                                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-colors shadow-md">
-                                        {config.label} <ExternalLink size={16} />
+                                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
+                                        {config.label} <ExternalLink size={14} className="md:w-4 md:h-4" />
                                     </div>
                                 </a>
                             )}

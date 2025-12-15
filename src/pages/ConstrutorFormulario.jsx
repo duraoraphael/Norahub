@@ -446,14 +446,14 @@ function ConstrutorFormulario() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 w-full max-w-4xl mx-auto p-8">
+      <main className="flex-1 w-full max-w-4xl mx-auto p-3 md:p-8">
         {mode === 'builder' ? (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800">Construtor de Formulário</h2>
+          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
+              <h2 className="text-lg md:text-xl font-bold text-gray-800">Construtor de Formulário</h2>
               <button
                 onClick={addField}
-                className="flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors font-medium text-sm"
+                className="flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-3 md:px-4 py-2 rounded-lg transition-colors font-medium text-sm w-full sm:w-auto justify-center"
               >
                 <Plus size={16} /> Adicionar Campo
               </button>

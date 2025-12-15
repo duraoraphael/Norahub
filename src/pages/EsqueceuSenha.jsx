@@ -68,12 +68,12 @@ function EsqueceuSenha() {
         </Link>
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center p-4">
+      <main className="flex-grow flex flex-col items-center justify-center p-3 md:p-4">
         
-        <div className="w-full max-w-sm bg-white p-8 rounded-xl shadow-2xl border border-gray-200">
+        <div className="w-full max-w-sm bg-white p-4 md:p-8 rounded-xl shadow-2xl border border-gray-200">
           
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Recuperar Senha</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Recuperar Senha</h2>
             {!success && <p className="text-sm text-gray-600 mb-6">Digite seu e-mail para enviarmos o link de recuperação.</p>}
           </div>
 

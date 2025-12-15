@@ -168,16 +168,16 @@ function Gerencia() {
   return (
     <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50 text-black">
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-6 px-8 border-b border-gray-200 bg-white">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
         <button
           onClick={() => navigate('/selecao-projeto')}
-          className="flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm"
+          className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
         >
-          <ArrowLeft size={18} /> Voltar
+          <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
         </button>
 
         <div className="text-center flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">Área de Gerência</h1>
+          <h1 className="text-lg md:text-2xl font-bold text-gray-900">Área de Gerência</h1>
           <p className="text-gray-500 text-sm mt-1">Bem-vindo, {primeiroNome}!</p>
         </div>
 
@@ -185,10 +185,10 @@ function Gerencia() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col items-center p-8">
+      <main className="flex-grow flex flex-col items-center p-3 md:p-8">
         <div className="w-full max-w-6xl">
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <div className="mb-4 md:mb-8">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
               {userProfile.funcao}
             </h2>
             <p className="text-gray-500">

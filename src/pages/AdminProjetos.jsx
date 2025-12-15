@@ -147,21 +147,21 @@ function AdminProjetos() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 relative text-black">
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
 
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
-        <button onClick={() => navigate('/admin')} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm">
-          <ArrowLeft size={20} />
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
+        <button onClick={() => navigate('/admin')} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
+          <ArrowLeft size={16} className="md:w-5 md:h-5" />
           <span className="hidden sm:inline">Voltar</span>
         </button>
         <div className="flex items-center justify-center">
-          <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-8 md:h-10 w-auto object-contain" />
+          <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-6 md:h-10 w-auto object-contain" />
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col items-center p-4 md:p-8">
+      <main className="flex-grow flex flex-col items-center p-3 md:p-8">
         <div className="w-full max-w-6xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <Users className="text-[#57B952]" /> Gerenciar Membros dos Projetos
+          <div className="mb-4 md:mb-8">
+            <h1 className="text-xl md:text-3xl font-bold text-gray-900 flex items-center gap-2">
+              <Users className="text-[#57B952]" size={24} /> Gerenciar Membros dos Projetos
             </h1>
             <p className="text-gray-500 mt-2">Defina quais usuários podem visualizar cada projeto.</p>
           </div>

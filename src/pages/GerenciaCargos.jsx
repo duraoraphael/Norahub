@@ -125,30 +125,30 @@ function GerenciaCargos() {
   return (
     <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50 text-black">
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-6 px-8 border-b border-gray-200 bg-white">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
         <button
           onClick={() => navigate('/gerencia')}
-          className="flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm"
+          className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
         >
-          <ArrowLeft size={18} /> Voltar
+          <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
         </button>
 
-        <div className="text-center flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">Gestão de Cargos</h1>
+        <div className="text-center flex-1 mx-2">
+          <h1 className="text-base md:text-2xl font-bold text-gray-900 truncate">Gestão de Cargos</h1>
         </div>
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-[#57B952] hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors"
+          className="bg-[#57B952] hover:bg-green-600 text-white px-3 md:px-4 py-2 rounded-lg font-bold flex items-center gap-1 md:gap-2 transition-colors text-xs md:text-sm shrink-0"
         >
-          <Plus size={18} /> Novo Cargo
+          <Plus size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Novo </span>Cargo
         </button>
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col items-center p-8">
+      <main className="flex-grow flex flex-col items-center p-3 md:p-8">
         <div className="w-full max-w-6xl">
-          <div className="mb-8">
+          <div className="mb-4 md:mb-8">
             <p className="text-gray-500">
               Total de cargos: <span className="font-bold text-gray-900">{cargos.length}</span>
             </p>

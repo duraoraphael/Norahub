@@ -170,15 +170,15 @@ function Login() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200">
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
       {/* ThemeToggle removed */}
-      <header className="relative w-full flex items-center justify-center py-6 px-8 border-b border-gray-200 h-20 bg-white">
-        <button onClick={() => navigate('/')} className="absolute left-4 md:left-8 flex items-center gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-sm">
-             <ArrowLeft size={18} /> <span className="hidden sm:inline">Voltar</span>
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
+        <button onClick={() => navigate('/')} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
+             <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
         </button>
-        <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-10 w-auto object-contain" />
+        <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-6 md:h-10 w-auto object-contain" />
       </header>
-      <main className="flex-grow flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-sm bg-white p-8 rounded-xl shadow-2xl border border-gray-200">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">Acessar Sistema</h2>
+      <main className="flex-grow flex flex-col items-center justify-center p-3 md:p-4">
+        <div className="w-full max-w-sm bg-white p-4 md:p-8 rounded-xl shadow-2xl border border-gray-200">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-6 md:mb-8">Acessar Sistema</h2>
           <button type="button" onClick={handleMicrosoftLogin} disabled={loading} className="w-full flex items-center justify-center gap-3 bg-[#2F2F2F] hover:bg-[#1a1a1a] text-white font-medium py-3 px-4 rounded-md transition-colors mb-6 border border-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>Entrar com Microsoft
           </button>

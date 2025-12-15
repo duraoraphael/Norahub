@@ -294,29 +294,29 @@ function SelecaoProjeto() {
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {projetos.map((projeto) => (
                         <div 
                             key={projeto.id} 
                             onClick={() => handleSelectProject(projeto)} 
-                            className="group bg-white p-8 rounded-xl shadow-md hover:shadow-xl border border-gray-200 text-left transition-all hover:-translate-y-1 flex flex-col h-full relative cursor-pointer"
+                            className="group bg-white p-4 md:p-8 rounded-xl shadow-md hover:shadow-xl border border-gray-200 text-left transition-all hover:-translate-y-1 flex flex-col h-full relative cursor-pointer"
                         >
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="bg-green-100 p-3 rounded-lg text-[#57B952]"><Briefcase size={24} /></div>
+                            <div className="flex items-start justify-between mb-3 md:mb-4">
+                                <div className="bg-green-100 p-2 md:p-3 rounded-lg text-[#57B952]"><Briefcase size={20} className="md:w-6 md:h-6" /></div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Base Ativa</span>
+                                    <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Base Ativa</span>
                                     {canEditProject(projeto.id) && (
                                         <button 
                                             onClick={(e) => handleDeleteProject(e, projeto.id)}
                                             className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             title="Excluir Base"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={14} className="md:w-4 md:h-4" />
                                         </button>
                                     )}
                                 </div>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#57B952] transition-colors">{projeto.nome}</h3>
+                            <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-[#57B952] transition-colors">{projeto.nome}</h3>
                             <p className="text-sm text-gray-500 mb-6 flex-grow">{projeto.descricao || 'Acesso ao portal.'}</p>
                             <div className="mt-auto w-full py-2 rounded-lg bg-gray-50 text-center text-sm font-medium text-gray-400 group-hover:bg-[#57B952] group-hover:text-white transition-colors">Acessar Projeto</div>
                         </div>
