@@ -29,7 +29,7 @@ function GerenciaUsuarios() {
   const fetchData = async () => {
     try {
       // Buscar usuários
-      const usuariosSnapshot = await getDocs(collection(db, 'users'));
+      const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
       let usuariosList = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       console.log('Usuários carregados:', usuariosList);
@@ -69,7 +69,7 @@ function GerenciaUsuarios() {
 
   const handleApproveUser = async (userId) => {
     try {
-      await updateDoc(doc(db, 'users', userId), {
+      await updateDoc(doc(db, 'usuarios', userId), {
         status: 'ativo'
       });
       showToast('Usuário aprovado com sucesso!', 'success');
@@ -95,7 +95,7 @@ function GerenciaUsuarios() {
 
   const handleUpdateCargo = async (userId, novoCargo) => {
     try {
-      await updateDoc(doc(db, 'users', userId), {
+      await updateDoc(doc(db, 'usuarios', userId), {
         funcao: novoCargo
       });
       showToast('Cargo alterado com sucesso!', 'success');

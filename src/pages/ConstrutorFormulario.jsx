@@ -13,10 +13,16 @@ function ConstrutorFormulario() {
   const { userProfile, currentUser } = useAuth();
 
   // Configurações do EmailJS
+  // ⚠️ DESABILITADO: Configure suas próprias credenciais em https://www.emailjs.com/
+  // Para habilitar notificações por email:
+  // 1. Crie conta grátis em https://www.emailjs.com/
+  // 2. Adicione um serviço de email (Gmail, Outlook, etc)
+  // 3. Crie um template com as variáveis: to_email, form_name, user_name, project_name, response_data, submission_date
+  // 4. Substitua as credenciais abaixo
   const EMAILJS_CONFIG = {
-    publicKey: 'HIafSr02lXJ1nR3TQ',
-    serviceId: 'service_q1o252g',
-    templateId: 'template_wg87jtj'
+    publicKey: '60DpU5tNSFx8C_WGu',
+    serviceId: 'service_gtuf3ho',
+    templateId: 'template_w2u8w77'
   };
   
   const [mode, setMode] = useState('preview'); // Começa no modo preview para usuários normais
@@ -91,9 +97,9 @@ function ConstrutorFormulario() {
     if (emails.length === 0) return;
 
     // Verificar se EmailJS está configurado
-    if (EMAILJS_CONFIG.publicKey === 'YouQE8KZOhh8Nl_Cr') {
-      console.warn('⚠️ EmailJS não configurado. Configure as credenciais no código.');
-      showToast('⚠️ Notificações por email não configuradas', 'error');
+    if (!EMAILJS_CONFIG.publicKey || !EMAILJS_CONFIG.serviceId || !EMAILJS_CONFIG.templateId) {
+      console.warn('⚠️ EmailJS não configurado. Notificação por email desabilitada.');
+      showToast('⚠️ Notificações por email não estão configuradas. Resposta salva com sucesso!', 'success');
       return;
     }
 
@@ -122,6 +128,8 @@ function ConstrutorFormulario() {
       const sendPromises = emails.map(async (email) => {
         const templateParams = {
           to_email: email,
+          to_name: email.split('@')[0], // Nome do destinatário
+          reply_to: email, // Email de resposta
           form_name: card.name,
           user_name: responseName,
           project_name: projeto.nome || 'NoraHub',
@@ -129,31 +137,36 @@ function ConstrutorFormulario() {
           submission_date: new Date(responseData.submittedAt).toLocaleString('pt-BR')
         };
 
-        console.log(`Enviando para ${email}...`);
+        console.log(`📧 Enviando email para ${email}...`);
         console.log('Template params:', templateParams);
         console.log('Config:', {
-          service_id: service_q1o252g.serviceId,
-          template_id: template_wg87jtj.templateId,
-          user_id: YouQE8KZOhh8Nl_Cr.publicKey
+          service_id: EMAILJS_CONFIG.serviceId,
+          template_id: EMAILJS_CONFIG.templateId,
+          user_id: EMAILJS_CONFIG.publicKey
         });
 
-        const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            service_id: service_q1o252g.serviceId,
-            template_id: template_wg87jtj.templateId,
-            user_id: YouQE8KZOhh8Nl_Cr.publicKey,
-            template_params: templateParams
-          })
-        });
+        try {
+          const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              service_id: EMAILJS_CONFIG.serviceId,
+              template_id: EMAILJS_CONFIG.templateId,
+              user_id: EMAILJS_CONFIG.publicKey,
+              template_params: templateParams
+            })
+          });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`Erro ${response.status}:`, errorText);
-          throw new Error(`Falha ao enviar para ${email}: ${errorText}`);
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Erro ${response.status}:`, errorText);
+            throw new Error(`EmailJS retornou erro ${response.status}: ${errorText}`);
+          }
+        } catch (fetchError) {
+          console.error(`Erro de rede ao enviar para ${email}:`, fetchError);
+          throw new Error(`Erro ao conectar com EmailJS: ${fetchError.message}`);
         }
 
         console.log(`✅ Email enviado com sucesso para ${email}`);
@@ -165,7 +178,12 @@ function ConstrutorFormulario() {
       showToast(`✅ Notificação enviada para ${emails.length} email(s)`, 'success');
     } catch (error) {
       console.error('❌ Erro ao enviar notificação:', error);
-      showToast('❌ Erro ao enviar notificação por email', 'error');
+      console.error('Detalhes completos do erro:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      showToast(`❌ Erro: ${error.message}`, 'error');
     }
   };
 

@@ -114,13 +114,22 @@ function Login() {
          }
          // Se ativo, o useEffect lá em cima redireciona
       } else {
-         await signOut(auth);
-         throw new Error("sem-perfil");
+         // Criar perfil básico caso não exista (usuário legado)
+         await setDoc(doc(db, 'users', userCredential.user.uid), {
+           nome: userCredential.user.displayName || email.split('@')[0],
+           email: userCredential.user.email,
+           funcao: 'usuario',
+           statusAcesso: 'ativo',
+           fotoURL: userCredential.user.photoURL || null,
+           createdAt: new Date()
+         });
+         // Continua o login normalmente
       }
     } catch (error) {
       console.error("Erro:", error);
       if (error.message === 'pendente') setAlertInfo({ message: "Conta em análise. Aguarde aprovação.", type: 'error' });
-      else if (error.message === 'sem-perfil') setAlertInfo({ message: "Perfil não encontrado.", type: 'error' });
+      else if (error.code === 'auth/user-not-found') setAlertInfo({ message: "Usuário não encontrado. Faça o cadastro primeiro.", type: 'error' });
+      else if (error.code === 'auth/wrong-password') setAlertInfo({ message: "Senha incorreta.", type: 'error' });
       else setAlertInfo({ message: "Email ou senha incorretos.", type: 'error' });
     } finally { setLoading(false); }
   };

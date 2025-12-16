@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Função helper para verificar se usuário está autenticado
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Função helper para verificar se é admin
+    function isAdmin() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.funcao == 'admin';
+    }
+    
+    // Função helper para verificar se é gerente
+    function isManager() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.funcao.matches('.*gerente.*');
+    }
+    
+    // Coleção de usuários
+    match /users/{userId} {
+      // Qualquer usuário autenticado pode ler todos os usuários
+      allow read: if isSignedIn();
+      
+      // Usuário pode criar seu próprio perfil
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      
+      // Usuário pode atualizar seu próprio perfil
+      // Admin e gerentes podem atualizar qualquer perfil
+      allow update: if isSignedIn() && 
+                      (request.auth.uid == userId || isAdmin() || isManager());
+      
+      // Apenas admin pode deletar
+      allow delete: if isAdmin();
+    }
+    
+    // Coleção de projetos
+    match /projetos/{projectId} {
+      // Todos os usuários autenticados podem ler projetos
+      allow read: if isSignedIn();
+      
+      // Admin e gerentes podem criar projetos
+      allow create: if isSignedIn() && (isAdmin() || isManager());
+      
+      // Admin, gerentes e qualquer usuário autenticado podem atualizar
+      // (necessário para respostas de formulários)
+      allow update: if isSignedIn();
+      
+      // Apenas admin pode deletar
+      allow delete: if isAdmin();
+    }
+    
+    // Coleção de cargos
+    match /cargos/{cargoId} {
+      // Todos podem ler
+      allow read: if isSignedIn();
+      
+      // Apenas admin pode criar, atualizar ou deletar
+      allow write: if isAdmin();
+    }
+    
+    // Coleção de formulários
+    match /formularios/{formId} {
+      // Todos podem ler
+      allow read: if isSignedIn();
+      
+      // Todos podem criar e atualizar (para respostas)
+      allow create, update: if isSignedIn();
+      
+      // Apenas admin e gerentes podem deletar
+      allow delete: if isAdmin() || isManager();
+    }
+    
+    // Coleção de arquivos (metadata)
+    match /arquivos/{fileId} {
+      // Todos podem ler
+      allow read: if isSignedIn();
+      
+      // Todos podem criar (upload)
+      allow create: if isSignedIn();
+      
+      // Apenas o dono, admin ou gerentes podem atualizar
+      allow update: if isSignedIn() && 
+                      (resource.data.uploadedBy == request.auth.uid || 
+                       isAdmin() || 
+                       isManager());
+      
+      // Apenas o dono, admin ou gerentes podem deletar
+      allow delete: if isSignedIn() && 
+                      (resource.data.uploadedBy == request.auth.uid || 
+                       isAdmin() || 
+                       isManager());
+    }
+    
+    // Coleção de notificações
+    match /notifications/{notificationId} {
+      // Usuário só pode ler suas próprias notificações
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      // Qualquer usuário autenticado pode criar notificações
+      allow create: if isSignedIn();
+      
+      // Usuário pode atualizar suas próprias notificações (marcar como lida)
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      // Apenas admin pode deletar
+      allow delete: if isAdmin();
+    }
+  }
+}

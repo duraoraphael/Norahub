@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Building2, ArrowLeft, Plus, Briefcase, X, Save, FileText, Share, Trash2, User, Shield, Upload, FolderOpen, FileSpreadsheet, File } from 'lucide-react';
+import { Building2, ArrowLeft, Plus, Briefcase, X, Save, FileText, Share, Trash2, User, Shield, Upload, FolderOpen, FileSpreadsheet, File, BarChart3 } from 'lucide-react';
 // ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../services/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
+import NotificationCenter from '../components/NotificationCenter';
 
 function SelecaoProjeto() {
   const { theme } = useTheme();
@@ -232,7 +233,8 @@ function SelecaoProjeto() {
         </div>
         
         {currentUser && (
-            <div className="absolute right-3 md:right-8 flex items-center gap-1.5 md:gap-3 shrink-0">
+            <div className="absolute right-3 md:right-8 flex items-center gap-2 md:gap-3 shrink-0">
+                <NotificationCenter />
                 <button 
                     onClick={() => navigate('/perfil')} 
                     className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
@@ -252,7 +254,17 @@ function SelecaoProjeto() {
                     <p className="text-sm md:text-base text-gray-500 mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
                 </div>
                 
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
+                    {/* BOTÃO DASHBOARD */}
+                    {(isAdmin || canAccessAdmin) && (
+                        <Link 
+                            to="/dashboard" 
+                            className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-blue-200"
+                        >
+                            <BarChart3 size={18} /> Dashboard
+                        </Link>
+                    )}
+                
                     {/* BOTÃO ADMIN - Apenas para Administrador */}
                     {isAdmin && (
                         <Link 

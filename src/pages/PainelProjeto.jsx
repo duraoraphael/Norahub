@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext'; // Importar Auth
 import { db } from '../services/firebase';
 import { doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import NotificationCenter from '../components/NotificationCenter';
 
 function PainelProjeto() {
   // Função que retorna configuração visual e funcional baseada no tipo de card
@@ -349,6 +350,7 @@ function PainelProjeto() {
         {/* PERFIL NO CANTO DIREITO */}
         {currentUser && (
             <div className="flex items-center gap-2 md:gap-3 shrink-0 z-10">
+                <NotificationCenter />
                 <button 
                     onClick={() => navigate('/perfil')} 
                     className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"

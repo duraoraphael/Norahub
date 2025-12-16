@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload, File, Trash2, Download, Eye } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db, storage } from '../services/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject, listAll } from 'firebase/storage';
+import { notifyFileUpload } from '../services/notifications';
 
 function GerenciamentoArquivos() {
   const location = useLocation();
@@ -70,6 +71,20 @@ function GerenciamentoArquivos() {
       
       await loadFiles();
       showToast('Arquivo(s) enviado(s) com sucesso!', 'success');
+      
+      // Notificar gerentes do projeto sobre o upload
+      try {
+        const usersQuery = query(collection(db, 'usuarios'), where('funcao', '==', 'gerente'));
+        const usersSnapshot = await getDocs(usersQuery);
+        const managerIds = usersSnapshot.docs.map(doc => doc.id);
+        
+        if (managerIds.length > 0) {
+          const uploaderName = userProfile?.nome || 'Um usuário';
+          await notifyFileUpload(managerIds, selectedFiles[0].name, uploaderName, projeto.id);
+        }
+      } catch (notifError) {
+        console.error('Erro ao enviar notificação:', notifError);
+      }
     } catch (error) {
       console.error('Erro completo ao fazer upload:', error);
       console.error('Código do erro:', error.code);

@@ -229,7 +229,7 @@ function AdminDashboard() {
             novosProjetos = [...projetosPorUsuario, projetoId];
         }
         
-        await updateDoc(doc(db, 'users', userId), { projetos: novosProjetos });
+        await updateDoc(doc(db, 'usuarios', userId), { projetos: novosProjetos });
         setUsers(prev => prev.map(u => u.id === userId ? { ...u, projetos: novosProjetos } : u));
         
         const projeto = projetos.find(p => p.id === projetoId);

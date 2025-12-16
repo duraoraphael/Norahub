@@ -1,4 +1,4 @@
-const CACHE_NAME = 'norahub-v1';
+const CACHE_NAME = 'norahub-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -39,6 +39,11 @@ self.addEventListener('activate', (event) => {
 
 // Estratégia: Network First, fallback para Cache
 self.addEventListener('fetch', (event) => {
+  // Ignorar requisições que não são GET (POST, PUT, DELETE, etc.)
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {

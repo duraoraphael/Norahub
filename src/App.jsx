@@ -18,6 +18,7 @@ import Perfil from './pages/Perfil';
 import GerenciamentoArquivos from './pages/GerenciamentoArquivos';
 import VisualizadorArquivo from './pages/VisualizadorArquivo';
 import ConstrutorFormulario from './pages/ConstrutorFormulario';
+import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import InstallPWA from './components/InstallPWA';
 
@@ -84,6 +85,7 @@ function App() {
         <Route path="/aprovacao-compras" element={<AprovacaoCompras />} />
 
         <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/admin-selection" element={<Navigate to="/admin" replace />} />
         <Route path="/gerencia" element={<PrivateRoute><Gerencia /></PrivateRoute>} />
         <Route path="/gerencia-usuarios" element={<PrivateRoute><GerenciaUsuarios /></PrivateRoute>} />
