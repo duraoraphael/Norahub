@@ -38,10 +38,17 @@ function GerenciaProjetos() {
     }
   };
 
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+  };
+
   const handleCreateProject = async (e) => {
     e.preventDefault();
     if (!newProjectName || !newProjectUrlForms || !newProjectUrlSharePoint) {
-      alert('Preencha todos os campos!');
+      showToast('Preencha todos os campos!', 'error');
       return;
     }
 
@@ -95,7 +102,7 @@ function GerenciaProjetos() {
   const handleCreateCard = async (e) => {
     e.preventDefault();
     if (!newCard.nome || !newCard.descricao || !newCard.url) {
-      alert('Preencha todos os campos do card!');
+      showToast('Preencha todos os campos do card!', 'error');
       return;
     }
 
@@ -117,10 +124,10 @@ function GerenciaProjetos() {
       setNewCard({ nome: '', descricao: '', url: '' });
       setIsCardModalOpen(false);
       fetchProjetos();
-      alert('Card adicionado com sucesso!');
+      showToast('Card adicionado com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao criar card:', error);
-      alert('Erro ao criar card!');
+      showToast('Erro ao criar card!', 'error');
     }
   };
 
@@ -134,6 +141,13 @@ function GerenciaProjetos() {
 
   return (
     <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50 text-black">
+      {/* Toast */}
+      {toast.show && (
+        <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fade-in`}>
+          {toast.message}
+        </div>
+      )}
+
       {/* Header */}
       <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
         <button

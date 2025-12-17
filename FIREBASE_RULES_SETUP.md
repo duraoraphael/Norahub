@@ -75,7 +75,7 @@ https://console.firebase.google.com/project/norahub-2655f/storage/rules
 - **Atualizar**: **TODOS os usuários autenticados** (para respostas de formulários)
 - **Deletar**: Apenas admin
 
-#### ✅ **Usuários** (`/usuarios/{userId}`)
+#### ✅ **Usuários** (`/users/{userId}`)
 - **Ler**: Todos os usuários autenticados
 - **Criar**: O próprio usuário
 - **Atualizar**: O próprio usuário, admin ou gerentes
@@ -157,7 +157,7 @@ Se o erro persistir:
 Se ainda tiver problemas, verifique:
 1. Console do navegador (F12) → Aba "Console"
 2. Firebase Console → Firestore → Aba "Uso" (para ver tentativas bloqueadas)
-3. Se o usuário tem o campo `funcao` definido na coleção `usuarios`
+3. Se o usuário tem o campo `funcao` definido na coleção `users`
 
 ---
 

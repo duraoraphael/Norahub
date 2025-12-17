@@ -17,6 +17,7 @@ import GerenciaCargos from './pages/GerenciaCargos';
 import Perfil from './pages/Perfil';
 import GerenciamentoArquivos from './pages/GerenciamentoArquivos';
 import VisualizadorArquivo from './pages/VisualizadorArquivo';
+import VisualizadorDashboard from './pages/VisualizadorDashboard';
 import ConstrutorFormulario from './pages/ConstrutorFormulario';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
@@ -67,6 +68,15 @@ function App() {
           element={
             <PrivateRoute>
               <VisualizadorArquivo />
+            </PrivateRoute>
+          } 
+        />
+        
+        <Route 
+          path="/visualizador-dashboard" 
+          element={
+            <PrivateRoute>
+              <VisualizadorDashboard />
             </PrivateRoute>
           } 
         />

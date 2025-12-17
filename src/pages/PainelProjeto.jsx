@@ -5,7 +5,7 @@ import { FileText, CheckCircle, ArrowLeft, ExternalLink, User, Sparkles, Setting
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext'; // Importar Auth
 import { db } from '../services/firebase';
-import { doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import NotificationCenter from '../components/NotificationCenter';
 
 function PainelProjeto() {
@@ -14,82 +14,82 @@ function PainelProjeto() {
     const configs = {
       link: { 
         icon: ExternalLink, 
-        bgColor: 'bg-purple-100', 
-        textColor: 'text-purple-600', 
-        btnColor: 'bg-purple-600 hover:bg-purple-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Acessar',
         needsUpload: false
       },
       documents: { 
         icon: FolderOpen, 
-        bgColor: 'bg-blue-100', 
-        textColor: 'text-blue-600', 
-        btnColor: 'bg-blue-600 hover:bg-blue-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Ver Arquivos',
         needsUpload: true
       },
       reports: { 
         icon: BarChart3, 
-        bgColor: 'bg-indigo-100', 
-        textColor: 'text-indigo-600', 
-        btnColor: 'bg-indigo-600 hover:bg-indigo-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Ver Relatório',
         needsUpload: false
       },
       files: { 
         icon: File, 
-        bgColor: 'bg-red-100', 
-        textColor: 'text-red-600', 
-        btnColor: 'bg-red-600 hover:bg-red-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Ver PDFs',
         needsUpload: true
       },
       spreadsheets: { 
         icon: FileSpreadsheet, 
         bgColor: 'bg-green-100', 
-        textColor: 'text-green-600', 
-        btnColor: 'bg-green-600 hover:bg-green-700',
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Ver Planilhas',
         needsUpload: true
       },
       forms: { 
         icon: ClipboardList, 
-        bgColor: 'bg-yellow-100', 
-        textColor: 'text-yellow-600', 
-        btnColor: 'bg-yellow-600 hover:bg-yellow-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Acessar Formulário',
         needsUpload: false,
         isCustomForm: true
       },
       approvals: { 
         icon: CheckCircle, 
-        bgColor: 'bg-teal-100', 
-        textColor: 'text-teal-600', 
-        btnColor: 'bg-teal-600 hover:bg-teal-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Ver Aprovações',
         needsUpload: false
       },
       inventory: { 
         icon: PackageCheck, 
-        bgColor: 'bg-orange-100', 
-        textColor: 'text-orange-600', 
-        btnColor: 'bg-orange-600 hover:bg-orange-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Acessar Estoque',
         needsUpload: false
       },
       financial: { 
         icon: DollarSign, 
-        bgColor: 'bg-emerald-100', 
-        textColor: 'text-emerald-600', 
-        btnColor: 'bg-emerald-600 hover:bg-emerald-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Ver Financeiro',
         needsUpload: false
       },
       hr: { 
         icon: Users, 
-        bgColor: 'bg-pink-100', 
-        textColor: 'text-pink-600', 
-        btnColor: 'bg-pink-600 hover:bg-pink-700',
+        bgColor: 'bg-green-100', 
+        textColor: 'text-[#57B952]', 
+        btnColor: 'bg-[#57B952] hover:bg-green-600',
         label: 'Acessar RH',
         needsUpload: false
       }
@@ -214,10 +214,9 @@ function PainelProjeto() {
         ? projeto.extras
             .map((e, originalIndex) => ({ ...e, originalIndex }))
             .filter((e) => {
+              // Apenas verifica se tem nome - todos os cards válidos precisam de nome
               if (!e?.name?.trim()) return false;
-              const config = getCardConfig(e.type || 'link');
-              // Cards com upload ou formulários personalizados não precisam de URL
-              return config.needsUpload || config.isCustomForm || e?.url?.trim();
+              return true; // Mantém todos os cards com nome válido
             })
         : [];
 
@@ -286,22 +285,37 @@ function PainelProjeto() {
     if (!editedName || !editedUrlForms || !editedUrlSharePoint) return;
     setSaving(true);
     try {
+      // Buscar os extras originais do banco para preservar dados existentes
+      const projetoDoc = await getDoc(doc(db, 'projetos', projeto.id));
+      const projetoData = projetoDoc.data();
+      const extrasOriginais = Array.isArray(projetoData.extras) ? projetoData.extras : [];
+      
+      // Filtrar e processar os extras editados
       const filteredExtras = editedExtras
         .filter((f) => {
-          const config = getCardConfig(f.type || 'link');
-          // Para tipos que precisam de upload ou formulários personalizados, só precisa de nome
-          // Para outros tipos, precisa de nome E url
-          return f.name.trim() && (config.needsUpload || config.isCustomForm || f.url.trim());
+          // Apenas precisa ter nome válido
+          return f.name && f.name.trim() !== '';
         })
-        .map((f) => ({ 
-          name: f.name.trim(), 
-          description: f.description.trim(), 
-          url: f.url?.trim() || '', 
-          type: f.type || 'link',
-          files: f.files || [],
-          formFields: f.formFields || []
-        }));
+        .map((f) => {
+          // Encontrar o card original pelo nome para preservar dados
+          const cardOriginal = extrasOriginais.find(e => e.name === f.name);
+          
+          return { 
+            name: f.name.trim(), 
+            description: (f.description || '').trim(), 
+            url: (f.url || '').trim(), 
+            type: f.type || 'link',
+            // Preservar dados existentes do card original
+            files: cardOriginal?.files || f.files || [],
+            formFields: cardOriginal?.formFields || f.formFields || [],
+            formResponses: cardOriginal?.formResponses || [],
+            emailNotifications: cardOriginal?.emailNotifications || false,
+            notificationEmails: cardOriginal?.notificationEmails || ''
+          };
+        });
 
+      console.log(`💾 Salvando ${filteredExtras.length} cards no projeto`);
+      
       await updateDoc(doc(db, 'projetos', projeto.id), {
         nome: editedName,
         urlForms: editedUrlForms,
@@ -309,6 +323,8 @@ function PainelProjeto() {
         extras: filteredExtras,
         updatedAt: new Date(),
       });
+      
+      console.log(`✅ ${filteredExtras.length} cards salvos com sucesso!`);
 
       // Atualizar o projeto no estado
       const updatedProjeto = {
@@ -323,7 +339,7 @@ function PainelProjeto() {
       localStorage.setItem('currentProjeto', JSON.stringify(updatedProjeto));
       
       setIsEditModalOpen(false);
-      showToast('Alterações salvas com sucesso!', 'success');
+      showToast(`✅ Projeto salvo com ${filteredExtras.length} card(s)!`, 'success');
     } catch (error) {
       console.error('Erro ao salvar:', error);
       showToast('Erro ao salvar alterações.', 'error');
@@ -462,14 +478,30 @@ function PainelProjeto() {
                                     onClick={() => navigate('/gerenciamento-arquivos', { state: { card: extra, projeto } })}
                                     className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
                                 >
-                                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                                    <div className={`${config.bgColor} p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform ${config.textColor}`}>
                                         <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
                                     <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
                                     <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
                                         {extra.description || 'Gerenciar arquivos deste card.'}
                                     </p>
-                                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
+                                    <div className={`mt-auto flex items-center gap-2 ${config.btnColor} text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base`}>
+                                        {config.label}
+                                    </div>
+                                </div>
+                            ) : extra.type === 'reports' ? (
+                                <div 
+                                    onClick={() => navigate('/visualizador-dashboard', { state: { dashboardUrl: extra.url, dashboardName: extra.name, projeto } })}
+                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
+                                >
+                                    <div className={`${config.bgColor} p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform ${config.textColor}`}>
+                                        <CardIcon size={36} className="md:w-12 md:h-12" />
+                                    </div>
+                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
+                                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+                                        {extra.description || 'Visualizar dashboard e relatórios.'}
+                                    </p>
+                                    <div className={`mt-auto flex items-center gap-2 ${config.btnColor} text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base`}>
                                         {config.label}
                                     </div>
                                 </div>
@@ -480,14 +512,14 @@ function PainelProjeto() {
                                     rel="noopener noreferrer"
                                     className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] block w-full"
                                 >
-                                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                                    <div className={`${config.bgColor} p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform ${config.textColor}`}>
                                         <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
                                     <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
                                     <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
                                         {extra.description || 'Acesse este recurso adicional.'}
                                     </p>
-                                    <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
+                                    <div className={`mt-auto flex items-center gap-2 ${config.btnColor} text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base`}>
                                         {config.label} <ExternalLink size={14} className="md:w-4 md:h-4" />
                                     </div>
                                 </a>
@@ -572,7 +604,10 @@ function PainelProjeto() {
                     <Plus size={14} /> Adicionar card
                   </button>
                 </div>
-                <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
+                <p className="text-xs text-gray-500 mt-1">
+                  {editedExtras.length} card(s) configurado(s)
+                </p>
+                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 border border-gray-200 rounded-lg p-4 bg-gray-50">
                   {editedExtras.map((field, idx) => (
                     <div key={idx} className="border border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50">
                       <input
