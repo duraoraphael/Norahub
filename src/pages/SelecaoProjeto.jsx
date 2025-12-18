@@ -8,6 +8,15 @@ import { db } from '../services/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
 import NotificationCenter from '../components/NotificationCenter';
 
+// Verificar se recharts está disponível
+let rechartsAvailable = false;
+try {
+  require('recharts');
+  rechartsAvailable = true;
+} catch (e) {
+  rechartsAvailable = false;
+}
+
 function SelecaoProjeto() {
   const { theme } = useTheme();
   const { currentUser, userProfile } = useAuth();
@@ -257,12 +266,26 @@ function SelecaoProjeto() {
                 <div className="flex gap-3 flex-wrap">
                     {/* BOTÃO DASHBOARD */}
                     {(isAdmin || canAccessAdmin) && (
-                        <Link 
-                            to="/dashboard" 
-                            className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-blue-200"
-                        >
-                            <BarChart3 size={18} /> Dashboard
-                        </Link>
+                        rechartsAvailable ? (
+                            <Link 
+                                to="/dashboard" 
+                                className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-blue-200"
+                            >
+                                <BarChart3 size={18} /> Dashboard
+                            </Link>
+                        ) : (
+                            <div className="relative group">
+                                <button 
+                                    disabled
+                                    className="bg-gray-200 text-gray-400 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow text-sm border border-gray-300 cursor-not-allowed opacity-60"
+                                >
+                                    <BarChart3 size={18} /> Dashboard
+                                </button>
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                                    Instale o recharts: npm install recharts
+                                </div>
+                            </div>
+                        )
                     )}
                 
                     {/* BOTÃO ADMIN - Apenas para Administrador */}
