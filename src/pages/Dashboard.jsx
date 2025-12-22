@@ -40,30 +40,48 @@ function Dashboard() {
       setLoading(true);
       
       // Buscar usuários
-      const usersSnapshot = await getDocs(collection(db, 'usuarios'));
+      const usersSnapshot = await getDocs(collection(db, 'users'));
       const totalUsers = usersSnapshot.size;
       
       // Buscar projetos
       const projectsSnapshot = await getDocs(collection(db, 'projetos'));
       const totalProjects = projectsSnapshot.size;
-      const activeProjects = projectsSnapshot.docs.filter(doc => doc.data().ativa).length;
+      const activeProjects = projectsSnapshot.docs.filter(doc => doc.data().ativa !== false).length;
       
-      // Buscar formulários (assumindo que existem na coleção 'formularios')
-      const formsSnapshot = await getDocs(collection(db, 'formularios'));
-      const totalForms = formsSnapshot.size;
+      // Contar respostas de formulários em todos os projetos
+      let totalForms = 0;
+      for (const projectDoc of projectsSnapshot.docs) {
+        const projectData = projectDoc.data();
+        if (projectData.extras && Array.isArray(projectData.extras)) {
+          for (const extra of projectData.extras) {
+            if (extra.formResponses && Array.isArray(extra.formResponses)) {
+              totalForms += extra.formResponses.length;
+            }
+          }
+        }
+      }
       
-      // Buscar arquivos (assumindo que existem na coleção 'arquivos')
-      const filesSnapshot = await getDocs(collection(db, 'arquivos'));
-      const totalFiles = filesSnapshot.size;
+      // Contar arquivos em todos os projetos (estimativa baseada em cards de documentos)
+      let totalFiles = 0;
+      for (const projectDoc of projectsSnapshot.docs) {
+        const projectData = projectDoc.data();
+        if (projectData.extras && Array.isArray(projectData.extras)) {
+          for (const extra of projectData.extras) {
+            if (extra.files && Array.isArray(extra.files)) {
+              totalFiles += extra.files.length;
+            }
+          }
+        }
+      }
       
-      // Buscar notificações recentes
-      const notificationsQuery = query(
-        collection(db, 'notifications'),
-        orderBy('createdAt', 'desc'),
+      // Buscar atividades recentes
+      const activitiesQuery = query(
+        collection(db, 'activities'),
+        orderBy('timestamp', 'desc'),
         limit(10)
       );
-      const notificationsSnapshot = await getDocs(notificationsQuery);
-      const activities = notificationsSnapshot.docs.map(doc => ({
+      const activitiesSnapshot = await getDocs(activitiesQuery);
+      const activities = activitiesSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
@@ -74,7 +92,7 @@ function Dashboard() {
         totalForms,
         totalFiles,
         activeProjects,
-        pendingApprovals: 0 // Implementar lógica de aprovações se necessário
+        pendingApprovals: 0
       });
       
       setRecentActivity(activities);
@@ -87,14 +105,18 @@ function Dashboard() {
 
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return 'Data desconhecida';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleDateString('pt-BR', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    try {
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return date.toLocaleDateString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return 'Data inválida';
+    }
   };
 
   const StatCard = ({ icon: Icon, label, value, color, bgColor }) => (
@@ -248,22 +270,14 @@ function Dashboard() {
                            <Activity size={18} className="text-gray-600" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                          <p className="text-xs text-gray-500 mt-1">{activity.message}</p>
-                          <p className="text-xs text-gray-400 mt-1">{formatTimestamp(activity.createdAt)}</p>
+                          <p className="text-sm font-medium text-gray-900">{activity.title || activity.action || 'Atividade'}</p>
+                          <p className="text-xs text-gray-500 mt-1">{activity.message || activity.description || 'Sem descrição'}</p>
+                          <p className="text-xs text-gray-400 mt-1">{formatTimestamp(activity.timestamp || activity.createdAt)}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
-              </div>
-
-              {/* Nota sobre Recharts */}
-              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
-                  📊 <strong>Nota:</strong> Para visualizar gráficos avançados, instale a biblioteca Recharts: 
-                  <code className="ml-2 bg-yellow-100 px-2 py-1 rounded">npm install recharts</code>
-                </p>
               </div>
             </>
           )}

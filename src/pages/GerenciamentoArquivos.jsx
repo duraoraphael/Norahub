@@ -6,12 +6,13 @@ import { db, storage } from '../services/firebase';
 import { doc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject, listAll } from 'firebase/storage';
 import { notifyFileUpload } from '../services/notifications';
+import ActivityLogger from '../services/activityLogger';
 
 function GerenciamentoArquivos() {
   const location = useLocation();
   const navigate = useNavigate();
   const { card, projeto } = location.state || {};
-  const { userProfile } = useAuth();
+  const { userProfile, currentUser } = useAuth();
   const [files, setFiles] = useState([]);
   const [folders, setFolders] = useState([]);
   const [currentPath, setCurrentPath] = useState('');
@@ -88,6 +89,10 @@ function GerenciamentoArquivos() {
       setIsCreatingFolder(false);
       await loadFilesAndFolders();
       showToast('Pasta criada com sucesso!', 'success');
+      
+      // Registrar atividade
+      const userName = userProfile?.nome || currentUser?.displayName || 'Usuário';
+      await ActivityLogger.folderCreated(newFolderName, card.name, projeto.nome, currentUser?.uid, userName);
     } catch (error) {
       console.error('Erro ao criar pasta:', error);
       showToast('Erro ao criar pasta', 'error');
@@ -161,6 +166,12 @@ function GerenciamentoArquivos() {
       await loadFilesAndFolders();
       showToast('Arquivo(s) enviado(s) com sucesso!', 'success');
       
+      // Registrar atividade no dashboard
+      const userName = userProfile?.nome || currentUser?.displayName || 'Usuário';
+      for (const file of selectedFiles) {
+        await ActivityLogger.fileUploaded(file.name, card.name, projeto.nome, currentUser?.uid, userName);
+      }
+      
       // Notificar gerentes do projeto sobre o upload
       try {
         const usersQuery = query(collection(db, 'users'), where('funcao', '==', 'gerente'));
@@ -196,10 +207,15 @@ function GerenciamentoArquivos() {
 
   const handleDeleteFile = async (filePath) => {
     try {
+      const fileName = filePath.split('/').pop();
       const fileRef = ref(storage, filePath);
       await deleteObject(fileRef);
       await loadFilesAndFolders();
       showToast('Arquivo excluído com sucesso!', 'success');
+      
+      // Registrar atividade
+      const userName = userProfile?.nome || currentUser?.displayName || 'Usuário';
+      await ActivityLogger.fileDeleted(fileName, card.name, projeto.nome, currentUser?.uid, userName);
     } catch (error) {
       console.error('Erro ao excluir arquivo:', error);
       showToast('Erro ao excluir arquivo.', 'error');

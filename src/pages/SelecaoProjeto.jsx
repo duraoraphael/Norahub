@@ -7,15 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../services/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
 import NotificationCenter from '../components/NotificationCenter';
-
-// Verificar se recharts está disponível
-let rechartsAvailable = false;
-try {
-  require('recharts');
-  rechartsAvailable = true;
-} catch (e) {
-  rechartsAvailable = false;
-}
+import ActivityLogger from '../services/activityLogger';
 
 function SelecaoProjeto() {
   const { theme } = useTheme();
@@ -43,10 +35,55 @@ function SelecaoProjeto() {
     const [extraFields, setExtraFields] = useState([{ label: '', value: '' }]);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [confirmDelete, setConfirmDelete] = useState({ open: false, projetoId: null });
+  
+  // Filtros e Ordenação
+  const [searchFilter, setSearchFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'inactive'
+  const [sortBy, setSortBy] = useState('name'); // 'name', 'date', 'recent'
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+  };
+  
+  // Função para filtrar e ordenar projetos
+  const getFilteredAndSortedProjects = () => {
+    let filtered = [...projetos];
+    
+    // Filtro por busca
+    if (searchFilter.trim()) {
+      const term = searchFilter.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.nome?.toLowerCase().includes(term) || 
+        p.descricao?.toLowerCase().includes(term)
+      );
+    }
+    
+    // Filtro por status
+    if (statusFilter === 'active') {
+      filtered = filtered.filter(p => p.ativa !== false);
+    } else if (statusFilter === 'inactive') {
+      filtered = filtered.filter(p => p.ativa === false);
+    }
+    
+    // Ordenação
+    if (sortBy === 'name') {
+      filtered.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+    } else if (sortBy === 'date') {
+      filtered.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || new Date(0);
+        return dateB - dateA;
+      });
+    } else if (sortBy === 'recent') {
+      filtered.sort((a, b) => {
+        const dateA = a.updatedAt?.toDate?.() || a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.updatedAt?.toDate?.() || b.createdAt?.toDate?.() || new Date(0);
+        return dateB - dateA;
+      });
+    }
+    
+    return filtered;
   };
 
   useEffect(() => {
@@ -147,6 +184,8 @@ function SelecaoProjeto() {
                         extras,
                         updatedAt: new Date()
                     });
+                    // Registrar atividade
+                    await ActivityLogger.projectEdited(newProjectName, currentUser.uid, primeiroNome);
                 } else {
                     await addDoc(collection(db, 'projetos'), {
                             nome: newProjectName,
@@ -156,6 +195,8 @@ function SelecaoProjeto() {
                             extras,
                             createdAt: new Date()
                     });
+                    // Registrar atividade
+                    await ActivityLogger.projectCreated(newProjectName, currentUser.uid, primeiroNome);
                 }
 
                 setNewProjectName('');
@@ -194,10 +235,16 @@ function SelecaoProjeto() {
 
   const confirmDeleteProject = async () => {
     try {
+      const projeto = projetos.find(p => p.id === confirmDelete.projetoId);
+      const projectName = projeto?.nome || 'Projeto';
+      
       await deleteDoc(doc(db, 'projetos', confirmDelete.projetoId));
       setProjetos(prev => prev.filter(p => p.id !== confirmDelete.projetoId));
       setConfirmDelete({ open: false, projetoId: null });
       showToast('Projeto excluído com sucesso!', 'success');
+      
+      // Registrar atividade
+      await ActivityLogger.projectDeleted(projectName, currentUser.uid, primeiroNome);
     } catch (error) {
       console.error("Erro ao excluir:", error);
       showToast('Erro ao excluir projeto.', 'error');
@@ -258,7 +305,7 @@ function SelecaoProjeto() {
       <main className="flex-grow flex flex-col items-center p-3 md:p-8">
         <div className="w-full max-w-6xl">
             <div className="flex flex-col md:flex-row justify-between items-end mb-4 md:mb-8 gap-4">
-                <div>
+                <div className="flex-1">
                     <h1 className="text-xl md:text-3xl font-bold text-gray-900">Seleção de projetos</h1>
                     <p className="text-sm md:text-base text-gray-500 mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
                 </div>
@@ -266,26 +313,12 @@ function SelecaoProjeto() {
                 <div className="flex gap-3 flex-wrap">
                     {/* BOTÃO DASHBOARD */}
                     {(isAdmin || canAccessAdmin) && (
-                        rechartsAvailable ? (
-                            <Link 
-                                to="/dashboard" 
-                                className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-blue-200"
-                            >
-                                <BarChart3 size={18} /> Dashboard
-                            </Link>
-                        ) : (
-                            <div className="relative group">
-                                <button 
-                                    disabled
-                                    className="bg-gray-200 text-gray-400 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow text-sm border border-gray-300 cursor-not-allowed opacity-60"
-                                >
-                                    <BarChart3 size={18} /> Dashboard
-                                </button>
-                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                                    Instale o recharts: npm install recharts
-                                </div>
-                            </div>
-                        )
+                        <Link 
+                            to="/dashboard" 
+                            className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-blue-200"
+                        >
+                            <BarChart3 size={18} /> Dashboard
+                        </Link>
                     )}
                 
                     {/* BOTÃO ADMIN - Apenas para Administrador */}
@@ -317,12 +350,54 @@ function SelecaoProjeto() {
                 </div>
             </div>
 
+            {/* Filtros e Busca */}
+            <div className="mb-6 bg-white rounded-xl shadow-md border border-gray-200 p-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                  <input
+                    type="text"
+                    placeholder="Buscar por nome ou descrição..."
+                    value={searchFilter}
+                    onChange={(e) => setSearchFilter(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none"
+                  >
+                    <option value="all">Todos</option>
+                    <option value="active">Ativos</option>
+                    <option value="inactive">Inativos</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none"
+                  >
+                    <option value="name">Nome (A-Z)</option>
+                    <option value="date">Data de Criação</option>
+                    <option value="recent">Modificados Recentemente</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
             {loading ? (
                 <div className="text-center py-20 text-gray-500">Carregando bases...</div>
-            ) : projetos.length === 0 ? (
+            ) : getFilteredAndSortedProjects().length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-xl shadow border border-gray-200">
-                    <p className="text-gray-500 mb-4">Nenhuma base cadastrada ainda.</p>
-                    {canManageProjects && (
+                    <p className="text-gray-500 mb-4">
+                      {projetos.length === 0 ? 'Nenhuma base cadastrada ainda.' : 'Nenhum projeto encontrado com os filtros aplicados.'}
+                    </p>
+                    {canManageProjects && projetos.length === 0 && (
                         <button onClick={() => setIsModalOpen(true)} className="text-[#57B952] font-bold hover:underline">
                             + Adicionar primeira base
                         </button>
@@ -330,7 +405,7 @@ function SelecaoProjeto() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    {projetos.map((projeto) => (
+                    {getFilteredAndSortedProjects().map((projeto) => (
                         <div 
                             key={projeto.id} 
                             onClick={() => handleSelectProject(projeto)} 

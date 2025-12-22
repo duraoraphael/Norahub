@@ -8,6 +8,7 @@ import Alert from '../components/Alert';
 import { auth, db } from '../services/firebase';
 import { signInWithEmailAndPassword, signOut, OAuthProvider, signInWithPopup, signInWithRedirect, updateProfile } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import ActivityLogger from '../services/activityLogger';
 
 function Login() {
   const { theme } = useTheme();
@@ -112,6 +113,9 @@ function Login() {
             await signOut(auth);
             throw new Error("pendente");
          }
+         // Registrar login no dashboard
+         const userData = docSnap.data();
+         await ActivityLogger.userLogin(userCredential.user.uid, userData.nome || email.split('@')[0]);
          // Se ativo, o useEffect lá em cima redireciona
       } else {
          // Criar perfil básico caso não exista (usuário legado)

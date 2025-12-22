@@ -22,11 +22,20 @@ import ConstrutorFormulario from './pages/ConstrutorFormulario';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import InstallPWA from './components/InstallPWA';
+import GlobalSearch from './components/GlobalSearch';
+import KeyboardShortcuts from './components/KeyboardShortcuts';
+import Chatbot from './components/Chatbot';
+import { useState } from 'react';
 
 function App() {
+  const [searchOpen, setSearchOpen] = useState(false);
+
   return (
     <BrowserRouter>
       <InstallPWA />
+      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <KeyboardShortcuts />
+      <Chatbot />
       <Routes>
         <Route path="/" element={<Capa />} />
         

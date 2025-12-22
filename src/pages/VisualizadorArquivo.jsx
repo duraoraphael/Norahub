@@ -1,10 +1,33 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download } from 'lucide-react';
+import { ArrowLeft, Download, Share2, ZoomIn, ZoomOut, RotateCw, X, ExternalLink } from 'lucide-react';
 
 function VisualizadorArquivo() {
   const location = useLocation();
   const navigate = useNavigate();
   const { fileUrl, fileName } = location.state || {};
+  
+  const [zoom, setZoom] = useState(100);
+  const [rotation, setRotation] = useState(0);
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  const getFileExtension = (name) => name?.split('.').pop().toLowerCase();
+  const extension = getFileExtension(fileName);
+  const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension);
+  const isPdf = extension === 'pdf';
+  const isVideo = ['mp4', 'webm', 'ogg'].includes(extension);
+  const isOffice = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(extension);
+
+  const handleZoomIn = () => setZoom(prev => Math.min(prev + 25, 200));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev - 25, 50));
+  const handleRotate = () => setRotation(prev => (prev + 90) % 360);
+  const handleReset = () => { setZoom(100); setRotation(0); };
+  
+  const copyShareLink = () => {
+    navigator.clipboard.writeText(fileUrl);
+    alert('Link copiado!');
+    setShowShareModal(false);
+  };
 
   if (!fileUrl) {
     return (
