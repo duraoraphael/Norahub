@@ -476,8 +476,9 @@ Responda à mensagem do usuário de forma **${chatbotConfig.communicationStyle.t
   };
 
   const callGeminiWithRetry = async (userQuery, systemPrompt) => {
-    const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || 'YOUR_GROQ_KEY_HERE';
-    const url = 'https://api.groq.com/openai/v1/chat/completions';
+    const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'YOUR_GEMINI_KEY_HERE';
+    const model = 'gemini-1.5-flash';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
 
     // Construir contexto da conversa
     const conversationHistory = messages.slice(-chatbotConfig.aiSettings.historyContext).map(m =>
@@ -499,12 +500,33 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
 **Sua resposta**:`;
 
     const payload = {
-      model: 'llama-3.1-8b-instant',
-      messages: [
-        { role: 'user', content: fullPrompt }
-      ],
-      temperature: chatbotConfig.aiSettings.temperature,
-      max_tokens: chatbotConfig.aiSettings.maxTokens
+      contents: [{
+        parts: [{ text: fullPrompt }]
+      }],
+      generationConfig: {
+        temperature: chatbotConfig.aiSettings.temperature,
+        maxOutputTokens: chatbotConfig.aiSettings.maxTokens,
+        topK: 40,
+        topP: 0.95,
+      },
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_HARASSMENT",
+          threshold: "BLOCK_NONE"
+        },
+        {
+          category: "HARM_CATEGORY_HATE_SPEECH",
+          threshold: "BLOCK_NONE"
+        },
+        {
+          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          threshold: "BLOCK_NONE"
+        },
+        {
+          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+          threshold: "BLOCK_NONE"
+        }
+      ]
     };
 
     const delays = [1000, 2000, 4000];
@@ -514,20 +536,26 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
         const response = await fetch(url, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${GROQ_API_KEY}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(payload)
         });
 
         if (response.ok) {
           const data = await response.json();
-          return data.choices?.[0]?.message?.content || 'Não foi possível processar a resposta.';
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          
+          if (!text) {
+            console.error('Resposta sem conteúdo:', data);
+            throw new Error('Resposta vazia da API');
+          }
+          
+          return text;
         }
 
         if (response.status !== 429 && response.status < 500) {
           const err = await response.json();
-          console.error('Erro da API Groq:', err);
+          console.error('Erro da API Gemini:', err);
           throw new Error(err.error?.message || 'Erro na API');
         }
 
@@ -725,7 +753,7 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
               </button>
             </div>
             <p className="text-[10px] text-gray-400 mt-2 text-center font-medium">
-              Powered by {chatbotConfig.assistantName} AI • Groq Llama 3.1
+              Powered by {chatbotConfig.assistantName} AI • Google Gemini 1.5 Flash
             </p>
           </div>
         </>
