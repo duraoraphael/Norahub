@@ -1,11 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { allTutorials } from '../data';
+import FavoriteButton from '../components/FavoriteButton';
+import { useAuth } from '../context/AuthContext';
+import { getFavorites } from '../services/favorites';
 import { Search, Download, ExternalLink, Lock, ArrowLeft } from 'lucide-react';
 
 function Tutoriais() {
   const [busca, setBusca] = useState('');
   const [categoriaAtiva, setCategoriaAtiva] = useState('todos');
+  const [ordenacao, setOrdenacao] = useState('padrao');
+  const { currentUser } = useAuth();
+  const [favIds, setFavIds] = useState(new Set());
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadFavs() {
+      if (!currentUser) { if (!cancelled) setFavIds(new Set()); return; }
+      const res = await getFavorites(currentUser.uid, 'tutorial');
+      if (res.success) {
+        const ids = new Set(res.favorites.map(f => f.id));
+        if (!cancelled) setFavIds(ids);
+      }
+    }
+    loadFavs();
+    return () => { cancelled = true; };
+  }, [currentUser]);
 
   // Lógica de Categorias
   const categorias = ['todos', ...new Set(allTutorials.map(t => t.categoria))].sort();
@@ -16,6 +36,17 @@ function Tutoriais() {
     const matchBusca = tutorial.titulo.toLowerCase().includes(busca.toLowerCase()) || 
                        tutorial.descricao.toLowerCase().includes(busca.toLowerCase());
     return matchCategoria && matchBusca;
+  });
+
+  // Ordenar
+  const tutoriaisOrdenados = [...tutoriaisFiltrados].sort((a, b) => {
+    if (ordenacao === 'favoritos') {
+      const af = favIds.has(`tutorial:${a.id}`) ? 1 : 0;
+      const bf = favIds.has(`tutorial:${b.id}`) ? 1 : 0;
+      if (bf !== af) return bf - af;
+    }
+    // fallback: ordem por título
+    return String(a.titulo).localeCompare(String(b.titulo));
   });
 
   return (
@@ -76,8 +107,16 @@ function Tutoriais() {
                 </div>
             </div>
             
-            {/* Filtros (Botões) */}
+            {/* Filtros e Ordenação */}
             <div className="flex flex-wrap justify-center lg:justify-end gap-2 w-full lg:w-2/3">
+                <select
+                    value={ordenacao}
+                    onChange={(e) => setOrdenacao(e.target.value)}
+                    className="py-2 px-4 rounded-full text-sm font-semibold bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#57B952]"
+                >
+                    <option value="padrao">Ordenar: Padrão</option>
+                    <option value="favoritos">⭐ Favoritos</option>
+                </select>
                 {categorias.map(cat => (
                     <button 
                         key={cat}
@@ -97,7 +136,7 @@ function Tutoriais() {
         {/* --- GRADE DE CARDS --- */}
         <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tutoriaisFiltrados.length > 0 ? (
-                tutoriaisFiltrados.map((tutorial) => {
+                tutoriaisOrdenados.map((tutorial) => {
                     const isEmBreve = tutorial.categoria.toLowerCase() === 'em breve';
                     const isCadastro = tutorial.categoria.toLowerCase() === 'cadastro';
 
@@ -105,6 +144,30 @@ function Tutoriais() {
                         <div key={tutorial.id} className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl border border-gray-200">
                             
                             <div className="bg-white p-6 flex-grow relative group">
+                                {/* Favoritar */}
+                                <div className="absolute top-4 right-4 z-10">
+                                    <FavoriteButton
+                                        itemId={`tutorial:${tutorial.id}`}
+                                        itemType="tutorial"
+                                        itemData={{
+                                            name: tutorial.titulo,
+                                            titulo: tutorial.titulo,
+                                            descricao: tutorial.descricao,
+                                            categoria: tutorial.categoria,
+                                            url: tutorial.url,
+                                            data: tutorial.data
+                                        }}
+                                        size={20}
+                                        onChange={(next) => {
+                                            const key = `tutorial:${tutorial.id}`;
+                                            setFavIds(prev => {
+                                                const s = new Set(prev);
+                                                if (next) s.add(key); else s.delete(key);
+                                                return s;
+                                            });
+                                        }}
+                                    />
+                                </div>
                                 <span className={`inline-block text-white text-[10px] font-bold tracking-wider uppercase px-2 py-1 rounded mb-3 ${isEmBreve ? 'bg-gray-500' : 'bg-[#57B952]'}`}>
                                     {tutorial.categoria}
                                 </span>

@@ -12,6 +12,8 @@ import {
   getDocs,
   limit
 } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from './firebase';
 
 /**
  * Criar uma notificação
@@ -37,6 +39,40 @@ export const createNotification = async (userId, type, title, message, link = nu
   } catch (error) {
     console.error('Erro ao criar notificação:', error);
   }
+};
+
+// Enviar notificação por e-mail via Resend (Cloud Function)
+export const sendEmailNotification = async ({ to, subject, html, from }) => {
+  try {
+    const sendEmail = httpsCallable(functions, 'sendEmailResend');
+    const res = await sendEmail({ to, subject, html, from });
+    return res.data;
+  } catch (error) {
+    console.error('Erro ao enviar notificação por e-mail:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Helper simples: enviar e-mail formatado para colaborador (CTA opcional)
+export const sendEmailToCollaborator = async ({ email, title, message, actionUrl = null, from = null }) => {
+  if (!email || !title || !message) {
+    return { success: false, error: 'Parâmetros obrigatórios: email, title, message' };
+  }
+
+  const subject = title;
+  const safeMessage = String(message);
+  const safeTitle = String(title);
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; color: #111; line-height: 1.5;">
+      <h2 style="margin:0 0 12px; color:#111;">${safeTitle}</h2>
+      <p style="margin:0 0 16px;">${safeMessage}</p>
+      ${actionUrl ? `<a href="${actionUrl}" style="display:inline-block;padding:10px 16px;background:#57B952;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">Abrir</a>` : ''}
+      <p style="margin:16px 0 0; color:#555; font-size:12px;">Enviado via NoraHub</p>
+    </div>
+  `;
+
+  return sendEmailNotification({ to: email, subject, html, from });
 };
 
 /**

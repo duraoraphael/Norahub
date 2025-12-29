@@ -20,6 +20,7 @@ import VisualizadorArquivo from './pages/VisualizadorArquivo';
 import VisualizadorDashboard from './pages/VisualizadorDashboard';
 import ConstrutorFormulario from './pages/ConstrutorFormulario';
 import Dashboard from './pages/Dashboard';
+import MeusFavoritos from './pages/MeusFavoritos';
 import PrivateRoute from './components/PrivateRoute';
 import InstallPWA from './components/InstallPWA';
 import GlobalSearch from './components/GlobalSearch';
@@ -43,6 +44,7 @@ function App() {
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
         <Route path="/tutoriais" element={<Tutoriais />} />
+        <Route path="/favoritos" element={<PrivateRoute><MeusFavoritos /></PrivateRoute>} />
 
         {/* Rota Protegida: Só entra se tiver login */}
         <Route 

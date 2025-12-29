@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Trash2, Save, Eye, Settings, FileText, Download, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db, storage } from '../services/firebase';
-import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { sendEmailToCollaborator } from '../services/notifications';
 
 function ConstrutorFormulario() {
   const location = useLocation();
@@ -12,20 +13,7 @@ function ConstrutorFormulario() {
   const { card, projeto } = location.state || {};
   const { userProfile, currentUser } = useAuth();
 
-  // Configurações do EmailJS
-  // ⚠️ DESABILITADO: Configure suas próprias credenciais em https://www.emailjs.com/
-  // Para habilitar notificações por email:
-  // 1. Crie conta grátis em https://www.emailjs.com/
-  // 2. Adicione um serviço de email (Gmail, Outlook, etc)
-  // 3. Crie um template com as variáveis: to_email, form_name, user_name, project_name, response_data, submission_date
-  // 4. Substitua as credenciais abaixo
-  const EMAILJS_CONFIG = {
-    publicKey: '60DpU5tNSFx8C_WGu',
-    serviceId: 'service_gtuf3ho',
-    templateId: 'template_w2u8w77'
-  };
-  
-  const [mode, setMode] = useState('preview'); // Começa no modo preview para usuários normais
+  const [mode, setMode] = useState('preview');
   const [formFields, setFormFields] = useState([]);
   const [formResponses, setFormResponses] = useState([]);
   const [currentResponse, setCurrentResponse] = useState({});
@@ -34,85 +22,77 @@ function ConstrutorFormulario() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
-  
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
-  // Verificar permissões de edição
-  const isAdmin = userProfile?.funcao === 'admin';
-  const isGerente = typeof userProfile?.funcao === 'string' && userProfile.funcao.toLowerCase().includes('gerente');
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+  };
+
+  const loadFormFields = async () => {
+    setLoading(true);
+    try {
+      const projetoDoc = await getDoc(doc(db, 'projetos', projeto.id));
+      if (!projetoDoc.exists()) {
+        showToast('Projeto não encontrado', 'error');
+        navigate(-1);
+        return;
+      }
+
+      const projetoData = projetoDoc.data();
+      const extras = projetoData.extras || [];
+      const formData = extras.find(e => e.name === card.name) || {};
+
+      setFormFields(formData.formFields || []);
+      setFormResponses(formData.formResponses || []);
+      setEmailNotifications(!!formData.emailNotifications);
+      setNotificationEmails(formData.notificationEmails || '');
+
+      const userFuncao = userProfile?.funcao || userProfile?.role;
+      const userCanEdit = !!(
+        projetoData.ownerId === currentUser?.uid ||
+        formData.createdBy === currentUser?.uid ||
+        userFuncao === 'admin' ||
+        userFuncao === 'gerente-projeto' ||
+        userFuncao === 'gerente-usuario' ||
+        userFuncao === 'colaborador' ||
+        typeof userFuncao === 'string'
+      );
+      setCanEdit(userCanEdit);
+      setMode(userCanEdit ? 'builder' : 'preview');
+    } catch (error) {
+      console.error('Erro ao carregar formulário:', error);
+      showToast('Erro ao carregar formulário', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!card || !projeto) {
       navigate(-1);
       return;
     }
-    checkEditPermission();
+    // Recarrega quando dados do usuário chegarem para garantir que admin/owner tenha permissão
     loadFormFields();
-  }, [card, projeto, userProfile]);
-
-  const checkEditPermission = () => {
-    // Admin e gerentes podem editar
-    if (isAdmin || isGerente) {
-      setCanEdit(true);
-      setMode('builder'); // Iniciam no modo de edição
-    } else {
-      setCanEdit(false);
-      setMode('preview'); // Colaboradores iniciam no modo de resposta
-    }
-  };
-
-  const loadFormFields = async () => {
-    setLoading(true);
-    try {
-      // Buscar campos salvos do formulário
-      const projetoDoc = await getDoc(doc(db, 'projetos', projeto.id));
-      const projetoData = projetoDoc.data();
-      const cardData = projetoData.extras?.find(e => e.name === card.name);
-      
-      if (cardData) {
-        if (cardData.formFields) {
-          setFormFields(cardData.formFields);
-        }
-        if (cardData.formResponses) {
-          setFormResponses(cardData.formResponses);
-        }
-        if (cardData.emailNotifications !== undefined) {
-          setEmailNotifications(cardData.emailNotifications);
-        }
-        if (cardData.notificationEmails) {
-          setNotificationEmails(cardData.notificationEmails);
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao carregar formulário:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [card?.name, projeto?.id, currentUser?.uid, userProfile?.role]);
   const sendEmailNotification = async (responseName, responseData) => {
     if (!emailNotifications || !notificationEmails.trim()) return;
 
     const emails = notificationEmails.split(',').map(e => e.trim()).filter(e => e);
     if (emails.length === 0) return;
 
-    // Verificar se EmailJS está configurado
-    if (!EMAILJS_CONFIG.publicKey || !EMAILJS_CONFIG.serviceId || !EMAILJS_CONFIG.templateId) {
-      console.warn('⚠️ EmailJS não configurado. Notificação por email desabilitada.');
-      showToast('⚠️ Notificações por email não estão configuradas. Resposta salva com sucesso!', 'success');
-      return;
-    }
-
     try {
-      console.log('📧 Iniciando envio de notificações...');
+      console.log('📧 Iniciando envio de notificações via Resend...');
       console.log('Destinatários:', emails);
-      
+
       // Formatar respostas do formulário
       let formattedResponses = '';
       formFields.forEach(field => {
         const answer = responseData.answers[field.id];
         let answerText = '';
-        
+
         if (field.type === 'file' && Array.isArray(answer) && answer[0]?.url) {
           answerText = answer.map(file => `📎 ${file.name}: ${file.url}`).join('\n');
         } else if (Array.isArray(answer)) {
@@ -120,73 +100,39 @@ function ConstrutorFormulario() {
         } else {
           answerText = answer || '-';
         }
-        
+
         formattedResponses += `\n${field.label}:\n${answerText}\n`;
       });
 
-      // Enviar email para cada destinatário
-      const sendPromises = emails.map(async (email) => {
-        const templateParams = {
-          to_email: email,
-          to_name: email.split('@')[0], // Nome do destinatário
-          reply_to: email, // Email de resposta
-          form_name: card.name,
-          user_name: responseName,
-          project_name: projeto.nome || 'NoraHub',
-          response_data: formattedResponses,
-          submission_date: new Date(responseData.submittedAt).toLocaleString('pt-BR')
-        };
+      const subject = `Nova resposta no formulário: ${card.name}`;
+      const submittedDate = new Date(responseData.submittedAt).toLocaleString('pt-BR');
+      const actionUrl = typeof window !== 'undefined' ? window.location.href : '';
+      const message = [
+        `Respondido por: ${responseName || 'Anônimo'}`,
+        `Projeto: ${projeto?.nome || 'NoraHub'}`,
+        `Enviado em: ${submittedDate}`,
+        '',
+        'Respostas:',
+        formattedResponses
+      ].join('\n');
 
-        console.log(`📧 Enviando email para ${email}...`);
-        console.log('Template params:', templateParams);
-        console.log('Config:', {
-          service_id: EMAILJS_CONFIG.serviceId,
-          template_id: EMAILJS_CONFIG.templateId,
-          user_id: EMAILJS_CONFIG.publicKey
-        });
+      await Promise.all(
+        emails.map(email =>
+          sendEmailToCollaborator({
+            email,
+            title: subject,
+            message,
+            actionUrl
+          })
+        )
+      );
 
-        try {
-          const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              service_id: EMAILJS_CONFIG.serviceId,
-              template_id: EMAILJS_CONFIG.templateId,
-              user_id: EMAILJS_CONFIG.publicKey,
-              template_params: templateParams
-            })
-          });
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Erro ${response.status}:`, errorText);
-            throw new Error(`EmailJS retornou erro ${response.status}: ${errorText}`);
-          }
-        } catch (fetchError) {
-          console.error(`Erro de rede ao enviar para ${email}:`, fetchError);
-          throw new Error(`Erro ao conectar com EmailJS: ${fetchError.message}`);
-        }
-
-        console.log(`✅ Email enviado com sucesso para ${email}`);
-        return email;
-      });
-
-      await Promise.all(sendPromises);
-      console.log('✅ Emails enviados com sucesso para:', emails);
-      showToast(`✅ Notificação enviada para ${emails.length} email(s)`, 'success');
+      showToast('Notificações enviadas via Resend!', 'success');
     } catch (error) {
-      console.error('❌ Erro ao enviar notificação:', error);
-      console.error('Detalhes completos do erro:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-      showToast(`❌ Erro: ${error.message}`, 'error');
+      console.error('Erro ao enviar notificações via Resend:', error);
+      showToast('Erro ao enviar notificações por email.', 'error');
     }
   };
-
   const submitResponse = async () => {
     // Validar campos obrigatórios
     const missingFields = formFields.filter(f => {
@@ -318,11 +264,6 @@ function ConstrutorFormulario() {
     link.click();
     
     showToast('Arquivo CSV baixado!', 'success');
-  };
-
-  const showToast = (message, type = 'success') => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
   };
 
   const addField = () => {

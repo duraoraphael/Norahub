@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Teste Visual - Novas Funcionalidades</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        .card-header {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .card-desc {
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .status {
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .test-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-top: 40px;
+        }
+        .test-item {
+            padding: 20px;
+            margin: 15px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .test-item h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .test-item p {
+            color: #555;
+            line-height: 1.8;
+        }
+        code {
+            background: #333;
+            color: #00ff00;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .button-demo {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn-blue { background: #3b82f6; }
+        .btn-purple { background: #9333ea; }
+        .btn-indigo { background: #4f46e5; }
+        .btn-green { background: #57B952; }
+        
+        .star-demo {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .star {
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        .star:hover {
+            transform: scale(1.2);
+        }
+        .star.active {
+            color: #fbbf24;
+            text-shadow: 0 0 10px #fbbf24;
+        }
+        .star.inactive {
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste Visual das Funcionalidades</h1>
+        
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">⭐</div>
+                <div class="card-title">Botão de Favoritos</div>
+                <div class="card-desc">
+                    Estrela aparece em TODOS os cards de projeto.
+                    Clique para favoritar/desfavoritar.
+                </div>
+                <div class="star-demo">
+                    <span class="star inactive" onclick="this.classList.toggle('active'); this.classList.toggle('inactive')">★</span>
+                    <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                        ↑ Clique para testar
+                    </p>
+                </div>
+                <div class="status success">✅ Implementado</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">📄</div>
+                <div class="card-title">Resumir PDF</div>
+                <div class="card-desc">
+                    Botão AZUL aparece ao abrir qualquer arquivo PDF.
+                    Usa IA para gerar resumo automático.
+                </div>
+                <div class="button-demo">
+                    <button class="btn btn-blue" onclick="alert('Este botão aparece no VISUALIZADOR DE ARQUIVOS ao abrir um PDF!')">
+                        📄 RESUMIR
+                    </button>
+                </div>
+                <div class="status success">✅ Implementado</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔍</div>
+                <div class="card-title">OCR de Imagens</div>
+                <div class="card-desc">
+                    Botão ROXO aparece ao abrir imagens.
+                    Extrai texto de fotos e screenshots.
+                </div>
+                <div class="button-demo">
+                    <button class="btn btn-purple" onclick="alert('Este botão aparece no VISUALIZADOR DE ARQUIVOS ao abrir imagens (JPG, PNG, etc)!')">
+                        🖼️ OCR
+                    </button>
+                </div>
+                <div class="status success">✅ Implementado</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">📊</div>
+                <div class="card-title">Análise de Dados</div>
+                <div class="card-desc">
+                    Botão ÍNDIGO para planilhas.
+                    Analisa dados e gera insights automáticos.
+                </div>
+                <div class="button-demo">
+                    <button class="btn btn-indigo" onclick="alert('Este botão aparece no VISUALIZADOR DE ARQUIVOS ao abrir planilhas (CSV, Excel)!')">
+                        📊 ANALISAR
+                    </button>
+                </div>
+                <div class="status success">✅ Implementado</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">💬</div>
+                <div class="card-title">Histórico do Chat</div>
+                <div class="card-desc">
+                    Conversas salvas automaticamente.
+                    Botão de lixeira para limpar histórico.
+                </div>
+                <div class="button-demo">
+                    <button class="btn btn-green" onclick="alert('Abra o CHATBOT e veja o ícone de lixeira no cabeçalho!')">
+                        🗑️ Ver no Chat
+                    </button>
+                </div>
+                <div class="status success">✅ Implementado</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🤖</div>
+                <div class="card-title">Comandos Inteligentes</div>
+                <div class="card-desc">
+                    Digite comandos no chat:
+                    "ir para perfil", "comandos", "buscar"
+                </div>
+                <div class="button-demo">
+                    <button class="btn btn-green" onclick="alert('Abra o CHATBOT e digite: comandos')">
+                        🎮 Testar Comandos
+                    </button>
+                </div>
+                <div class="status success">✅ Implementado</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 style="text-align: center; color: #333; margin-bottom: 30px;">
+                🎯 Onde Encontrar Cada Funcionalidade
+            </h2>
+
+            <div class="test-item">
+                <h3>⭐ Botão de Favoritos</h3>
+                <p>
+                    <strong>Página:</strong> Seleção de Projetos (<code>/selecao-projeto</code>)<br>
+                    <strong>Localização:</strong> Lado direito de cada card de projeto, ao lado de "BASE ATIVA"<br>
+                    <strong>Aparência:</strong> Estrela cinza ★ (desfavoritado) ou estrela amarela ⭐ (favoritado)<br>
+                    <strong>Como testar:</strong> Faça login → Vá para projetos → Clique na estrela
+                </p>
+            </div>
+
+            <div class="test-item">
+                <h3>📄 Botão RESUMIR (Azul)</h3>
+                <p>
+                    <strong>Página:</strong> Visualizador de Arquivos<br>
+                    <strong>Aparece quando:</strong> Você abre um arquivo PDF<br>
+                    <strong>Localização:</strong> Cabeçalho superior, entre o título e o botão "Baixar"<br>
+                    <strong>Como testar:</strong> Gerenciamento de Arquivos → Clique em um PDF → Veja o botão azul no topo
+                </p>
+            </div>
+
+            <div class="test-item">
+                <h3>🔍 Botão OCR (Roxo)</h3>
+                <p>
+                    <strong>Página:</strong> Visualizador de Arquivos<br>
+                    <strong>Aparece quando:</strong> Você abre uma imagem (JPG, PNG, GIF, WEBP)<br>
+                    <strong>Localização:</strong> Cabeçalho superior, ao lado do botão "Baixar"<br>
+                    <strong>Como testar:</strong> Faça upload de uma imagem com texto → Abra → Clique no botão roxo "OCR"
+                </p>
+            </div>
+
+            <div class="test-item">
+                <h3>📊 Botão ANALISAR (Índigo)</h3>
+                <p>
+                    <strong>Página:</strong> Visualizador de Arquivos<br>
+                    <strong>Aparece quando:</strong> Você abre uma planilha (CSV, XLS, XLSX)<br>
+                    <strong>Localização:</strong> Cabeçalho superior, ao lado do botão "Baixar"<br>
+                    <strong>Como testar:</strong> Faça upload de uma planilha → Abra → Veja o botão índigo no topo
+                </p>
+            </div>
+
+            <div class="test-item">
+                <h3>💬 Histórico e Comandos do Chat</h3>
+                <p>
+                    <strong>Página:</strong> Qualquer página (ícone do chat no canto inferior direito)<br>
+                    <strong>Histórico:</strong> Mensagens anteriores aparecem automaticamente ao reabrir<br>
+                    <strong>Limpar:</strong> Clique no ícone 🗑️ no cabeçalho do chat<br>
+                    <strong>Comandos:</strong> Digite <code>comandos</code> no chat para ver lista completa
+                </p>
+            </div>
+        </div>
+
+        <div class="test-section" style="margin-top: 30px; background: #fff3cd; border: 3px solid #ffc107;">
+            <h2 style="text-align: center; color: #856404; margin-bottom: 20px;">
+                ⚠️ IMPORTANTE - Leia Antes de Testar
+            </h2>
+            <div style="color: #856404; font-size: 1.1em; line-height: 1.8; padding: 20px;">
+                <p><strong>1. Limpe o cache do navegador:</strong> Pressione <code>Ctrl + Shift + Delete</code> e limpe os dados</p>
+                <p><strong>2. Faça hard refresh:</strong> Pressione <code>Ctrl + Shift + R</code> para recarregar</p>
+                <p><strong>3. Verifique o login:</strong> Você PRECISA estar logado para ver os botões de favoritos</p>
+                <p><strong>4. Abra o Console:</strong> Pressione <code>F12</code> para ver logs e erros</p>
+                <p><strong>5. Servidor deve estar rodando:</strong> <code>http://localhost:5173</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧪 Página de teste carregada!');
+        console.log('📍 Acesse: http://localhost:5173 para testar no app real');
+    </script>
+</body>
+</html>

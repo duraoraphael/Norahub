@@ -53,7 +53,9 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
+          // Versão do SW para bust de cache; altere este número sempre que mudar o SW
+          const swVersion = 'v4';
+          navigator.serviceWorker.register(`/service-worker.js?v=${swVersion}`)
             .then(registration => {
               console.log('Service Worker registrado com sucesso:', registration.scope);
             })

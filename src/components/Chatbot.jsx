@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Minimize2, Maximize2, User, Bot, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, Maximize2, User, Bot, Sparkles, History, Trash2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import chatbotConfig from '../config/chatbotConfig';
+import { saveChatMessage, getChatHistory, clearOldChatHistory } from '../services/chatHistory';
+import { detectCommand, executeCommand } from '../services/chatCommands';
+import { summarizeDocument, analyzeSpreadsheet, analyzeProject, performOCR } from '../services/documentAnalysis';
 
 function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,20 +13,36 @@ function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sessionId] = useState(`session_${Date.now()}`);
+  const [showHistory, setShowHistory] = useState(false);
   const messagesEndRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const { userProfile } = useAuth();
+  const { userProfile, currentUser } = useAuth();
 
+  // Carregar histórico ao abrir
   useEffect(() => {
-    if (messages.length === 0) {
+    if (isOpen && currentUser && messages.length === 0) {
+      loadChatHistory();
+    }
+  }, [isOpen, currentUser]);
+
+  const loadChatHistory = async () => {
+    if (!currentUser) return;
+    
+    const { success, messages: historyMessages } = await getChatHistory(currentUser.uid, 10);
+    
+    if (success && historyMessages.length > 0) {
+      setMessages(historyMessages);
+    } else {
+      // Mensagem de boas-vindas se não houver histórico
       setMessages([{
         role: 'assistant',
         content: chatbotConfig.messages.welcomeMessage,
         timestamp: new Date()
       }]);
     }
-  }, []);
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -477,8 +496,29 @@ Responda à mensagem do usuário de forma **${chatbotConfig.communicationStyle.t
 
   const callGeminiWithRetry = async (userQuery, systemPrompt) => {
     const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'YOUR_GEMINI_KEY_HERE';
-    const model = 'gemini-1.5-flash';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    // Usar modelos Gemini 2.0 (mais novo e estável) com fallback para 1.5
+    const endpoints = [
+      {
+        label: 'v1 gemini-2.0-flash',
+        url: `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`
+      },
+      {
+        label: 'v1beta gemini-2.0-flash',
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`
+      },
+      {
+        label: 'v1 gemini-1.5-pro',
+        url: `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`
+      },
+      {
+        label: 'v1beta gemini-1.5-pro',
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`
+      },
+      {
+        label: 'v1beta gemini-1.5-flash',
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`
+      }
+    ];
 
     // Construir contexto da conversa
     const conversationHistory = messages.slice(-chatbotConfig.aiSettings.historyContext).map(m =>
@@ -531,46 +571,66 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
 
     const delays = [1000, 2000, 4000];
 
-    for (let i = 0; i <= delays.length; i++) {
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
+    for (const endpoint of endpoints) {
+      console.log(`Tentando endpoint: ${endpoint.label}`);
+      console.log(`URL: ${endpoint.url.split('?')[0]}`);
+      
+      for (let i = 0; i <= delays.length; i++) {
+        try {
+          const response = await fetch(endpoint.url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
 
-        if (response.ok) {
-          const data = await response.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          
-          if (!text) {
-            console.error('Resposta sem conteúdo:', data);
-            throw new Error('Resposta vazia da API');
+          console.log(`[${endpoint.label}] Status: ${response.status}`);
+
+          if (response.ok) {
+            const data = await response.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            
+            if (!text) {
+              console.error('Resposta sem conteúdo:', data);
+              throw new Error('Resposta vazia da API');
+            }
+            
+            console.log(`✅ Sucesso com ${endpoint.label}`);
+            return text;
           }
+
+          // Log da resposta de erro
+          const errorText = await response.text();
+          console.error(`❌ Erro ${response.status} (${endpoint.label}):`, errorText.substring(0, 200));
           
-          return text;
+          if (response.status !== 429 && response.status < 500) {
+            try {
+              const err = JSON.parse(errorText);
+              throw new Error(err.error?.message || `Status ${response.status}`);
+            } catch {
+              throw new Error(`Status ${response.status}: ${errorText.substring(0, 100)}`);
+            }
+          }
+
+          console.log(`Tentativa ${i + 1} falhou (${endpoint.label}). Status: ${response.status}`);
+          
+        } catch (error) {
+          console.error(`Erro na tentativa ${i + 1} (${endpoint.label}):`, error.message);
+          if (i === delays.length) {
+            console.warn(`Endpoint ${endpoint.label} esgotou tentativas (${delays.length + 1} tentativas), tentando próximo...`);
+            break;
+          }
         }
 
-        if (response.status !== 429 && response.status < 500) {
-          const err = await response.json();
-          console.error('Erro da API Gemini:', err);
-          throw new Error(err.error?.message || 'Erro na API');
+        if (i < delays.length) {
+          console.log(`Aguardando ${delays[i]}ms antes de tentar novamente...`);
+          await new Promise(resolve => setTimeout(resolve, delays[i]));
         }
-
-        console.log(`Tentativa ${i + 1} falhou. Status: ${response.status}`);
-        
-      } catch (error) {
-        console.error(`Erro na tentativa ${i + 1}:`, error);
-        if (i === delays.length) throw error;
-      }
-
-      if (i < delays.length) {
-        console.log(`Aguardando ${delays[i]}ms antes de tentar novamente...`);
-        await new Promise(resolve => setTimeout(resolve, delays[i]));
       }
     }
+
+    throw new Error('Falha em todos os endpoints Gemini. Verifique o Console (F12) para detalhes.');
   };
 
   const handleSend = async () => {
@@ -580,17 +640,53 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
     const userMessage = {
       role: 'user',
       content: userText,
-      timestamp: new Date()
+      timestamp: new Date(),
+      sessionId
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setLoading(true);
 
-    try {
-      let botResponse = await callGeminiWithRetry(userText, buildSystemPrompt());
+    // Salvar mensagem do usuário no histórico
+    if (currentUser) {
+      await saveChatMessage(currentUser.uid, userMessage);
+    }
 
-      // Detectar comandos de navegação
+    try {
+      // Detectar comandos antes de chamar a IA
+      const command = detectCommand(userText);
+      let botResponse = '';
+
+      if (command) {
+        console.log('Comando detectado:', command);
+        
+        // Executar comando
+        const commandResult = await executeCommand(command, {
+          navigate,
+          currentUser: userProfile,
+          onCreateProject: null, // Implementar se necessário
+          onSearch: (term) => console.log('Buscar:', term),
+          onAnalyze: async (target) => {
+            if (target === 'project') {
+              const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+              // Pegar dados do projeto atual do contexto (se disponível)
+              return "Para analisar um projeto, navegue até ele primeiro.";
+            }
+            return "Análise não disponível no momento.";
+          },
+          onSummarize: async () => {
+            return "Para resumir um documento, navegue até o arquivo primeiro e use o botão 'Resumir'.";
+          }
+        });
+
+        botResponse = commandResult || await callGeminiWithRetry(userText, buildSystemPrompt());
+      } else {
+        // Chamada normal para a IA
+        botResponse = await callGeminiWithRetry(userText, buildSystemPrompt());
+      }
+
+      // Detectar comandos de navegação na resposta da IA
       const navigateMatch = botResponse.match(/\[NAVIGATE:(.*?)\]/);
       if (navigateMatch) {
         const path = navigateMatch[1];
@@ -601,11 +697,19 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
         }, 1500);
       }
 
-      setMessages(prev => [...prev, {
+      const assistantMessage = {
         role: 'assistant',
         content: botResponse.trim(),
-        timestamp: new Date()
-      }]);
+        timestamp: new Date(),
+        sessionId
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+
+      // Salvar resposta da IA no histórico
+      if (currentUser) {
+        await saveChatMessage(currentUser.uid, assistantMessage);
+      }
 
     } catch (error) {
       console.error('Erro no chatbot:', error);
@@ -615,13 +719,28 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
       const errorDetail = error.message || 'Erro desconhecido';
       const detailedMessage = `${chatbotConfig.messages.errorMessage}\n\n[DEBUG] Erro: ${errorDetail}`;
       
-      setMessages(prev => [...prev, {
+      const errorMessage = {
         role: 'assistant',
         content: import.meta.env.DEV ? detailedMessage : chatbotConfig.messages.errorMessage,
-        timestamp: new Date()
-      }]);
+        timestamp: new Date(),
+        sessionId
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const clearHistory = async () => {
+    if (!currentUser) return;
+    if (confirm('Deseja limpar o histórico de conversas?')) {
+      await clearOldChatHistory(currentUser.uid, 0); // Limpar tudo
+      setMessages([{
+        role: 'assistant',
+        content: chatbotConfig.messages.welcomeMessage,
+        timestamp: new Date()
+      }]);
     }
   };
 
@@ -671,6 +790,15 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
           </div>
         </div>
         <div className="flex items-center gap-1">
+          {currentUser && (
+            <button
+              onClick={clearHistory}
+              className="p-2 hover:bg-white/10 rounded-lg text-white transition-colors"
+              title="Limpar histórico"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
           <button
             onClick={() => setIsMinimized(!isMinimized)}
             className="p-2 hover:bg-white/10 rounded-lg text-white transition-colors"

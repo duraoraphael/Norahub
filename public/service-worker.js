@@ -1,4 +1,5 @@
-const CACHE_NAME = 'norahub-v2';
+// Bump cache version to force clients to fetch newest assets (avoid old JS using v1beta endpoint)
+const CACHE_NAME = 'norahub-v4';
 const urlsToCache = [
   '/',
   '/index.html',

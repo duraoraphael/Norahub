@@ -8,6 +8,8 @@ import { db } from '../services/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
 import NotificationCenter from '../components/NotificationCenter';
 import ActivityLogger from '../services/activityLogger';
+import FavoriteButton from '../components/FavoriteButton';
+import { getFavorites } from '../services/favorites';
 
 function SelecaoProjeto() {
   const { theme } = useTheme();
@@ -39,7 +41,8 @@ function SelecaoProjeto() {
   // Filtros e Ordenação
   const [searchFilter, setSearchFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'inactive'
-  const [sortBy, setSortBy] = useState('name'); // 'name', 'date', 'recent'
+  const [sortBy, setSortBy] = useState('name'); // 'name', 'date', 'recent', 'favorites'
+  const [favIds, setFavIds] = useState(new Set());
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -81,6 +84,13 @@ function SelecaoProjeto() {
         const dateB = b.updatedAt?.toDate?.() || b.createdAt?.toDate?.() || new Date(0);
         return dateB - dateA;
       });
+    } else if (sortBy === 'favorites') {
+      filtered.sort((a, b) => {
+        const af = favIds.has(a.id) ? 1 : 0;
+        const bf = favIds.has(b.id) ? 1 : 0;
+        if (bf !== af) return bf - af;
+        return (a.nome || '').localeCompare(b.nome || '');
+      });
     }
     
     return filtered;
@@ -89,7 +99,17 @@ function SelecaoProjeto() {
   useEffect(() => {
     fetchProjetos();
     checkPermissions();
+    loadFavorites();
   }, [userProfile]);
+
+  const loadFavorites = async () => {
+    if (!currentUser) { setFavIds(new Set()); return; }
+    const res = await getFavorites(currentUser.uid, 'project');
+    if (res.success) {
+      const ids = new Set(res.favorites.map(f => f.id));
+      setFavIds(ids);
+    }
+  };
 
   const checkPermissions = async () => {
     if (!userProfile) return;
@@ -385,6 +405,7 @@ function SelecaoProjeto() {
                     <option value="name">Nome (A-Z)</option>
                     <option value="date">Data de Criação</option>
                     <option value="recent">Modificados Recentemente</option>
+                    <option value="favorites">Favoritos</option>
                   </select>
                 </div>
               </div>
@@ -415,6 +436,19 @@ function SelecaoProjeto() {
                                 <div className="bg-green-100 p-2 md:p-3 rounded-lg text-[#57B952]"><Briefcase size={20} className="md:w-6 md:h-6" /></div>
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Base Ativa</span>
+                                    <FavoriteButton 
+                                        itemId={projeto.id}
+                                        itemType="project"
+                                        itemData={{ name: projeto.nome }}
+                                        size={18}
+                                        onChange={(next) => {
+                                            setFavIds(prev => {
+                                                const s = new Set(prev);
+                                                if (next) s.add(projeto.id); else s.delete(projeto.id);
+                                                return s;
+                                            });
+                                        }}
+                                    />
                                     {canEditProject(projeto.id) && (
                                         <button 
                                             onClick={(e) => handleDeleteProject(e, projeto.id)}
