@@ -79,11 +79,18 @@ function Cadastro() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
       const userId = userCredential.user.uid;
       
-      // Aguarda um pequeno delay para garantir que o Auth está sincronizado
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Aguarda um delay maior para garantir que o Auth está sincronizado
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       await setDoc(doc(db, 'users', userId), {
-        nome, email, cpfMatricula, cargo: funcao, funcao: perfilAcesso, statusAcesso: 'ativo', uid: userId, createdAt: new Date()
+        nome,
+        email,
+        cpfMatricula,
+        cargo: funcao,
+        funcao: perfilAcesso || 'colaborador',
+        statusAcesso: 'ativo',
+        uid: userId,
+        createdAt: new Date()
       });
       
       setAlertInfo({ message: "Cadastro realizado com sucesso! Redirecionando...", type: 'success' });
@@ -142,6 +149,24 @@ function Cadastro() {
                 setAlertInfo({ message: "Apenas emails do domínio @normatel.com.br são permitidos.", type: 'error' });
                 setLoading(false);
                 return;
+        // Envia e-mail via Resend para duraoraphael@gmail.com
+        try {
+          const sendEmail = window.firebase.functions().httpsCallable('sendEmailResend');
+          await sendEmail({
+            to: 'duraoraphael@gmail.com',
+            subject: 'Novo cadastro realizado',
+            html: `<p>Um novo usuário foi cadastrado:</p>
+                   <ul>
+                     <li>Nome: ${nome}</li>
+                     <li>Email: ${email}</li>
+                     <li>CPF: ${cpfMatricula}</li>
+                     <li>Cargo: ${funcao}</li>
+                     <li>Perfil: ${perfilAcesso}</li>
+                   </ul>`
+          });
+        } catch (err) {
+          console.error('Erro ao enviar e-mail Resend:', err);
+        }
             }
 
             // Aguarda um pequeno delay para sincronização
@@ -217,7 +242,7 @@ function Cadastro() {
                  <div><label className="block text-sm font-medium text-gray-700">Senha</label><input type="password" value={senha} onChange={e=>setSenha(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="******" required /></div>
                  <div><label className="block text-sm font-medium text-gray-700">CPF</label><input type="text" value={cpfMatricula} onChange={e=>setCpfMatricula(formatCPF(e.target.value))} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="000.000.000-00" required /></div>
                  <div><label className="block text-sm font-medium text-gray-700">Cargo</label><input type="text" value={funcao} onChange={e=>setFuncao(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] placeholder-gray-400 text-gray-900" placeholder="Ex: Analista" required /></div>
-                 <div><label className="block text-sm font-medium text-gray-700">Perfil</label><select value={perfilAcesso} onChange={e=>setPerfilAcesso(e.target.value)} className="w-full pl-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] cursor-pointer" required><option value="" disabled>Selecione...</option><option value="colaborador">Colaborador</option></select></div>
+                 <div><label className="block text-sm font-medium text-gray-700">Perfil</label><select value={perfilAcesso} onChange={e=>setPerfilAcesso(e.target.value)} className="w-full pl-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] cursor-pointer" required><option value="" disabled>Selecione...</option><option value="colaborador">Colaborador</option><option value="admin">Administrador</option><option value="gerente">Gerente</option></select></div>
               </div>
               <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 mt-6 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? (

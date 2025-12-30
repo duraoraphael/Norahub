@@ -18,14 +18,28 @@ export function AuthProvider({ children }) {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
           if (user) {
             setCurrentUser(user);
-            try {
+            let tentativas = 0;
+            let perfil = null;
+            while (tentativas < 5 && !perfil) {
+              try {
                 const docRef = doc(db, 'users', user.uid);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    setUserProfile(docSnap.data());
+                  setUserProfile(docSnap.data());
+                  perfil = docSnap.data();
+                } else {
+                  tentativas++;
+                  await new Promise(res => setTimeout(res, 1000));
                 }
-            } catch (error) {
-                console.error("Erro ao buscar perfil:", error);
+              } catch (error) {
+                if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
+                  tentativas++;
+                  await new Promise(res => setTimeout(res, 1000));
+                } else {
+                  console.error("Erro ao buscar perfil:", error);
+                  break;
+                }
+              }
             }
           } else {
             setCurrentUser(null);
