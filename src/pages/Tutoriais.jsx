@@ -9,7 +9,6 @@ import { Search, Download, ExternalLink, Lock, ArrowLeft } from 'lucide-react';
 function Tutoriais() {
   const [busca, setBusca] = useState('');
   const [categoriaAtiva, setCategoriaAtiva] = useState('todos');
-  const [ordenacao, setOrdenacao] = useState('padrao');
   const { currentUser } = useAuth();
   const [favIds, setFavIds] = useState(new Set());
 
@@ -40,12 +39,7 @@ function Tutoriais() {
 
   // Ordenar
   const tutoriaisOrdenados = [...tutoriaisFiltrados].sort((a, b) => {
-    if (ordenacao === 'favoritos') {
-      const af = favIds.has(`tutorial:${a.id}`) ? 1 : 0;
-      const bf = favIds.has(`tutorial:${b.id}`) ? 1 : 0;
-      if (bf !== af) return bf - af;
-    }
-    // fallback: ordem por título
+    // ordem por título
     return String(a.titulo).localeCompare(String(b.titulo));
   });
 
@@ -109,14 +103,6 @@ function Tutoriais() {
             
             {/* Filtros e Ordenação */}
             <div className="flex flex-wrap justify-center lg:justify-end gap-2 w-full lg:w-2/3">
-                <select
-                    value={ordenacao}
-                    onChange={(e) => setOrdenacao(e.target.value)}
-                    className="py-2 px-4 rounded-full text-sm font-semibold bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#57B952]"
-                >
-                    <option value="padrao">Ordenar: Padrão</option>
-                    <option value="favoritos">⭐ Favoritos</option>
-                </select>
                 {categorias.map(cat => (
                     <button 
                         key={cat}

@@ -26,6 +26,7 @@ import InstallPWA from './components/InstallPWA';
 import GlobalSearch from './components/GlobalSearch';
 import KeyboardShortcuts from './components/KeyboardShortcuts';
 import Chatbot from './components/Chatbot';
+import PageTransition from './components/PageTransition';
 import { useState } from 'react';
 
 function App() {
@@ -33,88 +34,90 @@ function App() {
 
   return (
     <BrowserRouter>
-      <InstallPWA />
-      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
-      <KeyboardShortcuts />
-      <Chatbot />
-      <Routes>
-        <Route path="/" element={<Capa />} />
-        
-        <Route path="/login" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
-        <Route path="/tutoriais" element={<Tutoriais />} />
-        <Route path="/favoritos" element={<PrivateRoute><MeusFavoritos /></PrivateRoute>} />
+      <PageTransition>
+        <InstallPWA />
+        <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+        <KeyboardShortcuts />
+        <Chatbot />
+        <Routes>
+          <Route path="/" element={<Capa />} />
+          
+          <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
+          <Route path="/tutoriais" element={<Tutoriais />} />
+          <Route path="/favoritos" element={<PrivateRoute><MeusFavoritos /></PrivateRoute>} />
 
-        {/* Rota Protegida: Só entra se tiver login */}
-        <Route 
-          path="/selecao-projeto" 
-          element={
-            <PrivateRoute>
-              <SelecaoProjeto />
-            </PrivateRoute>
-          } 
-        />
-        
-        <Route 
-          path="/painel-projeto" 
-          element={
-            <PrivateRoute>
-              <PainelProjeto />
-            </PrivateRoute>
-          } 
-        />
-        
-        <Route 
-          path="/gerenciamento-arquivos" 
-          element={
-            <PrivateRoute>
-              <GerenciamentoArquivos />
-            </PrivateRoute>
-          } 
-        />
-        
-        <Route 
-          path="/visualizador-arquivo" 
-          element={
-            <PrivateRoute>
-              <VisualizadorArquivo />
-            </PrivateRoute>
-          } 
-        />
-        
-        <Route 
-          path="/visualizador-dashboard" 
-          element={
-            <PrivateRoute>
-              <VisualizadorDashboard />
-            </PrivateRoute>
-          } 
-        />
-        
-        <Route 
-          path="/construtor-formulario" 
-          element={
-            <PrivateRoute>
-              <ConstrutorFormulario />
-            </PrivateRoute>
-          } 
-        />
+          {/* Rota Protegida: Só entra se tiver login */}
+          <Route 
+            path="/selecao-projeto" 
+            element={
+              <PrivateRoute>
+                <SelecaoProjeto />
+              </PrivateRoute>
+            } 
+          />
+          
+          <Route 
+            path="/painel-projeto" 
+            element={
+              <PrivateRoute>
+                <PainelProjeto />
+              </PrivateRoute>
+            } 
+          />
+          
+          <Route 
+            path="/gerenciamento-arquivos" 
+            element={
+              <PrivateRoute>
+                <GerenciamentoArquivos />
+              </PrivateRoute>
+            } 
+          />
+          
+          <Route 
+            path="/visualizador-arquivo" 
+            element={
+              <PrivateRoute>
+                <VisualizadorArquivo />
+              </PrivateRoute>
+            } 
+          />
+          
+          <Route 
+            path="/visualizador-dashboard" 
+            element={
+              <PrivateRoute>
+                <VisualizadorDashboard />
+              </PrivateRoute>
+            } 
+          />
+          
+          <Route 
+            path="/construtor-formulario" 
+            element={
+              <PrivateRoute>
+                <ConstrutorFormulario />
+              </PrivateRoute>
+            } 
+          />
 
-        {/* As páginas de ação direta continuam públicas ou protegidas conforme sua lógica */}
-        <Route path="/solicitacao-compras" element={<SolicitacaoCompras />} />
-        <Route path="/aprovacao-compras" element={<AprovacaoCompras />} />
+          {/* As páginas de ação direta continuam públicas ou protegidas conforme sua lógica */}
+          <Route path="/solicitacao-compras" element={<SolicitacaoCompras />} />
+          <Route path="/aprovacao-compras" element={<AprovacaoCompras />} />
 
-        <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
-        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-        <Route path="/admin-selection" element={<Navigate to="/admin" replace />} />
-        <Route path="/gerencia" element={<PrivateRoute><Gerencia /></PrivateRoute>} />
-        <Route path="/gerencia-usuarios" element={<PrivateRoute><GerenciaUsuarios /></PrivateRoute>} />
-        <Route path="/gerencia-projetos" element={<PrivateRoute><GerenciaProjetos /></PrivateRoute>} />
-        <Route path="/gerencia-cargos" element={<PrivateRoute><GerenciaCargos /></PrivateRoute>} />
-        <Route path="/admin" element={<PrivateRoute requiredRole="admin"><AdminDashboard /></PrivateRoute>} />
-        <Route path="/admin-cargos" element={<PrivateRoute requiredRole="admin"><AdminCargos /></PrivateRoute>} />
-      </Routes>
+          <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/admin-selection" element={<Navigate to="/admin" replace />} />
+          <Route path="/gerencia" element={<PrivateRoute><Gerencia /></PrivateRoute>} />
+          <Route path="/gerencia-usuarios" element={<PrivateRoute><GerenciaUsuarios /></PrivateRoute>} />
+          <Route path="/gerencia-projetos" element={<PrivateRoute><GerenciaProjetos /></PrivateRoute>} />
+          <Route path="/gerencia-cargos" element={<PrivateRoute><GerenciaCargos /></PrivateRoute>} />
+          <Route path="/admin" element={<PrivateRoute requiredRole="admin"><AdminDashboard /></PrivateRoute>} />
+          <Route path="/admin-cargos" element={<PrivateRoute requiredRole="admin"><AdminCargos /></PrivateRoute>} />
+        </Routes>
+      </PageTransition>
     </BrowserRouter>
   );
 }

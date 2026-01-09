@@ -24,16 +24,20 @@ service cloud.firestore {
       // Qualquer usuário autenticado pode ler todos os usuários
       allow read: if isSignedIn();
       
-      // Usuário pode criar seu próprio perfil
+      // Usuário pode criar seu próprio perfil (permite cadastro inicial)
       allow create: if isSignedIn() && request.auth.uid == userId;
       
       // Usuário pode atualizar seu próprio perfil
       // Admin e gerentes podem atualizar qualquer perfil
       allow update: if isSignedIn() && 
-                      (request.auth.uid == userId || isAdmin() || isManager());
+                      (request.auth.uid == userId || 
+                       exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+                       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.funcao in ['admin', 'gerente']);
       
       // Apenas admin pode deletar
-      allow delete: if isAdmin();
+      allow delete: if isSignedIn() && 
+                      exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+                      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.funcao == 'admin';
     }
     
     // Coleção de projetos

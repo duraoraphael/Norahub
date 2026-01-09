@@ -183,44 +183,45 @@ function Login() {
     <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200">
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
       {/* ThemeToggle removed */}
-      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
-        <button onClick={() => navigate('/')} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
-             <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
+      <header className="relative w-full flex items-center justify-center py-2 sm:py-3 md:py-6 px-2 sm:px-4 md:px-8 border-b border-gray-200 min-h-[48px] sm:min-h-[56px] md:h-20 bg-white">
+        <button onClick={() => navigate('/')} className="absolute left-2 sm:left-4 md:left-8 flex items-center gap-1 sm:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs sm:text-sm shrink-0 z-10">
+             <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
         </button>
-        <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-6 md:h-10 w-auto object-contain" />
+        <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-5 sm:h-6 md:h-10 w-auto object-contain" />
       </header>
-      <main className="flex-grow flex flex-col items-center justify-center p-3 md:p-4">
-        <div className="w-full max-w-sm bg-white p-4 md:p-8 rounded-xl shadow-2xl border border-gray-200">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-6 md:mb-8">Acessar Sistema</h2>
-          <button type="button" onClick={handleMicrosoftLogin} disabled={loading} className="w-full flex items-center justify-center gap-3 bg-[#2F2F2F] hover:bg-[#1a1a1a] text-white font-medium py-3 px-4 rounded-md transition-colors mb-6 border border-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>Entrar com Microsoft
+      <main className="flex-grow flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 min-h-screen">
+        <div className="w-full max-w-xs sm:max-w-sm bg-white rounded-lg sm:rounded-xl shadow-lg sm:shadow-2xl border border-gray-200 p-3 sm:p-4 md:p-8">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-900 mb-4 md:mb-6 sm:mb-5">Acessar Sistema</h2>
+          <button type="button" onClick={handleMicrosoftLogin} disabled={loading} className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-[#2F2F2F] hover:bg-[#1a1a1a] text-white font-medium py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-colors mb-4 sm:mb-6 border border-gray-600 text-xs sm:text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className="sm:w-[21px] sm:h-[21px]" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>
+            <span>Entrar com Microsoft</span>
           </button>
-          <div className="flex items-center gap-4 mb-6"><div className="h-px bg-gray-300 flex-1"></div><span className="text-sm text-gray-500">ou use seu e-mail</span><div className="h-px bg-gray-300 flex-1"></div></div>
+          <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6"><div className="h-px bg-gray-300 flex-1"></div><span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">ou use seu e-mail</span><div className="h-px bg-gray-300 flex-1"></div></div>
           <form onSubmit={handleSubmit}>
-            <div className="mb-4"><label className="block text-sm font-medium text-gray-700">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952]" placeholder="seu.nome@normatel.com.br" required /></div>
-            <div className="mb-6"><label className="block text-sm font-medium text-gray-700">Senha</label><input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952]" placeholder="••••••" required /></div>
-            <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50">{loading ? '...' : 'Entrar'}</button>
+            <div className="mb-3 sm:mb-4"><label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-3 sm:pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] text-sm placeholder-gray-400" placeholder="seu.nome@normatel.com.br" required /></div>
+            <div className="mb-4 sm:mb-6"><label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Senha</label><input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full pl-3 sm:pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] text-sm placeholder-gray-400" placeholder="••••••" required /></div>
+            <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 sm:py-2.5 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 text-sm sm:text-base">{loading ? '...' : 'Entrar'}</button>
           </form>
           
           {/* ÁREA DE LINKS DESTACADA */}
-          <div className="mt-8 space-y-4">
+          <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
             
             <Link 
               to="/esqueceu-senha" 
-              className="block text-center text-sm font-medium text-[#57B952] hover:text-green-700 hover:underline transition-colors"
+              className="block text-center text-xs sm:text-sm font-medium text-[#57B952] hover:text-green-700 hover:underline transition-colors"
             >
                 Esqueceu sua senha?
             </Link>
             
             <div className="relative flex py-2 items-center">
                 <div className="flex-grow border-t border-gray-200"></div>
-                <span className="flex-shrink-0 mx-4 text-gray-400 text-xs uppercase tracking-wider">Novo por aqui?</span>
+                <span className="flex-shrink-0 mx-2 sm:mx-4 text-gray-400 text-xs uppercase tracking-wider">Novo por aqui?</span>
                 <div className="flex-grow border-t border-gray-200"></div>
             </div>
 
             <Link 
                 to="/cadastro" 
-                className="flex items-center justify-center w-full py-2 px-4 border-2 border-[#57B952] text-[#57B952] rounded-lg font-bold hover:bg-[#57B952] hover:text-white transition-all text-sm"
+                className="flex items-center justify-center w-full py-2 sm:py-2.5 px-3 sm:px-4 border-2 border-[#57B952] text-[#57B952] rounded-lg font-bold hover:bg-[#57B952] hover:text-white transition-all text-xs sm:text-sm"
             >
                 Criar Nova Conta
             </Link>
@@ -228,7 +229,7 @@ function Login() {
 
         </div>
       </main>
-      <footer className="w-full py-4 text-center text-gray-500 text-xs shrink-0 bg-white border-t border-gray-200">&copy; 2025 Normatel Engenharia</footer>
+      <footer className="w-full py-3 sm:py-4 text-center text-gray-500 text-xs shrink-0 bg-white border-t border-gray-200 px-2">&copy; 2025 Normatel Engenharia</footer>
     </div>
   );
 }

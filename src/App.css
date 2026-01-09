@@ -8,6 +8,24 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Variáveis para responsividade */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  
+  /* Tamanhos de fonte responsivos */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
 }
 
 /* Remove margens e garante altura total */
@@ -17,6 +35,11 @@ html, body {
   width: 100%;
   height: 100%;
   overflow-x: hidden; /* Evita rolagem lateral */
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* Configuração do Container Principal do React */
@@ -74,4 +97,41 @@ input:-webkit-autofill:active {
     -webkit-text-fill-color: inherit !important;
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px transparent;
+}
+
+/* --- Animações de Transição de Página --- */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Aplica animação de entrada ao container de página */
+.page-enter {
+  animation: pageEnter 0.4s ease-out;
+}
+
+.page-exit {
+  animation: pageExit 0.4s ease-out;
+}
+
+/* Transição suave para rotas */
+.page-transition {
+  animation: pageEnter 0.4s ease-out;
 }

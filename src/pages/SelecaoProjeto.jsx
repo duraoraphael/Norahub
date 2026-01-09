@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Building2, ArrowLeft, Plus, Briefcase, X, Save, FileText, Share, Trash2, User, Shield, Upload, FolderOpen, FileSpreadsheet, File, BarChart3 } from 'lucide-react';
+import { Building2, ArrowLeft, Plus, Briefcase, X, Save, FileText, Share, Trash2, User, Shield, Upload, FolderOpen, FileSpreadsheet, File } from 'lucide-react';
 // ThemeToggle removed: app forced to light mode
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -331,16 +331,6 @@ function SelecaoProjeto() {
                 </div>
                 
                 <div className="flex gap-3 flex-wrap">
-                    {/* BOTÃO DASHBOARD */}
-                    {(isAdmin || canAccessAdmin) && (
-                        <Link 
-                            to="/dashboard" 
-                            className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-blue-200"
-                        >
-                            <BarChart3 size={18} /> Dashboard
-                        </Link>
-                    )}
-                
                     {/* BOTÃO ADMIN - Apenas para Administrador */}
                     {isAdmin && (
                         <Link 
