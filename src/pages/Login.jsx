@@ -52,14 +52,14 @@ function Login() {
         }
       }
       
-      const docSnap = await getDoc(doc(db, 'users', user.uid));
+      const docSnap = await getDoc(doc(db, 'usuarios', user.uid));
       
       if (docSnap.exists()) {
         const data = docSnap.data();
         if (data.statusAcesso === 'pendente') { 
             // Se for Microsoft, atualiza para ativo automaticamente para não travar
             if (user.providerData[0]?.providerId === 'microsoft.com') {
-                await updateDoc(doc(db, 'users', user.uid), { statusAcesso: 'ativo', fotoURL: user.photoURL || null });
+                await updateDoc(doc(db, 'usuarios', user.uid), { statusAcesso: 'ativo', fotoURL: user.photoURL || null });
                 // Força atualização do Auth com a foto
                 if (user.photoURL) {
                   await updateProfile(user, { photoURL: user.photoURL });
@@ -73,7 +73,7 @@ function Login() {
         
         // Se for Microsoft e ativo, atualiza foto
         if (user.providerData[0]?.providerId === 'microsoft.com' && user.photoURL) {
-          await updateDoc(doc(db, 'users', user.uid), { fotoURL: user.photoURL });
+          await updateDoc(doc(db, 'usuarios', user.uid), { fotoURL: user.photoURL });
           await updateProfile(user, { photoURL: user.photoURL });
         }
         
@@ -82,7 +82,7 @@ function Login() {
         
       } else { 
         // Cria perfil se não existir (Primeiro acesso Microsoft -> Ativo)
-        await setDoc(doc(db, 'users', user.uid), {
+        await setDoc(doc(db, 'usuarios', user.uid), {
           nome: user.displayName || 'Usuário Microsoft',
           email: effectiveEmail,
           cargo: 'Colaborador',
@@ -107,7 +107,7 @@ function Login() {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       
       // Verificação específica para senha (mantém a regra de pendente)
-      const docSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
+      const docSnap = await getDoc(doc(db, 'usuarios', userCredential.user.uid));
       if (docSnap.exists()) {
          if (docSnap.data().statusAcesso === 'pendente') {
             await signOut(auth);
@@ -119,7 +119,7 @@ function Login() {
          // Se ativo, o useEffect lá em cima redireciona
       } else {
          // Criar perfil básico caso não exista (usuário legado)
-         await setDoc(doc(db, 'users', userCredential.user.uid), {
+         await setDoc(doc(db, 'usuarios', userCredential.user.uid), {
            nome: userCredential.user.displayName || email.split('@')[0],
            email: userCredential.user.email,
            funcao: 'usuario',

@@ -70,7 +70,7 @@ function AdminDashboard() {
           }
         }
 
-        const userSnapshot = await getDocs(collection(db, 'users'));
+        const userSnapshot = await getDocs(collection(db, 'usuarios'));
         let userLista = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
         // Gerente de usuário só vê usuários que não são admin
@@ -138,7 +138,7 @@ function AdminDashboard() {
           return;
         }
         
-        const userRef = doc(db, 'users', user.id);
+        const userRef = doc(db, 'usuarios', user.id);
         const finalRole = newRole || user.funcao;
         
         await updateDoc(userRef, { 
@@ -172,7 +172,7 @@ function AdminDashboard() {
             }
             
             // Remove o perfil do Firestore
-            await deleteDoc(doc(db, 'users', userId));
+            await deleteDoc(doc(db, 'usuarios', userId));
             
             setUsers(prev => prev.filter(u => u.id !== userId));
             setAlertInfo({ message: 'Usuário removido do Firebase!', type: 'success' });
@@ -204,7 +204,7 @@ function AdminDashboard() {
           return;
         }
         
-        await updateDoc(doc(db, 'users', userId), { funcao: newRole });
+        await updateDoc(doc(db, 'usuarios', userId), { funcao: newRole });
         setUsers(prev => prev.map(u => u.id === userId ? { ...u, funcao: newRole } : u));
         setAlertInfo({ message: "Função alterada.", type: "success" });
     } catch (error) { setAlertInfo({ message: "Erro ao alterar.", type: "error" }); }
@@ -268,7 +268,7 @@ function AdminDashboard() {
         }
       }
 
-      await updateDoc(doc(db, 'users', modalProjetos.userId), { projetos: modalProjetos.projetosAtuais });
+      await updateDoc(doc(db, 'usuarios', modalProjetos.userId), { projetos: modalProjetos.projetosAtuais });
       setUsers(prev => prev.map(u => u.id === modalProjetos.userId ? { ...u, projetos: modalProjetos.projetosAtuais } : u));
       setAlertInfo({ message: `${modalProjetos.userName} agora tem ${modalProjetos.projetosAtuais.length} projeto(s)!`, type: "success" });
       fecharModalProjetos();

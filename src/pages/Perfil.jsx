@@ -53,7 +53,7 @@ function Perfil() {
         if (currentUser.displayName) setPrimeiroNome(currentUser.displayName.split(' ')[0]);
         
         try {
-          const docRef = doc(db, 'users', currentUser.uid);
+          const docRef = doc(db, 'usuarios', currentUser.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
@@ -170,7 +170,7 @@ function Perfil() {
       
       // Atualiza Firestore
       console.log('Salvando no Firestore:', firestoreUpdate);
-      await updateDoc(doc(db, 'users', currentUser.uid), firestoreUpdate);
+      await updateDoc(doc(db, 'usuarios', currentUser.uid), firestoreUpdate);
       console.log('Firestore atualizado com sucesso!');
       
       if (novaSenha) {

@@ -40,7 +40,7 @@ function Dashboard() {
       setLoading(true);
       
       // Buscar usuários
-      const usersSnapshot = await getDocs(collection(db, 'users'));
+      const usersSnapshot = await getDocs(collection(db, 'usuarios'));
       const totalUsers = usersSnapshot.size;
       
       // Buscar projetos

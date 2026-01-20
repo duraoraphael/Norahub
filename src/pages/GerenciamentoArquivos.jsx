@@ -174,7 +174,7 @@ function GerenciamentoArquivos() {
       
       // Notificar gerentes do projeto sobre o upload
       try {
-        const usersQuery = query(collection(db, 'users'), where('funcao', '==', 'gerente'));
+        const usersQuery = query(collection(db, 'usuarios'), where('funcao', '==', 'gerente'));
         const usersSnapshot = await getDocs(usersQuery);
         const managerIds = usersSnapshot.docs.map(doc => doc.id);
         

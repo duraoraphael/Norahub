@@ -9,7 +9,7 @@
       const user = result.user;
       
       // Verifica se o usuário já existe
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
       
       if (userDoc.exists()) {
         setAlertInfo({ message: 'Este usuário já está cadastrado.', type: 'error' });
@@ -19,7 +19,7 @@
       }
 
       // Cria novo usuário no Firestore
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(db, 'usuarios', user.uid), {
         nome: user.displayName || '',
         email: user.email,
         cpfMatricula: '',
@@ -131,7 +131,7 @@ function Cadastro() {
         // Tenta até 3 vezes gravar no Firestore
         for (let i = 0; i < 3; i++) {
           try {
-            await setDoc(doc(db, 'users', userId), userData);
+            await setDoc(doc(db, 'usuarios', userId), userData);
             success = true;
             console.log('Documento criado com sucesso!');
             break;

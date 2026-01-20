@@ -31,7 +31,7 @@ function AdminProjetos() {
       console.log('Projetos carregados:', projList);
 
       // Fetch todos os usuários (removido filtro de status) e garante campo uid
-      const userSnapshot = await getDocs(collection(db, 'users'));
+      const userSnapshot = await getDocs(collection(db, 'usuarios'));
       const userList = userSnapshot.docs.map(doc => ({ id: doc.id, uid: doc.data()?.uid || doc.id, ...doc.data() }));
       setUsuarios(userList);
       console.log('Usuários carregados:', userList);

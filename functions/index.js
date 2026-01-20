@@ -42,6 +42,57 @@ exports.sendEmailResend = functions.region('southamerica-east1').https.onCall(as
   }
 });
 
+// Cloud Function para migrar usuários da coleção 'users' para 'usuarios'
+exports.migrateUsersCollection = functions.region('southamerica-east1').https.onCall(async (data, context) => {
+  // Verifica se quem está chamando é admin
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Usuário não autenticado');
+  }
+
+  // Busca o perfil do usuário que está chamando
+  const callerProfile = await admin.firestore().collection('usuarios').doc(context.auth.uid).get();
+  
+  if (!callerProfile.exists || callerProfile.data().funcao !== 'admin') {
+    throw new functions.https.HttpsError('permission-denied', 'Apenas administradores podem fazer essa migração');
+  }
+
+  try {
+    const db = admin.firestore();
+    const usersCollection = db.collection('users');
+    const usuariosCollection = db.collection('usuarios');
+    
+    // Busca todos os usuários da coleção antiga
+    const snapshot = await usersCollection.get();
+    
+    if (snapshot.empty) {
+      return { success: true, message: 'Nenhum usuário para migrar', count: 0 };
+    }
+
+    let migratedCount = 0;
+    const batch = db.batch();
+
+    // Itera sobre todos os documentos
+    snapshot.forEach(doc => {
+      const userData = doc.data();
+      const docRef = usuariosCollection.doc(doc.id);
+      batch.set(docRef, userData, { merge: true });
+      migratedCount++;
+    });
+
+    // Executa a migração
+    await batch.commit();
+
+    return { 
+      success: true, 
+      message: `${migratedCount} usuários migrados com sucesso para a coleção 'usuarios'`,
+      count: migratedCount 
+    };
+  } catch (error) {
+    console.error('Erro ao migrar usuários:', error);
+    throw new functions.https.HttpsError('internal', 'Erro ao migrar usuários: ' + error.message);
+  }
+});
+
 // Cloud Function para deletar usuário (Auth + Firestore)
 exports.deleteUser = functions.region('southamerica-east1').https.onCall(async (data, context) => {
   // Verifica se quem está chamando é admin
@@ -50,7 +101,7 @@ exports.deleteUser = functions.region('southamerica-east1').https.onCall(async (
   }
 
   // Busca o perfil do usuário que está chamando
-  const callerProfile = await admin.firestore().collection('users').doc(context.auth.uid).get();
+  const callerProfile = await admin.firestore().collection('usuarios').doc(context.auth.uid).get();
   
   if (!callerProfile.exists || callerProfile.data().funcao !== 'admin') {
     throw new functions.https.HttpsError('permission-denied', 'Apenas administradores podem deletar usuários');
@@ -67,7 +118,7 @@ exports.deleteUser = functions.region('southamerica-east1').https.onCall(async (
     await admin.auth().deleteUser(userId);
     
     // 2. Deleta o documento do Firestore
-    await admin.firestore().collection('users').doc(userId).delete();
+    await admin.firestore().collection('usuarios').doc(userId).delete();
 
     return { success: true, message: 'Usuário deletado com sucesso' };
   } catch (error) {

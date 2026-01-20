@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Calendar, MoreVertical, ChevronDown, Check, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../services/firebase';
-import { collection, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, where, writeBatch } from 'firebase/firestore';
+import { migrateUsersCollection } from '../services/migrationService';
 
 function GerenciaUsuarios() {
   const { currentUser, userProfile } = useAuth();
@@ -14,6 +15,7 @@ function GerenciaUsuarios() {
   const [cargos, setCargos] = useState([]);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [editingCargo, setEditingCargo] = useState({ userId: null, cargo: '' });
+  const [migratingData, setMigratingData] = useState(false);
 
   const primeiroNome = userProfile?.nome?.split(' ')[0] || currentUser?.displayName?.split(' ')[0] || 'Usuário';
 
@@ -83,7 +85,7 @@ function GerenciaUsuarios() {
   const handleDeleteUser = async (userId) => {
     if (window.confirm('Tem certeza que deseja deletar este usuário?')) {
       try {
-        await deleteDoc(doc(db, 'users', userId));
+        await deleteDoc(doc(db, 'usuarios', userId));
         showToast('Usuário deletado com sucesso!', 'success');
         fetchData();
       } catch (error) {
@@ -123,6 +125,76 @@ function GerenciaUsuarios() {
     await handleUpdateCargo(userId, editingCargo.cargo);
   };
 
+  const handleMigrateData = async () => {
+    if (!window.confirm('Tem certeza? Isso vai importar os usuários antigos do Firebase para o novo sistema.')) {
+      return;
+    }
+    
+    setMigratingData(true);
+    try {
+      // Primeiro tenta com a Cloud Function
+      try {
+        const result = await migrateUsersCollection();
+        showToast(`Migração realizada! ${result.count} usuários importados.`, 'success');
+      } catch (functionError) {
+        console.log('Cloud Function não disponível, usando migração local...', functionError);
+        // Se a Cloud Function não estiver disponível, faz migração local
+        const batch = writeBatch(db);
+        const usersSnapshot = await getDocs(collection(db, 'users'));
+        
+        if (usersSnapshot.empty) {
+          showToast('Nenhum usuário para importar.', 'info');
+          setMigratingData(false);
+          return;
+        }
+
+        let count = 0;
+        const errors = [];
+        
+        usersSnapshot.forEach(userDoc => {
+          try {
+            const userData = userDoc.data();
+            const docRef = doc(db, 'usuarios', userDoc.id);
+            batch.set(docRef, userData, { merge: true });
+            count++;
+          } catch (err) {
+            errors.push(`Erro ao processar ${userDoc.id}: ${err.message}`);
+          }
+        });
+
+        try {
+          await batch.commit();
+          if (errors.length > 0) {
+            console.warn('Erros durante a migração:', errors);
+            showToast(`Migração parcial! ${count} usuários importados com ${errors.length} erros.`, 'success');
+          } else {
+            showToast(`Migração realizada! ${count} usuários importados.`, 'success');
+          }
+        } catch (batchError) {
+          console.error('Erro ao confirmar batch:', batchError);
+          // Se ainda assim der erro de permissão, mostra mensagem específica
+          if (batchError.message?.includes('permission')) {
+            showToast('Erro de permissão no Firestore. Verifique as Firestore Rules.', 'error');
+          } else {
+            showToast('Erro ao migrar dados: ' + batchError.message, 'error');
+          }
+          setMigratingData(false);
+          return;
+        }
+      }
+
+      // Recarrega os dados
+      setTimeout(() => {
+        fetchData();
+      }, 1000);
+    } catch (error) {
+      console.error('Erro na migração:', error);
+      showToast('Erro ao migrar dados: ' + error.message, 'error');
+    } finally {
+      setMigratingData(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
@@ -160,7 +232,14 @@ function GerenciaUsuarios() {
 
           {usuarios.length === 0 ? (
             <div className="text-center py-20 bg-white rounded-xl shadow border border-gray-200">
-              <p className="text-gray-500">Nenhum usuário cadastrado.</p>
+              <p className="text-gray-500 mb-4">Nenhum usuário cadastrado.</p>
+              <button
+                onClick={handleMigrateData}
+                disabled={migratingData}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+              >
+                {migratingData ? 'Importando usuários...' : 'Importar Usuários do Firebase'}
+              </button>
             </div>
           ) : (
             <div className="space-y-4">
