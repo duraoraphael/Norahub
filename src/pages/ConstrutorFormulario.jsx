@@ -43,8 +43,18 @@ function ConstrutorFormulario() {
       const extras = projetoData.extras || [];
       const formData = extras.find(e => e.name === card.name) || {};
 
-      setFormFields(formData.formFields || []);
-      setFormResponses(formData.formResponses || []);
+      const loadedFields = formData.formFields || [];
+      const loadedResponses = formData.formResponses || [];
+      
+      // Log para debug
+      console.log('✅ Formulário carregado:', {
+        campos: loadedFields.length,
+        respostas: loadedResponses.length,
+        respostasData: loadedResponses
+      });
+
+      setFormFields(loadedFields);
+      setFormResponses(loadedResponses);
       setEmailNotifications(!!formData.emailNotifications);
       setNotificationEmails(formData.notificationEmails || '');
 
@@ -334,14 +344,19 @@ function ConstrutorFormulario() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <p className="text-gray-600">Carregando formulário...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+      </div>
       {/* Toast */}
       {toast.show && (
         <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
@@ -350,7 +365,7 @@ function ConstrutorFormulario() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 bg-gray-900/50 min-h-[56px]">
         <button 
           onClick={() => navigate(-1)} 
           className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
@@ -407,7 +422,7 @@ function ConstrutorFormulario() {
       {/* Content */}
       <main className="flex-1 w-full max-w-4xl mx-auto p-3 md:p-8">
         {mode === 'builder' ? (
-          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-4 md:p-8 border border-white/20">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
               <h2 className="text-lg md:text-xl font-bold text-gray-800">Construtor de Formulário</h2>
               <button
@@ -428,7 +443,7 @@ function ConstrutorFormulario() {
                     onChange={(e) => setEmailNotifications(e.target.checked)}
                     className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded"
                   />
-                  <span className="font-medium text-gray-700">📧 Ativar notificações por email</span>
+                  <span className="font-medium text-gray-300">📧 Ativar notificações por email</span>
                 </label>
               </div>
               {emailNotifications && (
@@ -458,7 +473,7 @@ function ConstrutorFormulario() {
             ) : (
               <div className="space-y-4">
                 {formFields.map((field, idx) => (
-                  <div key={field.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div key={field.id} className="border border-white/20 rounded-lg p-4 bg-white/5 backdrop-blur-sm">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-semibold text-gray-600">Campo {idx + 1}</span>
                       <button
@@ -502,7 +517,7 @@ function ConstrutorFormulario() {
                             onChange={(e) => updateField(field.id, 'required', e.target.checked)}
                             className="w-4 h-4 text-[#57B952] focus:ring-[#57B952] rounded"
                           />
-                          <span className="text-sm text-gray-700">Campo obrigatório</span>
+                          <span className="text-sm text-gray-300">Campo obrigatório</span>
                         </label>
                       </div>
 
@@ -527,9 +542,9 @@ function ConstrutorFormulario() {
             )}
           </div>
         ) : mode === 'preview' ? (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">{card.name}</h2>
-            <p className="text-gray-600 mb-8">{card.description || 'Preencha os campos abaixo'}</p>
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
+            <h2 className="text-2xl font-bold text-gray-100 mb-6">{card.name}</h2>
+            <p className="text-gray-300 mb-8">{card.description || 'Preencha os campos abaixo'}</p>
 
             {formFields.length === 0 ? (
               <div className="text-center py-12 text-gray-400">
@@ -540,7 +555,7 @@ function ConstrutorFormulario() {
               <div className="space-y-6">
                 {formFields.map((field) => (
                   <div key={field.id}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       {field.label} {field.required && <span className="text-red-500">*</span>}
                     </label>
 
@@ -651,7 +666,7 @@ function ConstrutorFormulario() {
                           />
                           <label htmlFor={`file-${field.id}`} className="cursor-pointer">
                             <Upload className="mx-auto mb-3 text-[#57B952]" size={40} />
-                            <p className="text-gray-700 font-medium mb-1">Clique ou arraste arquivos aqui</p>
+                            <p className="text-gray-300 font-medium mb-1">Clique ou arraste arquivos aqui</p>
                             <p className="text-sm text-gray-500">Suporta imagens, PDFs e documentos (máx 10MB cada)</p>
                           </label>
                         </div>
@@ -661,7 +676,7 @@ function ConstrutorFormulario() {
                           <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                             {currentResponse[field.id].map((file, idx) => (
                               <div key={idx} className="relative group">
-                                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-gray-200">
+                                <div className="aspect-square rounded-lg overflow-hidden bg-white/10 border-2 border-white/20">
                                   {file.type?.startsWith('image/') ? (
                                     <img
                                       src={URL.createObjectURL(file)}
@@ -716,9 +731,9 @@ function ConstrutorFormulario() {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800">
+              <h2 className="text-xl font-bold text-gray-100">
                 Respostas Recebidas ({formResponses.length})
               </h2>
               {formResponses.length > 0 && (
@@ -737,68 +752,73 @@ function ConstrutorFormulario() {
               </div>
             ) : (
               <div className="space-y-6">
-                {formResponses.map((response, idx) => (
-                  <div key={response.id} className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                {formResponses.length > 0 && formResponses.map((response, idx) => (
+                  <div key={response.id || idx} className="border border-white/20 rounded-lg p-6 bg-white/5 backdrop-blur-sm">
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
                       <div>
-                        <p className="font-semibold text-gray-800">{response.userName}</p>
+                        <p className="font-semibold text-gray-800">{response.userName || 'Usuário'}</p>
                         <p className="text-xs text-gray-500">
-                          {new Date(response.submittedAt).toLocaleString('pt-BR')}
+                          {response.submittedAt ? new Date(response.submittedAt).toLocaleString('pt-BR') : 'Data não disponível'}
                         </p>
                       </div>
                       <span className="text-sm font-medium text-gray-600">Resposta #{idx + 1}</span>
                     </div>
 
                     <div className="space-y-3">
-                      {formFields.map(field => {
-                        const answer = response.answers[field.id];
-                        const isFileField = field.type === 'file';
-                        const isFileArray = isFileField && Array.isArray(answer) && answer.length > 0 && typeof answer[0] === 'object';
-                        
-                        return (
-                          <div key={field.id}>
-                            <p className="text-sm font-medium text-gray-600 mb-2">{field.label}</p>
-                            {isFileArray ? (
-                              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                {answer.map((file, idx) => (
-                                  <a
-                                    key={idx}
-                                    href={file.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="group relative aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-gray-200 hover:border-[#57B952] transition-all"
-                                  >
-                                    {file.type?.startsWith('image/') ? (
-                                      <img
-                                        src={file.url}
-                                        alt={file.name}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex flex-col items-center justify-center p-3">
-                                        <FileText size={32} className="text-gray-400 mb-2" />
-                                        <p className="text-xs text-gray-600 text-center truncate w-full">{file.name}</p>
+                      {formFields && formFields.length > 0 ? (
+                        formFields.map(field => {
+                          // Tenta acessar a resposta pelo ID do campo
+                          const answer = response.answers?.[field.id];
+                          const isFileField = field.type === 'file';
+                          const isFileArray = isFileField && Array.isArray(answer) && answer.length > 0 && typeof answer[0] === 'object' && answer[0].url;
+                          
+                          return (
+                            <div key={field.id}>
+                              <p className="text-sm font-medium text-gray-600 mb-2">{field.label}</p>
+                              {isFileArray ? (
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                  {answer.map((file, fileIdx) => (
+                                    <a
+                                      key={fileIdx}
+                                      href={file.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="group relative aspect-square rounded-lg overflow-hidden bg-white/10 backdrop-blur-xl border-2 border-white/20 hover:border-[#57B952] transition-all"
+                                    >
+                                      {file.type?.startsWith('image/') ? (
+                                        <img
+                                          src={file.url}
+                                          alt={file.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center p-3">
+                                          <FileText size={32} className="text-gray-400 mb-2" />
+                                          <p className="text-xs text-gray-600 text-center truncate w-full">{file.name}</p>
+                                        </div>
+                                      )}
+                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
+                                        <Download className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={24} />
                                       </div>
-                                    )}
-                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                                      <Download className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={24} />
-                                    </div>
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                                      <p className="text-xs text-white truncate">{file.name}</p>
-                                    </div>
-                                  </a>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-gray-800 mt-1">
-                                {Array.isArray(answer) 
-                                  ? answer.join(', ') 
-                                  : answer || '-'}
-                              </p>
-                            )}
-                          </div>
-                        );
-                      })}
+                                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+                                        <p className="text-xs text-white truncate">{file.name}</p>
+                                      </div>
+                                    </a>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-gray-800 mt-1">
+                                  {Array.isArray(answer) 
+                                    ? answer.length > 0 ? answer.join(', ') : '-'
+                                    : answer ? String(answer) : '-'}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-gray-500 italic">Nenhum campo disponível para exibir respostas</p>
+                      )}
                     </div>
                   </div>
                 ))}

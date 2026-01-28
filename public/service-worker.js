@@ -4,9 +4,8 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/img/noraicon.png',
-  '/img/NoraHub.png',
-  '/img/Normatel Engenharia_PRETO.png',
-  '/img/Normatel Engenharia_BRANCO.png'
+  '/img/Designer (5).png',
+  '/img/Designer (5).png'
 ];
 
 // Instalar Service Worker e fazer cache dos recursos

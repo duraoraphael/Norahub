@@ -52,9 +52,9 @@ function Gerencia() {
 
   if (!isGerente) {
     return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 p-4">
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Acesso Restrito</h1>
+          <h1 className="text-3xl font-bold text-white mb-4">Acesso Restrito</h1>
           <p className="text-gray-500 mb-8">Apenas administradores e gerentes podem acessar a área de gerência.</p>
           <button
             onClick={() => navigate('/selecao-projeto')}
@@ -166,39 +166,44 @@ function Gerencia() {
   const opcoes = getGerenciaOptions();
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50 text-black">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+      </div>
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
+      <header className="relative w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-white/10 bg-gray-900/50 backdrop-blur-md min-h-[56px] z-20">
         <button
           onClick={() => navigate('/selecao-projeto')}
-          className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
+          className="flex items-center gap-1 md:gap-2 text-gray-300 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
         >
           <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
         </button>
 
         <div className="text-center flex-1">
-          <h1 className="text-lg md:text-2xl font-bold text-gray-900">Área de Gerência</h1>
-          <p className="text-gray-500 text-sm mt-1">Bem-vindo, {primeiroNome}!</p>
+          <h1 className="text-lg md:text-2xl font-bold text-white">Área de Gerência</h1>
+          <p className="text-gray-400 text-sm mt-1">Bem-vindo, {primeiroNome}!</p>
         </div>
 
         <div className="w-16"></div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col items-center p-3 md:p-8">
+      <main className="relative z-10 flex-grow flex flex-col items-center p-3 md:p-8">
         <div className="w-full max-w-6xl">
           <div className="mb-4 md:mb-8">
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
+            <h2 className="text-lg md:text-xl font-bold text-white mb-2">
               {userProfile.funcao}
             </h2>
-            <p className="text-gray-500">
+            <p className="text-gray-400">
               Selecione a área que deseja gerenciar:
             </p>
           </div>
 
           {opcoes.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-xl shadow border border-gray-200">
-              <p className="text-gray-500 mb-4">Você não tem permissões para gerenciar nada.</p>
+            <div className="text-center py-20 bg-white/10 backdrop-blur-md rounded-xl shadow border border-white/20">
+              <p className="text-gray-400 mb-4">Você não tem permissões para gerenciar nada.</p>
               <button
                 onClick={() => navigate('/selecao-projeto')}
                 className="text-[#57B952] font-bold hover:underline"
@@ -219,8 +224,8 @@ function Gerencia() {
                     disabled={isDisabled}
                     className={`p-6 rounded-xl shadow border transition-all transform ${
                       isDisabled
-                        ? 'bg-gray-100 opacity-50 cursor-not-allowed border-gray-200'
-                        : 'bg-white border-gray-200 hover:-translate-y-2 hover:shadow-lg cursor-pointer'
+                        ? 'bg-white/5 opacity-50 cursor-not-allowed border-white/10'
+                        : 'bg-white/10 backdrop-blur-md border-white/20 hover:-translate-y-2 hover:shadow-lg cursor-pointer hover:border-white/30'
                     }`}
                   >
                     <div
@@ -228,14 +233,14 @@ function Gerencia() {
                     >
                       <Icon size={24} />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 text-left mb-1">
+                    <h3 className="text-lg font-bold text-white text-left mb-1">
                       {opcao.titulo}
                     </h3>
-                    <p className="text-gray-500 text-sm text-left">
+                    <p className="text-gray-400 text-sm text-left">
                       {opcao.descricao}
                     </p>
                     {isDisabled && (
-                      <p className="text-xs text-red-500 mt-3 text-left font-medium">
+                      <p className="text-xs text-red-400 mt-3 text-left font-medium">
                         Sem permissão
                       </p>
                     )}
@@ -248,7 +253,7 @@ function Gerencia() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 text-center text-gray-500 text-xs border-t border-gray-200 bg-white">
+      <footer className="w-full py-4 text-center text-gray-300 text-xs border-t border-gray-700 bg-gray-900/50">
         &copy; 2025 Parceria Petrobras & Normatel Engenharia
       </footer>
     </div>

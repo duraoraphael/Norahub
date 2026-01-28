@@ -133,14 +133,14 @@ function GerenciaProjetos() {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952]"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50 text-black">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       {/* Toast */}
       {toast.show && (
         <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fade-in`}>
@@ -149,7 +149,7 @@ function GerenciaProjetos() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 bg-gray-900/50 min-h-[56px] text-white">
         <button
           onClick={() => navigate('/gerencia')}
           className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
@@ -158,7 +158,7 @@ function GerenciaProjetos() {
         </button>
 
         <div className="text-center flex-1 mx-2">
-          <h1 className="text-base md:text-2xl font-bold text-gray-900 truncate">Gestão de Projetos</h1>
+          <h1 className="text-base md:text-2xl font-bold text-white truncate">Gestão de Projetos</h1>
         </div>
 
         <button
@@ -174,12 +174,12 @@ function GerenciaProjetos() {
         <div className="w-full max-w-6xl">
           <div className="mb-4 md:mb-8">
             <p className="text-gray-500">
-              Total de projetos: <span className="font-bold text-gray-900">{projetos.length}</span>
+              Total de projetos: <span className="font-bold text-white">{projetos.length}</span>
             </p>
           </div>
 
           {projetos.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-xl shadow border border-gray-200">
+            <div className="text-center py-20 bg-white/10 backdrop-blur-xl rounded-xl shadow-xl border border-white/20">
               <p className="text-gray-500 mb-4">Nenhum projeto cadastrado.</p>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
@@ -193,10 +193,10 @@ function GerenciaProjetos() {
               {projetos.map((projeto) => (
                 <div
                   key={projeto.id}
-                  className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden"
+                  className="bg-white/10 backdrop-blur-xl rounded-lg shadow-xl border border-white/20 overflow-hidden"
                 >
                   <div
-                    className="p-6 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="p-6 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
                     onClick={() => setExpandedProject(expandedProject === projeto.id ? null : projeto.id)}
                   >
                     <div className="flex items-center gap-4 flex-1">
@@ -204,7 +204,7 @@ function GerenciaProjetos() {
                         P
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900">{projeto.nome}</h3>
+                        <h3 className="font-bold text-white">{projeto.nome}</h3>
                         <p className="text-sm text-gray-500">ID: {projeto.id}</p>
                       </div>
                     </div>
@@ -215,42 +215,42 @@ function GerenciaProjetos() {
                   </div>
 
                   {expandedProject === projeto.id && (
-                    <div className="border-t border-gray-200 p-6 bg-gray-50 space-y-4">
+                    <div className="border-t border-white/10 p-6 bg-white/5 space-y-4">
                       {editingProject === projeto.id ? (
                         <>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
                               Nome
                             </label>
                             <input
                               type="text"
                               defaultValue={projeto.nome}
                               onChange={(e) => (projeto.nome = e.target.value)}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
                               URL Forms
                             </label>
                             <input
                               type="text"
                               defaultValue={projeto.urlForms}
                               onChange={(e) => (projeto.urlForms = e.target.value)}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
                               URL SharePoint
                             </label>
                             <input
                               type="text"
                               defaultValue={projeto.urlSharePoint}
                               onChange={(e) => (projeto.urlSharePoint = e.target.value)}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                             />
                           </div>
 
@@ -306,8 +306,8 @@ function GerenciaProjetos() {
                             {projeto.extras && projeto.extras.length > 0 ? (
                               <div className="space-y-2">
                                 {projeto.extras.map((card, index) => (
-                                  <div key={index} className="bg-white p-3 rounded border border-gray-200">
-                                    <p className="font-medium text-gray-900">{card.name}</p>
+                                  <div key={index} className="bg-white/10 p-3 rounded border border-white/20">
+                                    <p className="font-medium text-white">{card.name}</p>
                                     <p className="text-xs text-gray-500">{card.description}</p>
                                   </div>
                                 ))}
@@ -351,45 +351,45 @@ function GerenciaProjetos() {
       {/* Modal Criar Projeto */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Novo Projeto</h2>
+          <div className="bg-gray-800 backdrop-blur-xl rounded-xl shadow-2xl max-w-md w-full p-8 border border-gray-700">
+            <h2 className="text-2xl font-bold text-white mb-6">Novo Projeto</h2>
 
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Nome do Projeto
                 </label>
                 <input
                   type="text"
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                   placeholder="Digite o nome"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   URL Forms
                 </label>
                 <input
                   type="text"
                   value={newProjectUrlForms}
                   onChange={(e) => setNewProjectUrlForms(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                   placeholder="Cole a URL"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   URL SharePoint
                 </label>
                 <input
                   type="text"
                   value={newProjectUrlSharePoint}
                   onChange={(e) => setNewProjectUrlSharePoint(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                   placeholder="Cole a URL"
                 />
               </div>
@@ -404,7 +404,7 @@ function GerenciaProjetos() {
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-lg font-bold transition-colors"
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold transition-colors"
                 >
                   Cancelar
                 </button>
@@ -417,45 +417,45 @@ function GerenciaProjetos() {
       {/* Modal Criar Card */}
       {isCardModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Novo Card</h2>
+          <div className="bg-gray-800 backdrop-blur-xl rounded-xl shadow-2xl max-w-md w-full p-8 border border-gray-700">
+            <h2 className="text-2xl font-bold text-white mb-6">Novo Card</h2>
 
             <form onSubmit={handleCreateCard} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Nome do Card
                 </label>
                 <input
                   type="text"
                   value={newCard.nome}
                   onChange={(e) => setNewCard({ ...newCard, nome: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                   placeholder="Digite o nome"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Descrição
                 </label>
                 <input
                   type="text"
                   value={newCard.descricao}
                   onChange={(e) => setNewCard({ ...newCard, descricao: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                   placeholder="Digite a descrição"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   URL
                 </label>
                 <input
                   type="text"
                   value={newCard.url}
                   onChange={(e) => setNewCard({ ...newCard, url: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                   placeholder="Cole a URL"
                 />
               </div>
@@ -473,7 +473,7 @@ function GerenciaProjetos() {
                     setIsCardModalOpen(false);
                     setNewCard({ nome: '', descricao: '', url: '' });
                   }}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-lg font-bold transition-colors"
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold transition-colors"
                 >
                   Cancelar
                 </button>
@@ -484,7 +484,7 @@ function GerenciaProjetos() {
       )}
 
       {/* Footer */}
-      <footer className="w-full py-4 text-center text-gray-500 text-xs border-t border-gray-200 bg-white">
+      <footer className="w-full py-4 text-center text-gray-300 text-xs border-t border-gray-700 bg-gray-900/50">
         &copy; 2025 Parceria Petrobras & Normatel Engenharia
       </footer>
     </div>

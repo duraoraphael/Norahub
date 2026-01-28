@@ -19,7 +19,7 @@ export function ThemeToggle() {
               const Icon = t.icon;
               const isActive = theme === t.name;
               return (
-                <button key={t.name} onClick={() => setTheme(t.name)} className={`p-1.5 rounded-full transition-all duration-200 ${isActive ? 'bg-white text-[#57B952] shadow-sm scale-110' : 'text-white/80 hover:bg-white/20 hover:text-white'}`} title={t.label}>
+                <button key={t.name} onClick={() => setTheme(t.name)} className={`p-1.5 rounded-full transition-all duration-200 ${isActive ? 'bg-white/20 backdrop-blur-md text-[#57B952] shadow-sm scale-110 border border-white/30' : 'text-white/80 hover:bg-white/20 hover:text-white'}`} title={t.label}>
                   <Icon size={18} />
                 </button>
               );

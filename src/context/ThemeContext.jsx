@@ -1,28 +1,28 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const initialState = {
-  theme: 'light',
+  theme: 'dark',
   setTheme: () => null,
 };
 
 const ThemeProviderContext = createContext(initialState);
 
 export function ThemeProvider({ children, ...props }) {
-  // Forçar tema claro: o app deve rodar apenas em modo claro.
-  const theme = 'light';
+  // Forçar tema escuro: o app deve rodar apenas em modo escuro.
+  const theme = 'dark';
 
   useEffect(() => {
     const root = window.document.documentElement;
 
-    const applyLight = () => {
-      // remove any dark class and ensure light is present
-      root.classList.remove('dark');
-      root.classList.add('light');
-      try { localStorage.setItem('vite-ui-theme', 'light'); } catch (e) {}
+    const applyDark = () => {
+      // remove any light class and ensure dark is present
+      root.classList.remove('light');
+      root.classList.add('dark');
+      try { localStorage.setItem('vite-ui-theme', 'dark'); } catch (e) {}
     };
 
     // Aplica imediatamente (independente do modo do sistema)
-    applyLight();
+    applyDark();
 
     // Detecta mudanças no modo do sistema e, se o sistema ficar em dark,
     // garante que a aplicação permaneça em modo claro (branco).

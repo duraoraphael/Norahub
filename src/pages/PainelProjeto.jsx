@@ -14,82 +14,82 @@ function PainelProjeto() {
     const configs = {
       link: { 
         icon: ExternalLink, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Acessar',
         needsUpload: false
       },
       documents: { 
         icon: FolderOpen, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Ver Arquivos',
         needsUpload: true
       },
       reports: { 
         icon: BarChart3, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Ver Relatório',
         needsUpload: false
       },
       files: { 
         icon: File, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Ver PDFs',
         needsUpload: true
       },
       spreadsheets: { 
         icon: FileSpreadsheet, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Ver Planilhas',
         needsUpload: true
       },
       forms: { 
         icon: ClipboardList, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Acessar Formulário',
         needsUpload: false,
         isCustomForm: true
       },
       approvals: { 
         icon: CheckCircle, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Ver Aprovações',
         needsUpload: false
       },
       inventory: { 
         icon: PackageCheck, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Acessar Estoque',
         needsUpload: false
       },
       financial: { 
         icon: DollarSign, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Ver Financeiro',
         needsUpload: false
       },
       hr: { 
         icon: Users, 
-        bgColor: 'bg-green-100', 
-        textColor: 'text-[#57B952]', 
-        btnColor: 'bg-[#57B952] hover:bg-green-600',
+        bgColor: 'bg-green-500/20', 
+        textColor: 'text-green-400', 
+        btnColor: 'bg-[#57B952] hover:bg-[#3d8c38]',
         label: 'Acessar RH',
         needsUpload: false
       }
@@ -201,7 +201,7 @@ function PainelProjeto() {
 
   if (!projeto) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
             <button onClick={() => navigate('/selecao-projeto')} className="text-[#57B952]">Voltar para Seleção</button>
         </div>
       );
@@ -349,18 +349,26 @@ function PainelProjeto() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 text-black">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200 text-white">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+    </div>
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-between py-4 px-4 md:px-8 border-b border-gray-200 min-h-[64px] bg-white">
-        <button onClick={() => navigate('/selecao-projeto')} className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
+      <header className="relative w-full flex items-center justify-between py-4 px-4 md:px-8 border-b border-gray-700 min-h-[64px] bg-gray-900/50 backdrop-blur-md z-20">
+        <button onClick={() => navigate('/selecao-projeto')} className="flex items-center gap-1 md:gap-2 text-gray-300 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
              <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Trocar</span><span className="hidden md:inline"> Projeto</span>
         </button>
         
         <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2 md:gap-4">
-                <img src="/img/NoraHub.png" alt="Logo Nora" className="h-6 md:h-10 w-auto object-contain" />
-            <span className="text-gray-600 text-xl md:text-2xl font-light">|</span>
-            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-6 md:h-10 w-auto object-contain" />
+                <img src="/img/Designer (6).png" alt="Logo Nora" className="h-10 sm:h-12 md:h-14 w-auto object-contain drop-shadow-lg" />
+            <span className="text-gray-400 text-xl md:text-2xl font-light">|</span>
+            <img 
+              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+              alt="Logo Normatel" 
+              className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
+            />
         </div>
 
         {/* PERFIL NO CANTO DIREITO */}
@@ -369,11 +377,11 @@ function PainelProjeto() {
                 <NotificationCenter />
                 <button 
                     onClick={() => navigate('/perfil')} 
-                    className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-white/10 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
                 >
-                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
+                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-400" />}
                 </button>
-                <span className="text-xs md:text-base font-semibold text-gray-800 hidden xs:block truncate max-w-[80px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
+                <span className="text-xs md:text-base font-semibold text-white hidden xs:block truncate max-w-[80px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
             </div>
         )}
       </header>
@@ -385,14 +393,14 @@ function PainelProjeto() {
                 <h2 className="text-xs md:text-sm font-bold text-[#57B952] uppercase tracking-widest mb-1 md:mb-2">
                     Ambiente de Trabalho
                 </h2>
-                <h1 className="text-xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+                <h1 className="text-xl md:text-3xl lg:text-4xl font-bold text-white">
                     {projeto.nome}
                 </h1>
-                <p className="text-xs md:text-base text-gray-500 mt-1 md:mt-2">Selecione a operação desejada para esta base.</p>
+                <p className="text-xs md:text-base text-gray-400 mt-1 md:mt-2">Selecione a operação desejada para esta base.</p>
                 {canEdit && (
                   <button
                     onClick={openEditModal}
-                    className="mt-4 inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-semibold text-sm border border-blue-200 transition-colors shadow-sm"
+                    className="mt-4 inline-flex items-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-lg font-semibold text-sm border border-blue-400/30 transition-colors shadow-sm"
                   >
                     <Settings size={16} /> Editar Base
                   </button>
@@ -406,13 +414,13 @@ function PainelProjeto() {
                     href={linkSolicitacao}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer min-h-[280px] md:h-[320px]"
+                    className="group bg-white/10 backdrop-blur-md p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer min-h-[280px] md:h-[320px]"
                 >
-                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-green-600">
+                    <div className="bg-green-500/20 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-green-400">
                         <FileText size={36} className="md:w-12 md:h-12" />
                     </div>
-                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">Nova Solicitação</h2>
-                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+                    <h2 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">Nova Solicitação</h2>
+                    <p className="text-sm md:text-base text-gray-400 mb-4 md:mb-6">
                         Preencher formulário de requisição para {projeto.nome}.
                     </p>
                     <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
@@ -425,13 +433,13 @@ function PainelProjeto() {
                     href={linkAprovacao}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer min-h-[280px] md:h-[320px]"
+                    className="group bg-white/10 backdrop-blur-md p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 w-full md:w-1/2 cursor-pointer min-h-[280px] md:h-[320px]"
                 >
-                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                    <div className="bg-green-500/20 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-green-400">
                         <CheckCircle size={36} className="md:w-12 md:h-12" />
                     </div>
-                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">Aprovação / Painel</h2>
-                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+                    <h2 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">Aprovação / Painel</h2>
+                    <p className="text-sm md:text-base text-gray-400 mb-4 md:mb-6">
                         Acessar lista de pedidos e aprovações desta base.
                     </p>
                     <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base">
@@ -451,7 +459,7 @@ function PainelProjeto() {
                             {(canEdit || canEditCards) && (
                                 <button 
                                     onClick={(e) => handleDeleteExtraCard(e, extra.originalIndex)}
-                                    className="absolute top-4 right-4 z-20 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors shadow-md bg-white"
+                                    className="absolute top-4 right-4 z-20 p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/20 rounded-full transition-colors shadow-md bg-white/10 backdrop-blur-md"
                                     title="Excluir Card"
                                 >
                                     <Trash2 size={18} />
@@ -460,13 +468,13 @@ function PainelProjeto() {
                             {config.isCustomForm ? (
                                 <div 
                                     onClick={() => navigate('/construtor-formulario', { state: { card: extra, projeto } })}
-                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
+                                    className="group bg-white/10 backdrop-blur-md p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
                                 >
-                                    <div className="bg-green-100 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-[#57B952]">
+                                    <div className="bg-green-500/20 p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform text-green-400">
                                         <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
-                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
-                                    <p className="text-gray-500 mb-6">
+                                    <h2 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">{extra.name}</h2>
+                                    <p className="text-gray-400 mb-6">
                                         {extra.description || 'Criar e gerenciar formulário personalizado.'}
                                     </p>
                                     <div className="mt-auto flex items-center gap-2 bg-[#57B952] hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-colors shadow-md">
@@ -476,13 +484,13 @@ function PainelProjeto() {
                             ) : config.needsUpload ? (
                                 <div 
                                     onClick={() => navigate('/gerenciamento-arquivos', { state: { card: extra, projeto } })}
-                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
+                                    className="group bg-white/10 backdrop-blur-md p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
                                 >
                                     <div className={`${config.bgColor} p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform ${config.textColor}`}>
                                         <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
-                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
-                                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+                                    <h2 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">{extra.name}</h2>
+                                    <p className="text-sm md:text-base text-gray-400 mb-4 md:mb-6">
                                         {extra.description || 'Gerenciar arquivos deste card.'}
                                     </p>
                                     <div className={`mt-auto flex items-center gap-2 ${config.btnColor} text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base`}>
@@ -492,13 +500,13 @@ function PainelProjeto() {
                             ) : extra.type === 'reports' ? (
                                 <div 
                                     onClick={() => navigate('/visualizador-dashboard', { state: { dashboardUrl: extra.url, dashboardName: extra.name, projeto } })}
-                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
+                                    className="group bg-white/10 backdrop-blur-md p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] w-full"
                                 >
                                     <div className={`${config.bgColor} p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform ${config.textColor}`}>
                                         <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
-                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
-                                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+                                    <h2 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">{extra.name}</h2>
+                                    <p className="text-sm md:text-base text-gray-400 mb-4 md:mb-6">
                                         {extra.description || 'Visualizar dashboard e relatórios.'}
                                     </p>
                                     <div className={`mt-auto flex items-center gap-2 ${config.btnColor} text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base`}>
@@ -510,13 +518,13 @@ function PainelProjeto() {
                                     href={extra.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="group bg-white p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] block w-full"
+                                    className="group bg-white/10 backdrop-blur-md p-4 md:p-10 rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 flex flex-col items-center text-center transition-all transform hover:-translate-y-2 cursor-pointer min-h-[280px] md:h-[320px] block w-full"
                                 >
                                     <div className={`${config.bgColor} p-4 md:p-6 rounded-full mb-4 md:mb-6 group-hover:scale-110 transition-transform ${config.textColor}`}>
                                         <CardIcon size={36} className="md:w-12 md:h-12" />
                                     </div>
-                                    <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-2 md:mb-3">{extra.name}</h2>
-                                    <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+                                    <h2 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">{extra.name}</h2>
+                                    <p className="text-sm md:text-base text-gray-400 mb-4 md:mb-6">
                                         {extra.description || 'Acesse este recurso adicional.'}
                                     </p>
                                     <div className={`mt-auto flex items-center gap-2 ${config.btnColor} text-white px-4 md:px-6 py-2 rounded-full font-bold transition-colors shadow-md text-sm md:text-base`}>
@@ -532,16 +540,16 @@ function PainelProjeto() {
         </div>
       </main>
       
-      <footer className="w-full py-6 text-center text-gray-500 text-xs shrink-0 border-t border-gray-200 bg-white">
+      <footer className="w-full py-6 text-center text-gray-400 text-xs shrink-0 border-t border-white/20 bg-white/5">
         &copy; 2025 Parceria Petrobras & Normatel Engenharia
       </footer>
 
       {/* MODAL DE EDIÇÃO */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 animate-fade-in flex flex-col max-h-[90vh]">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100 flex-shrink-0">
-              <h2 className="text-xl font-bold text-gray-900">Editar Base</h2>
+          <div className="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md border border-white/20 animate-fade-in flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-6 border-b border-white/10 flex-shrink-0">
+              <h2 className="text-xl font-bold text-white">Editar Base</h2>
               <button
                 onClick={() => setIsEditModalOpen(false)}
                 className="text-gray-400 hover:text-red-500 transition-colors"
@@ -552,7 +560,7 @@ function PainelProjeto() {
             <form onSubmit={handleSaveEdit} className="flex flex-col flex-1 overflow-hidden">
               <div className="p-6 space-y-4 overflow-y-auto flex-1">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Nome do Projeto
                 </label>
                 <input
@@ -560,12 +568,12 @@ function PainelProjeto() {
                   placeholder="Ex: Projeto 743 - Facilities"
                   value={editedName}
                   onChange={(e) => setEditedName(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/20 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#57B952] outline-none"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
                   <FileText size={14} /> Link do Forms (Solicitação)
                 </label>
                 <input
@@ -573,12 +581,12 @@ function PainelProjeto() {
                   placeholder="https://forms..."
                   value={editedUrlForms}
                   onChange={(e) => setEditedUrlForms(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/20 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#57B952] outline-none"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
                   <CheckCircle size={14} /> Link do SharePoint (Aprovação)
                 </label>
                 <input
@@ -586,44 +594,44 @@ function PainelProjeto() {
                   placeholder="https://sharepoint..."
                   value={editedUrlSharePoint}
                   onChange={(e) => setEditedUrlSharePoint(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/20 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#57B952] outline-none"
                   required
                 />
               </div>
 
               <div className="pt-2">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-300">
                     Cards adicionais (opcional)
                   </label>
                   <button
                     type="button"
                     onClick={addExtraField}
-                    className="text-sm text-[#57B952] hover:text-green-700 font-semibold flex items-center gap-1"
+                    className="text-sm text-[#57B952] hover:text-green-500 font-semibold flex items-center gap-1"
                   >
                     <Plus size={14} /> Adicionar card
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-400 mt-1">
                   {editedExtras.length} card(s) configurado(s)
                 </p>
-                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 border border-white/20 rounded-lg p-4 bg-white/5">
                   {editedExtras.map((field, idx) => (
-                    <div key={idx} className="border border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50">
+                    <div key={idx} className="border border-white/20 rounded-lg p-3 space-y-2 bg-white/5">
                       <input
                         type="text"
                         placeholder="Nome do Card"
                         value={field.name}
                         onChange={(e) => updateExtraField(idx, 'name', e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                        className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
                       />
                       
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Tipo de Card</label>
+                        <label className="block text-xs font-medium text-gray-400 mb-1">Tipo de Card</label>
                         <select
                           value={field.type || 'link'}
                           onChange={(e) => updateExtraField(idx, 'type', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                          className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
                         >
                           <option value="link">🔗 Link Externo</option>
                           <option value="documents">📁 Pasta de Documentos</option>
@@ -643,7 +651,7 @@ function PainelProjeto() {
                         placeholder="Descrição (opcional)"
                         value={field.description}
                         onChange={(e) => updateExtraField(idx, 'description', e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                        className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none text-sm placeholder-gray-400"
                       />
                       
                       {!getCardConfig(field.type || 'link').needsUpload && !getCardConfig(field.type || 'link').isCustomForm && (
@@ -652,7 +660,7 @@ function PainelProjeto() {
                           placeholder="URL (https://...)"
                           value={field.url}
                           onChange={(e) => updateExtraField(idx, 'url', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                          className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none text-sm placeholder-gray-400"
                         />
                       )}
                       
@@ -723,7 +731,7 @@ function PainelProjeto() {
       {/* TOAST NOTIFICATION */}
       {toast.show && (
         <div className="fixed top-8 right-8 z-[200] animate-fade-in">
-          <div className={`border-l-4 ${toast.type === 'error' ? 'bg-white border-red-500' : 'bg-white border-[#57B952]'} rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px]`}>
+          <div className={`border-l-4 ${toast.type === 'error' ? 'bg-red-500/20 border-red-500' : 'bg-green-500/20 border-[#57B952]'} rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px] text-white`}>
             <div className={`${toast.type === 'error' ? 'bg-red-100' : 'bg-green-100'} p-2 rounded-full`}>
               {toast.type === 'error' ? (
                 <X size={24} className="text-red-500" />
@@ -732,7 +740,7 @@ function PainelProjeto() {
               )}
             </div>
             <div>
-              <p className="font-bold text-gray-900">{toast.type === 'error' ? 'Erro!' : 'Sucesso!'}</p>
+              <p className="font-bold text-white">{toast.type === 'error' ? 'Erro!' : 'Sucesso!'}</p>
               <p className="text-sm text-gray-600">{toast.message}</p>
             </div>
           </div>
@@ -742,13 +750,13 @@ function PainelProjeto() {
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete.open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[300]">
-          <div className="bg-white rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Confirmar exclusão</h3>
+          <div className="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4 border border-gray-700 text-white">
+            <h3 className="text-lg font-bold text-white mb-2">Confirmar exclusão</h3>
             <p className="text-sm text-gray-600 mb-6">Tem certeza que deseja remover este card adicional? Esta ação não pode ser desfeita.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDelete({ open: false, cardIndex: null })}
-                className="flex-1 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold transition-colors"
+                className="flex-1 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors"
               >
                 Cancelar
               </button>

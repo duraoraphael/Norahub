@@ -52,14 +52,14 @@ function Login() {
         }
       }
       
-      const docSnap = await getDoc(doc(db, 'usuarios', user.uid));
+      const docSnap = await getDoc(doc(db, 'users', user.uid));
       
       if (docSnap.exists()) {
         const data = docSnap.data();
         if (data.statusAcesso === 'pendente') { 
             // Se for Microsoft, atualiza para ativo automaticamente para não travar
             if (user.providerData[0]?.providerId === 'microsoft.com') {
-                await updateDoc(doc(db, 'usuarios', user.uid), { statusAcesso: 'ativo', fotoURL: user.photoURL || null });
+                await updateDoc(doc(db, 'users', user.uid), { statusAcesso: 'ativo', fotoURL: user.photoURL || null });
                 // Força atualização do Auth com a foto
                 if (user.photoURL) {
                   await updateProfile(user, { photoURL: user.photoURL });
@@ -73,7 +73,7 @@ function Login() {
         
         // Se for Microsoft e ativo, atualiza foto
         if (user.providerData[0]?.providerId === 'microsoft.com' && user.photoURL) {
-          await updateDoc(doc(db, 'usuarios', user.uid), { fotoURL: user.photoURL });
+          await updateDoc(doc(db, 'users', user.uid), { fotoURL: user.photoURL });
           await updateProfile(user, { photoURL: user.photoURL });
         }
         
@@ -82,7 +82,7 @@ function Login() {
         
       } else { 
         // Cria perfil se não existir (Primeiro acesso Microsoft -> Ativo)
-        await setDoc(doc(db, 'usuarios', user.uid), {
+        await setDoc(doc(db, 'users', user.uid), {
           nome: user.displayName || 'Usuário Microsoft',
           email: effectiveEmail,
           cargo: 'Colaborador',
@@ -107,7 +107,7 @@ function Login() {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       
       // Verificação específica para senha (mantém a regra de pendente)
-      const docSnap = await getDoc(doc(db, 'usuarios', userCredential.user.uid));
+      const docSnap = await getDoc(doc(db, 'users', userCredential.user.uid));
       if (docSnap.exists()) {
          if (docSnap.data().statusAcesso === 'pendente') {
             await signOut(auth);
@@ -119,7 +119,7 @@ function Login() {
          // Se ativo, o useEffect lá em cima redireciona
       } else {
          // Criar perfil básico caso não exista (usuário legado)
-         await setDoc(doc(db, 'usuarios', userCredential.user.uid), {
+         await setDoc(doc(db, 'users', userCredential.user.uid), {
            nome: userCredential.user.displayName || email.split('@')[0],
            email: userCredential.user.email,
            funcao: 'usuario',
@@ -177,59 +177,93 @@ function Login() {
     } finally { setLoading(false); }
   };
 
-  if (authLoading) return <div className="min-h-screen w-full flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952]"></div></div>;
+  if (authLoading) return <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-white to-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952]"></div></div>;
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-1/3 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+      </div>
+      
       {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
       {/* ThemeToggle removed */}
-      <header className="relative w-full flex items-center justify-center py-2 sm:py-3 md:py-6 px-2 sm:px-4 md:px-8 border-b border-gray-200 min-h-[48px] sm:min-h-[56px] md:h-20 bg-white">
-        <button onClick={() => navigate('/')} className="absolute left-2 sm:left-4 md:left-8 flex items-center gap-1 sm:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs sm:text-sm shrink-0 z-10">
-             <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
+      <header className="relative w-full flex items-center justify-center py-4 sm:py-5 md:py-8 px-2 sm:px-4 md:px-8 min-h-[56px] sm:min-h-[64px] md:h-24 bg-white/5 backdrop-blur-md border-b border-white/10 z-20">
+        <button onClick={() => navigate('/')} className="absolute left-2 sm:left-4 md:left-8 flex items-center gap-2 text-gray-300 hover:text-[#57B952] hover:bg-white/5 px-4 py-2 rounded-lg transition-all font-semibold text-xs sm:text-sm backdrop-blur-sm">
+             <ArrowLeft size={18} className="sm:w-5 sm:h-5" /> <span className="hidden sm:inline">Voltar</span>
         </button>
-        <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-5 sm:h-6 md:h-10 w-auto object-contain" />
+        <img 
+          src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+          alt="Logo" 
+          className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
+        />
       </header>
-      <main className="flex-grow flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 min-h-screen">
-        <div className="w-full max-w-xs sm:max-w-sm bg-white rounded-lg sm:rounded-xl shadow-lg sm:shadow-2xl border border-gray-200 p-3 sm:p-4 md:p-8">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-900 mb-4 md:mb-6 sm:mb-5">Acessar Sistema</h2>
-          <button type="button" onClick={handleMicrosoftLogin} disabled={loading} className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-[#2F2F2F] hover:bg-[#1a1a1a] text-white font-medium py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-colors mb-4 sm:mb-6 border border-gray-600 text-xs sm:text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className="sm:w-[21px] sm:h-[21px]" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>
-            <span>Entrar com Microsoft</span>
+      <main className="flex-grow flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 min-h-screen relative z-10">
+        <div className="w-full max-w-xs sm:max-w-sm bg-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 p-6 sm:p-8 md:p-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-center text-white mb-8 md:mb-10">Acessar Sistema</h2>
+          
+          <button type="button" onClick={handleMicrosoftLogin} disabled={loading} className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#2F2F2F] to-[#1a1a1a] hover:from-[#444] hover:to-[#222] text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all mb-6 sm:mb-8 border border-white/20 hover:border-white/40 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" className="sm:w-6 sm:h-6" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>
+            <span>{loading ? 'Processando...' : 'Entrar com Microsoft'}</span>
           </button>
-          <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6"><div className="h-px bg-gray-300 flex-1"></div><span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">ou use seu e-mail</span><div className="h-px bg-gray-300 flex-1"></div></div>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3 sm:mb-4"><label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-3 sm:pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] text-sm placeholder-gray-400" placeholder="seu.nome@normatel.com.br" required /></div>
-            <div className="mb-4 sm:mb-6"><label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Senha</label><input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full pl-3 sm:pl-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#57B952] text-sm placeholder-gray-400" placeholder="••••••" required /></div>
-            <button type="submit" disabled={loading} className="w-full bg-[#57B952] text-white font-bold py-2 sm:py-2.5 rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 text-sm sm:text-base">{loading ? '...' : 'Entrar'}</button>
+          
+          <div className="flex items-center gap-4 mb-6 sm:mb-8">
+            <div className="h-px bg-white/20 flex-1"></div>
+            <span className="text-xs sm:text-sm text-gray-200 whitespace-nowrap font-medium">ou email corporativo</span>
+            <div className="h-px bg-white/20 flex-1"></div>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+            <div className="space-y-2">
+              <label className="block text-xs sm:text-sm font-semibold text-gray-200 ml-1">Email</label>
+              <div className="relative">
+                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400 text-white text-sm sm:text-base outline-none backdrop-blur-sm transition-all hover:bg-white/15" placeholder="seu.nome@normatel.com.br" required />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-xs sm:text-sm font-semibold text-gray-200 ml-1">Senha</label>
+              <div className="relative">
+                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400 text-white text-sm sm:text-base outline-none backdrop-blur-sm transition-all hover:bg-white/15" placeholder="••••••" required />
+              </div>
+            </div>
+            
+            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-[#57B952] to-[#3d8c38] hover:from-[#6BC962] hover:to-[#45a241] text-white font-bold py-3 sm:py-4 rounded-xl transition-all mt-6 sm:mt-8 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base">
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
           </form>
           
           {/* ÁREA DE LINKS DESTACADA */}
-          <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
-            
+          <div className="mt-8 sm:mt-10 space-y-4">
             <Link 
               to="/esqueceu-senha" 
-              className="block text-center text-xs sm:text-sm font-medium text-[#57B952] hover:text-green-700 hover:underline transition-colors"
+              className="block text-center text-xs sm:text-sm font-semibold text-[#57B952] hover:text-[#6BC962] hover:underline transition-all"
             >
-                Esqueceu sua senha?
+              Esqueceu sua senha?
             </Link>
             
-            <div className="relative flex py-2 items-center">
-                <div className="flex-grow border-t border-gray-200"></div>
-                <span className="flex-shrink-0 mx-2 sm:mx-4 text-gray-400 text-xs uppercase tracking-wider">Novo por aqui?</span>
-                <div className="flex-grow border-t border-gray-200"></div>
+            <div className="relative flex py-3 items-center">
+              <div className="flex-grow border-t border-white/20"></div>
+              <span className="flex-shrink-0 mx-3 text-gray-600 text-xs uppercase tracking-widest font-bold">Novo aqui?</span>
+              <div className="flex-grow border-t border-white/20"></div>
             </div>
 
             <Link 
-                to="/cadastro" 
-                className="flex items-center justify-center w-full py-2 sm:py-2.5 px-3 sm:px-4 border-2 border-[#57B952] text-[#57B952] rounded-lg font-bold hover:bg-[#57B952] hover:text-white transition-all text-xs sm:text-sm"
+              to="/cadastro" 
+              className="flex items-center justify-center w-full py-3 sm:py-4 px-4 sm:px-6 border-2 border-[#57B952] text-[#57B952] rounded-xl font-bold hover:bg-[#57B952]/20 hover:border-[#6BC962] hover:text-[#6BC962] transition-all text-xs sm:text-sm backdrop-blur-sm"
             >
-                Criar Nova Conta
+              Criar Novo Cadastro
             </Link>
           </div>
 
         </div>
       </main>
-      <footer className="w-full py-3 sm:py-4 text-center text-gray-500 text-xs shrink-0 bg-white border-t border-gray-200 px-2">&copy; 2025 Normatel Engenharia</footer>
+      <footer className="w-full py-4 sm:py-6 text-center text-gray-300 text-xs shrink-0 bg-white/50 backdrop-blur-md border-t border-gray-700 px-2 z-20">
+        &copy; 2025 Normatel Engenharia
+      </footer>
     </div>
   );
 }

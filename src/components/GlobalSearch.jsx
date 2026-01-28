@@ -118,9 +118,9 @@ function GlobalSearch({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-start justify-center pt-20 px-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[600px] flex flex-col overflow-hidden">
+      <div className="bg-gray-800 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-3xl max-h-[600px] flex flex-col overflow-hidden border border-gray-700">
         {/* Header com Input */}
-        <div className="flex items-center gap-3 p-4 border-b border-gray-200">
+        <div className="flex items-center gap-3 p-4 border-b border-gray-700">
           <Search className="text-gray-400" size={20} />
           <input
             ref={inputRef}
@@ -128,7 +128,7 @@ function GlobalSearch({ isOpen, onClose }) {
             placeholder="Buscar projetos, cards, arquivos... (Ctrl+K)"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 outline-none text-gray-900 placeholder-gray-400 text-lg"
+            className="flex-1 outline-none text-white placeholder-gray-400 text-lg"
           />
           <button
             onClick={onClose}
@@ -174,7 +174,7 @@ function GlobalSearch({ isOpen, onClose }) {
                           <Briefcase size={20} className="text-[#57B952]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{project.nome}</p>
+                          <p className="font-medium text-white truncate">{project.nome}</p>
                           <p className="text-sm text-gray-500 truncate">{project.descricao || 'Projeto'}</p>
                         </div>
                         <ExternalLink size={16} className="text-gray-400 shrink-0" />
@@ -201,7 +201,7 @@ function GlobalSearch({ isOpen, onClose }) {
                           <FileText size={20} className="text-blue-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{card.name}</p>
+                          <p className="font-medium text-white truncate">{card.name}</p>
                           <p className="text-sm text-gray-500 truncate">
                             {card.projectName} • {card.description || 'Card'}
                           </p>
@@ -217,13 +217,13 @@ function GlobalSearch({ isOpen, onClose }) {
         </div>
 
         {/* Footer com dicas */}
-        <div className="border-t border-gray-200 p-3 bg-gray-50">
-          <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="border-t border-gray-700 p-3 bg-gray-900/50 backdrop-blur-md">
+          <div className="flex items-center justify-between text-xs text-gray-400">
             <div className="flex items-center gap-4">
-              <span><kbd className="px-2 py-1 bg-white border border-gray-300 rounded">↑↓</kbd> Navegar</span>
-              <span><kbd className="px-2 py-1 bg-white border border-gray-300 rounded">Enter</kbd> Abrir</span>
+              <span><kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded">↑↓</kbd> Navegar</span>
+              <span><kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded">Enter</kbd> Abrir</span>
             </div>
-            <span><kbd className="px-2 py-1 bg-white border border-gray-300 rounded">Esc</kbd> Fechar</span>
+            <span><kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded">Esc</kbd> Fechar</span>
           </div>
         </div>
       </div>

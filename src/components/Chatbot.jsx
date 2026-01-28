@@ -758,7 +758,7 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
       <div className="fixed bottom-20 right-6 z-50">
         <button
           onClick={() => setIsOpen(true)}
-          className="w-16 h-16 bg-white hover:bg-gray-50 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 group p-2 border-2 border-[#57B952]"
+          className="w-16 h-16 bg-white/10 backdrop-blur-xl hover:bg-white/20 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 group p-2 border-2 border-[#57B952]"
           title="Conversar com Nora (assistente virtual)"
         >
           <img src="/img/Simbolo.png" alt="Nora" className="w-full h-full object-contain" />
@@ -772,12 +772,12 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
   }
 
   return (
-    <div className={`fixed bottom-20 right-6 z-50 bg-white shadow-2xl rounded-2xl border border-gray-200 flex flex-col transition-all duration-300 overflow-hidden ${isMinimized ? 'h-16 w-72' : 'h-[600px] w-[380px] sm:w-[420px]'}`}>
+    <div className={`fixed bottom-20 right-6 z-50 bg-gray-800 backdrop-blur-xl shadow-2xl rounded-2xl border border-gray-700 flex flex-col transition-all duration-300 overflow-hidden ${isMinimized ? 'h-16 w-72' : 'h-[600px] w-[380px] sm:w-[420px]'}`}>
       
       {/* Header */}
       <div className="bg-gradient-to-r from-[#57B952] to-[#469e41] p-4 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-white/30 p-1">
+          <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 p-1">
             <img src="/img/Simbolo.png" alt="Nora" className="w-full h-full object-contain" />
           </div>
           <div>
@@ -821,10 +821,10 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`}>
                 <div className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center shadow-sm ${msg.role === 'user' ? 'bg-green-100 text-green-600' : 'bg-white border border-gray-200 p-1'}`}>
+                  <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center shadow-sm ${msg.role === 'user' ? 'bg-green-100 text-green-600' : 'bg-white/20 backdrop-blur-md border border-white/30 p-1'}`}>
                     {msg.role === 'user' ? <User size={16} /> : <img src="/img/Simbolo.png" alt="Nora" className="w-full h-full object-contain" />}
                   </div>
-                  <div className={`p-3 rounded-2xl shadow-sm text-sm leading-relaxed ${msg.role === 'user' ? 'bg-[#57B952] text-white rounded-tr-none' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-none'}`}>
+                  <div className={`p-3 rounded-2xl shadow-sm text-sm leading-relaxed ${msg.role === 'user' ? 'bg-[#57B952] text-white rounded-tr-none' : 'bg-white/10 border border-white/20 text-gray-100 rounded-tl-none backdrop-blur-sm'}`}>
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                     {chatbotConfig.visual.showTimestamp && (
                       <span className={`text-[9px] mt-2 block opacity-70 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
@@ -837,7 +837,7 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
             ))}
             {loading && (
               <div className="flex justify-start animate-pulse">
-                <div className="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-none shadow-sm flex gap-1.5">
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-3 rounded-2xl rounded-tl-none shadow-sm flex gap-1.5">
                   <div className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '75ms' }}></div>
                   <div className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                   <div className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -848,12 +848,12 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
           </div>
 
           {/* Quick Actions */}
-          <div className="px-4 py-2 bg-white border-t border-gray-100 flex gap-2 overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="px-4 py-2 bg-gray-900/50 backdrop-blur-md border-t border-gray-700 flex gap-2 overflow-x-auto no-scrollbar scroll-smooth">
             {quickActions.map((action, idx) => (
               <button
                 key={idx}
                 onClick={() => setInput(action.query)}
-                className="whitespace-nowrap px-4 py-1.5 bg-gray-50 hover:bg-green-50 hover:text-green-700 border border-gray-200 rounded-full text-xs font-medium transition-all"
+                className="whitespace-nowrap px-4 py-1.5 bg-white/10 hover:bg-green-500/20 hover:text-green-400 border border-white/20 rounded-full text-xs font-medium transition-all text-gray-300"
               >
                 {action.label}
               </button>
@@ -861,15 +861,15 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
           </div>
 
           {/* Input */}
-          <div className="p-4 bg-white border-t border-gray-100">
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-1.5 focus-within:border-green-400 focus-within:ring-2 focus-within:ring-green-100 transition-all shadow-inner">
+          <div className="p-4 bg-gray-900/50 backdrop-blur-md border-t border-gray-700">
+            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-2xl p-1.5 focus-within:border-[#57B952] focus-within:ring-2 focus-within:ring-[#57B952]/20 transition-all shadow-inner backdrop-blur-sm">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder={chatbotConfig.messages.inputPlaceholder}
-                className="flex-1 bg-transparent border-none outline-none px-3 text-sm text-gray-700 placeholder:text-gray-400"
+                className="flex-1 bg-transparent border-none outline-none px-3 text-sm text-white placeholder:text-gray-400"
                 disabled={loading}
               />
               <button
@@ -880,7 +880,7 @@ ${conversationHistory || 'Nenhuma mensagem anterior.'}
                 <Send size={20} />
               </button>
             </div>
-            <p className="text-[10px] text-gray-400 mt-2 text-center font-medium">
+            <p className="text-[10px] text-gray-300 mt-2 text-center font-medium">
               Powered by {chatbotConfig.assistantName} AI • Google Gemini 1.5 Flash
             </p>
           </div>

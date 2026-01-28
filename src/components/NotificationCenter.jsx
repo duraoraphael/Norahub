@@ -115,10 +115,10 @@ const NotificationCenter = () => {
 
       {/* Dropdown de Notificações */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[80vh] flex flex-col">
+        <div className="absolute right-0 mt-2 w-80 md:w-96 bg-gray-800 backdrop-blur-xl rounded-lg shadow-xl border border-gray-700 z-50 max-h-[80vh] flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Notificações</h3>
+          <div className="flex items-center justify-between p-4 border-b border-gray-700">
+            <h3 className="text-lg font-semibold text-white">Notificações</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
@@ -169,7 +169,7 @@ const NotificationCenter = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
                           <p className={`text-sm font-medium ${
-                            !notification.read ? 'text-gray-900' : 'text-gray-700'
+                            !notification.read ? 'text-white' : 'text-gray-300'
                           }`}>
                             {notification.title}
                           </p>
@@ -193,7 +193,7 @@ const NotificationCenter = () => {
 
           {/* Footer (se houver muitas notificações) */}
           {notifications.length > 10 && (
-            <div className="p-3 border-t border-gray-200 text-center">
+            <div className="p-3 border-t border-gray-700 text-center">
               <button className="text-sm text-[#57B952] hover:text-[#4a9e44] font-medium">
                 Ver todas as notificações
               </button>

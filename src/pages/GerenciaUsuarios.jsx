@@ -197,16 +197,16 @@ function GerenciaUsuarios() {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952]"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50 text-black">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px]">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 bg-gray-900/50 min-h-[56px] text-white">
         <button
           onClick={() => navigate('/gerencia')}
           className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
@@ -215,7 +215,7 @@ function GerenciaUsuarios() {
         </button>
 
         <div className="text-center flex-1">
-          <h1 className="text-lg md:text-2xl font-bold text-gray-900">Gestão de Usuários</h1>
+          <h1 className="text-lg md:text-2xl font-bold text-white">Gestão de Usuários</h1>
         </div>
 
         <div className="w-16"></div>
@@ -226,12 +226,12 @@ function GerenciaUsuarios() {
         <div className="w-full max-w-6xl">
           <div className="mb-4 md:mb-8">
             <p className="text-gray-500">
-              Total de usuários: <span className="font-bold text-gray-900">{usuarios.length}</span>
+              Total de usuários: <span className="font-bold text-white">{usuarios.length}</span>
             </p>
           </div>
 
           {usuarios.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-xl shadow border border-gray-200">
+            <div className="text-center py-20 bg-white/10 backdrop-blur-md rounded-xl shadow border border-white/20 text-gray-300">
               <p className="text-gray-500 mb-4">Nenhum usuário cadastrado.</p>
               <button
                 onClick={handleMigrateData}
@@ -246,10 +246,10 @@ function GerenciaUsuarios() {
               {usuarios.map((usuario) => (
                 <div
                   key={usuario.id}
-                  className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden"
+                  className="bg-white/10 backdrop-blur-md rounded-lg shadow border border-white/20 overflow-hidden"
                 >
                   <div
-                    className="p-6 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="p-6 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors text-white"
                     onClick={() => setExpandedUser(expandedUser === usuario.id ? null : usuario.id)}
                   >
                     <div className="flex items-center gap-4 flex-1">
@@ -257,7 +257,7 @@ function GerenciaUsuarios() {
                         {usuario.nome?.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-gray-900">{usuario.nome}</h3>
+                        <h3 className="font-bold text-white">{usuario.nome}</h3>
                         <p className="text-sm text-gray-500">{usuario.email}</p>
                       </div>
                       <div className="text-right">
@@ -276,11 +276,11 @@ function GerenciaUsuarios() {
                   </div>
 
                   {expandedUser === usuario.id && (
-                    <div className="border-t border-gray-200 p-6 bg-gray-50">
+                    <div className="border-t border-gray-700 p-6 bg-white/5">
                       <div className="space-y-4">
                         {/* Alterar Cargo */}
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
                             Alterar Cargo
                           </label>
                           {(usuario.funcao === 'admin' || usuario.funcao?.toLowerCase() === 'administrador geral') && userProfile?.funcao !== 'admin' ? (
@@ -360,7 +360,7 @@ function GerenciaUsuarios() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 text-center text-gray-500 text-xs border-t border-gray-200 bg-white">
+      <footer className="w-full py-4 text-center text-gray-300 text-xs border-t border-gray-700 bg-gray-900/50">
         &copy; 2025 Parceria Petrobras & Normatel Engenharia
       </footer>
 

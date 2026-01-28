@@ -306,21 +306,26 @@ function AdminDashboard() {
   );
 
   return (
-        <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50 transition-colors duration-200 relative text-black">
+        <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200 relative text-white">
+          {/* Background decorativo */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+          </div>
             {alertInfo && <Alert message={alertInfo.message} type={alertInfo.type} onClose={() => setAlertInfo(null)} />}
             {confirmDelete.open && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 mx-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl max-w-md w-full p-6 border border-white/20">
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 bg-yellow-100 rounded-full p-2">
-                                <AlertTriangle size={28} className="text-yellow-600" />
+                            <div className="flex-shrink-0 bg-yellow-500/20 rounded-full p-2">
+                                <AlertTriangle size={28} className="text-yellow-400" />
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-lg font-bold text-gray-900">Confirmar exclusão</h3>
-                                <p className="text-sm text-gray-600 mt-1">Você tem certeza que deseja remover <span className="font-medium text-gray-800">{confirmDelete.userName}</span>? Esta ação não pode ser desfeita.</p>
+                                <h3 className="text-lg font-bold text-white">Confirmar exclusão</h3>
+                                <p className="text-sm text-gray-300 mt-1">Você tem certeza que deseja remover <span className="font-medium text-white">{confirmDelete.userName}</span>? Esta ação não pode ser desfeita.</p>
                                 <div className="mt-5 flex gap-3 justify-end">
-                                    <button onClick={cancelDelete} className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700">Cancelar</button>
-                                    <button onClick={() => deleteUser(confirmDelete.userId)} className="px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold">Excluir</button>
+                                    <button onClick={cancelDelete} className="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 transition-colors">Cancelar</button>
+                                    <button onClick={() => deleteUser(confirmDelete.userId)} className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors">Excluir</button>
                                 </div>
                             </div>
                         </div>
@@ -329,23 +334,27 @@ function AdminDashboard() {
             )}
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 min-h-[56px] md:h-20 bg-gray-900/50 backdrop-blur-md z-20">
         
         {/* Esquerda: Botão Voltar + Badge Admin */}
         <div className="absolute left-3 md:left-8 flex items-center gap-2 md:gap-4">
             {/* MUDANÇA AQUI: Link aponta para /selecao-projeto */}
-            <Link to="/selecao-projeto" className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors text-xs md:text-sm">
+            <Link to="/selecao-projeto" className="flex items-center gap-1 md:gap-2 text-gray-300 hover:text-[#57B952] hover:bg-white/5 px-4 py-2 rounded-lg transition-all font-semibold text-xs md:text-sm backdrop-blur-sm">
                 <ArrowLeft size={16} className="md:w-5 md:h-5" />
-                <span className="hidden sm:inline font-medium">Voltar</span>
+                <span className="hidden sm:inline">Voltar</span>
             </Link>
-            <span className="px-2 md:px-3 py-0.5 md:py-1 rounded-full bg-purple-100 text-purple-700 text-[10px] md:text-xs font-bold uppercase tracking-wider border border-purple-200">
+            <span className="px-2 md:px-3 py-0.5 md:py-1 rounded-full bg-purple-500/20 text-purple-300 text-[10px] md:text-xs font-bold uppercase tracking-wider border border-purple-500/50">
                 Admin
             </span>
         </div>
         
         {/* Centro: Logo */}
         <div className="flex items-center justify-center">
-            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo" className="h-6 md:h-10 w-auto object-contain" />
+            <img 
+              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+              alt="Logo" 
+              className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
+            />
         </div>
 
       </header>
@@ -356,13 +365,13 @@ function AdminDashboard() {
             <div className="mb-4 md:mb-8 flex flex-col sm:flex-row gap-3 md:gap-4">
                 <button 
                     onClick={() => navigate('/admin')}
-                    className="flex items-center justify-center gap-1.5 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors text-sm md:text-base min-h-[44px]"
+                    className="flex items-center justify-center gap-1.5 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded-lg font-semibold transition-colors text-sm md:text-base min-h-[44px] border border-blue-500/30"
                 >
                     <Users size={16} className="md:w-[18px] md:h-[18px]" /> Usuários
                 </button>
                 <button 
                     onClick={() => navigate('/admin-cargos')}
-                    className="flex items-center justify-center gap-1.5 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold transition-colors text-sm md:text-base min-h-[44px]"
+                    className="flex items-center justify-center gap-1.5 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg font-semibold transition-colors text-sm md:text-base min-h-[44px] border border-purple-500/30"
                 >
                     <Briefcase size={16} className="md:w-[18px] md:h-[18px]" /> Gerenciar Cargos
                 </button>
@@ -370,76 +379,76 @@ function AdminDashboard() {
             
             <div className="flex flex-col md:flex-row justify-between items-end mb-4 md:mb-8 gap-4">
                 <div>
-                    <h1 className="text-xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
+                    <h1 className="text-xl md:text-3xl font-bold text-white flex items-center gap-2">
                         <Users className="text-[#57B952]" size={20} /> Gestão de Usuários
                     </h1>
-                    <p className="text-sm md:text-base text-gray-500 mt-1">Aprove cadastros pendentes e gerencie permissões.</p>
+                    <p className="text-sm md:text-base text-gray-200 mt-1">Aprove cadastros pendentes e gerencie permissões.</p>
                 </div>
                 <div className="relative w-full md:w-72">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3"><Search className="h-5 w-5 text-gray-400" /></span>
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3"><Search className="h-5 w-5 text-gray-300" /></span>
                     <input 
                         type="text" 
                         placeholder="Buscar usuário..." 
                         value={searchTerm} 
                         onChange={(e) => setSearchTerm(e.target.value)} 
-                        className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none shadow-sm placeholder-gray-400" 
+                        className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-[#57B952] outline-none backdrop-blur-sm"
                     />
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden -mx-4 md:mx-0">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 overflow-hidden -mx-4 md:mx-0">
                 <div className="overflow-x-auto">
                     <div className="min-w-[900px]">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Status</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Usuário</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Cargo</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Projeto</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Email</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase">Cargo / Permissão</th>
-                                <th className="p-4 text-xs font-bold text-gray-500 uppercase text-right">Excluir</th>
+                            <tr className="bg-white/5 border-b border-white/10">
+                                <th className="p-4 text-xs font-bold text-gray-100 uppercase">Status</th>
+                                <th className="p-4 text-xs font-bold text-gray-100 uppercase">Usuário</th>
+                                <th className="p-4 text-xs font-bold text-gray-100 uppercase">Cargo</th>
+                                <th className="p-4 text-xs font-bold text-gray-100 uppercase">Projeto</th>
+                                <th className="p-4 text-xs font-bold text-gray-100 uppercase">Email</th>
+                                <th className="p-4 text-xs font-bold text-gray-100 uppercase">Cargo / Permissão</th>
+                                <th className="p-4 text-xs font-bold text-gray-100 uppercase text-right">Excluir</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-white/5">
                             {loading ? (
-                                <tr><td colSpan="7" className="p-8 text-center text-gray-500">Carregando...</td></tr>
+                                <tr><td colSpan="7" className="p-8 text-center text-gray-300">Carregando...</td></tr>
                             ) : filteredUsers.length === 0 ? (
-                                <tr><td colSpan="7" className="p-8 text-center text-gray-500">Nenhum usuário encontrado.</td></tr>
+                                <tr><td colSpan="7" className="p-8 text-center text-gray-300">Nenhum usuário encontrado.</td></tr>
                             ) : (
                                 filteredUsers.map((user) => (
-                                    <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-50' : 'hover:bg-gray-50'}`}>
+                                    <tr key={user.id} className={`transition-colors ${user.statusAcesso === 'pendente' ? 'bg-yellow-500/10' : 'hover:bg-white/5'} border-white/5`}>
                                         
                                         <td className="p-4">
                                             {user.statusAcesso === 'pendente' ? (
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold border border-yellow-200">
+                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-yellow-500/20 text-yellow-300 text-xs font-bold border border-yellow-500/30">
                                                     <AlertTriangle size={12} /> Pendente
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-bold border border-green-200">
+                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-green-500/20 text-green-300 text-xs font-bold border border-green-500/30">
                                                     <CheckCircle size={12} /> Ativo
                                                 </span>
                                             )}
                                         </td>
 
-                                        <td className="p-4 font-medium text-gray-900">{user.nome}</td>
+                                        <td className="p-4 font-medium text-white">{user.nome}</td>
                                         <td className="p-4">
-                                          <span className={`inline-flex px-2 py-1 rounded text-xs font-semibold ${
-                                            user.funcao === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                                          <span className={`inline-flex px-2 py-1 rounded-lg text-xs font-semibold ${
+                                            user.funcao === 'admin' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                                           }`}>
                                             {user.funcao === 'admin' ? 'Administrador' : user.funcao || 'colaborador'}
                                           </span>
                                         </td>
-                                        <td className="p-4 text-sm text-gray-600">
+                                        <td className="p-4 text-sm text-gray-300">
                                           <button 
                                             onClick={() => abrirModalProjetos(user.id)}
-                                            className="px-3 py-1 bg-[#57B952] hover:bg-green-600 text-white rounded text-xs font-semibold transition-colors"
+                                            className="px-3 py-1 bg-[#57B952]/20 hover:bg-[#57B952]/30 text-[#6BC962] rounded-lg text-xs font-semibold transition-colors border border-[#57B952]/30"
                                           >
                                             {(user.projetos || []).length > 0 ? `${user.projetos.length} projeto(s)` : 'Atribuir'}
                                           </button>
                                         </td>
-                                        <td className="p-4 text-sm text-gray-500">{user.email}</td>
+                                        <td className="p-4 text-sm text-gray-300">{user.email}</td>
                                         
                                         <td className="p-4">
                                             {user.statusAcesso === 'pendente' ? (
@@ -447,7 +456,7 @@ function AdminDashboard() {
                                                     <select 
                                                         defaultValue={user.funcao || 'Colaborador'}
                                                         id={`role-${user.id}`}
-                                                        className="text-sm p-2 rounded border border-gray-300 bg-white text-gray-900 font-medium min-w-[160px]"
+                                                        className="text-sm p-2 rounded-lg border border-white/20 bg-white/10 text-white font-medium min-w-[160px] focus:ring-2 focus:ring-[#57B952]"
                                                     >
                                                         {cargos.length === 0 ? (
                                                             <option value="Colaborador">Colaborador</option>
@@ -461,13 +470,13 @@ function AdminDashboard() {
                                                     
                                                     <button 
                                                         onClick={() => handleApprove(user, document.getElementById(`role-${user.id}`).value)}
-                                                        className="p-1.5 bg-green-500 text-white rounded hover:bg-green-600 transition-colors" title="Aprovar"
+                                                        className="p-1.5 bg-green-500/20 text-green-300 rounded-lg hover:bg-green-500/30 transition-colors border border-green-500/30" title="Aprovar"
                                                     >
                                                         <CheckCircle size={16} />
                                                     </button>
                                                     <button 
                                                         onClick={() => handleReject(user.id)}
-                                                        className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors" title="Recusar"
+                                                        className="p-1.5 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30" title="Recusar"
                                                     >
                                                         <XCircle size={16} />
                                                     </button>
@@ -477,7 +486,7 @@ function AdminDashboard() {
                                                     value={user.funcao || 'Colaborador'} 
                                                     onChange={(e) => handleRoleChange(user.id, e.target.value)}
                                                     disabled={user.funcao === 'admin' && !isAdmin}
-                                                    className={`w-full px-3 py-2 rounded-md text-sm border border-gray-300 ${user.funcao === 'admin' && !isAdmin ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white hover:bg-gray-50 cursor-pointer'} focus:ring-2 focus:ring-[#57B952] focus:border-transparent outline-none text-gray-900 font-medium transition-colors min-w-[160px]`}>
+                                                    className={`w-full px-3 py-2 rounded-lg text-sm border ${user.funcao === 'admin' && !isAdmin ? 'bg-gray-700/50 border-gray-600 cursor-not-allowed opacity-50 text-gray-400' : 'bg-white/10 border-white/20 text-white hover:bg-white/15 focus:ring-2 focus:ring-[#57B952] cursor-pointer'} outline-none font-medium transition-colors min-w-[160px]`}>
                                                     {cargos.length === 0 ? (
                                                         <option value="Colaborador">Colaborador</option>
                                                     ) : (
@@ -493,7 +502,7 @@ function AdminDashboard() {
                                             <button 
                                                 onClick={() => handleReject(user.id)} 
                                                 disabled={user.funcao === 'admin' && !isAdmin}
-                                                className={`p-1.5 rounded ${user.funcao === 'admin' && !isAdmin ? 'bg-gray-300 cursor-not-allowed opacity-50' : 'bg-red-500 hover:bg-red-600'} text-white`} 
+                                                className={`p-1.5 rounded-lg ${user.funcao === 'admin' && !isAdmin ? 'bg-gray-100 border-gray-300 cursor-not-allowed opacity-50 text-gray-600' : 'bg-red-500/20 text-red-700 hover:bg-red-500/30 border border-red-500/30'} transition-colors`} 
                                                 title={user.funcao === 'admin' && !isAdmin ? 'Não pode excluir administrador' : 'Excluir'}
                                             >
                                                 <Trash2 size={16} />
@@ -512,17 +521,17 @@ function AdminDashboard() {
 
       {/* MODAL DE ATRIBUIÇÃO DE PROJETOS */}
       {modalProjetos.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col border border-white/20">
             {/* Header */}
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+            <div className="flex justify-between items-center p-6 border-b border-white/10">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Atribuir Projetos</h2>
-                <p className="text-sm text-gray-500 mt-1">{modalProjetos.userName}</p>
+                <h2 className="text-xl font-bold text-white">Atribuir Projetos</h2>
+                <p className="text-sm text-gray-300 mt-1">{modalProjetos.userName}</p>
               </div>
               <button 
                 onClick={fecharModalProjetos} 
-                className="text-gray-400 hover:text-red-500 transition-colors"
+                className="text-gray-600 hover:text-red-600 transition-colors"
               >
                 <X size={24} />
               </button>
@@ -532,14 +541,14 @@ function AdminDashboard() {
             <div className="px-6 pt-4 pb-2">
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  <Search className="h-5 w-5 text-gray-600" />
                 </span>
                 <input 
                   type="text" 
                   placeholder="Buscar projetos..." 
                   value={searchProjetos} 
                   onChange={(e) => setSearchProjetos(e.target.value)} 
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none"
+                  className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-[#57B952] outline-none"
                 />
               </div>
             </div>
@@ -548,22 +557,22 @@ function AdminDashboard() {
             <div className="flex-1 overflow-y-auto px-6 py-4">
               <div className="space-y-2">
                 {projetosFiltrados.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">Nenhum projeto encontrado</p>
+                  <p className="text-center text-gray-400 py-8">Nenhum projeto encontrado</p>
                 ) : (
                   projetosFiltrados.map(projeto => (
                     <label 
                       key={projeto.id} 
-                      className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-white/10 hover:bg-white/5 cursor-pointer transition-colors"
                     >
                       <input 
                         type="checkbox" 
                         checked={modalProjetos.projetosAtuais.includes(projeto.id)} 
                         onChange={() => toggleProjetoModal(projeto.id)}
-                        className="w-5 h-5 rounded border-gray-300 text-[#57B952] focus:ring-[#57B952]"
+                        className="w-5 h-5 rounded border-white/20 text-[#57B952] focus:ring-[#57B952] accent-[#57B952] bg-white/5"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{projeto.nome}</p>
-                        <p className="text-xs text-gray-500">{projeto.descricao || '-'}</p>
+                        <p className="font-medium text-white">{projeto.nome}</p>
+                        <p className="text-xs text-gray-400">{projeto.descricao || '-'}</p>
                       </div>
                     </label>
                   ))
@@ -572,16 +581,16 @@ function AdminDashboard() {
             </div>
 
             {/* Footer */}
-            <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50">
+            <div className="flex gap-3 p-6 border-t border-white/10 bg-white/5">
               <button 
                 onClick={fecharModalProjetos}
-                className="flex-1 py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors"
+                className="flex-1 py-2 px-4 bg-white/10 hover:bg-white/20 text-gray-300 font-medium rounded-lg transition-colors border border-white/20"
               >
                 Cancelar
               </button>
               <button 
                 onClick={salvarProjetosModal}
-                className="flex-1 py-2 px-4 bg-[#57B952] hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+                className="flex-1 py-2 px-4 bg-[#57B952] hover:bg-[#3d8c38] text-white font-medium rounded-lg transition-colors"
               >
                 Salvar ({modalProjetos.projetosAtuais.length})
               </button>

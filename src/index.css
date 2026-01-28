@@ -47,3 +47,66 @@ html, body {
 .border-theme {
   border-color: var(--border-color);
 }
+
+/* Efeitos Modernos para Dark Mode */
+.dark {
+  --glow-green: 87, 185, 82;
+}
+
+/* Glow effect para botões */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(87, 185, 82, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(87, 185, 82, 0.2);
+  }
+}
+
+/* Gradientes modernos */
+.dark .btn-modern {
+  background: linear-gradient(135deg, rgba(87, 185, 82, 0.1) 0%, rgba(61, 140, 56, 0.05) 100%);
+  border: 1px solid rgba(87, 185, 82, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .btn-modern:hover {
+  background: linear-gradient(135deg, rgba(87, 185, 82, 0.2) 0%, rgba(61, 140, 56, 0.1) 100%);
+  border: 1px solid rgba(87, 185, 82, 0.5);
+  box-shadow: 0 0 20px rgba(87, 185, 82, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Cards com backdrop blur */
+.dark .card-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.dark .card-glass:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Text shimmer effect */
+@keyframes text-shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.dark .text-shimmer {
+  background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
+  background-size: 1000px 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: text-shimmer 3s infinite;
+}

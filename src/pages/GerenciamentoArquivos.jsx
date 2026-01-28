@@ -387,7 +387,7 @@ function GerenciamentoArquivos() {
   if (!card || !projeto) return null;
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-50">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Toast */}
       {toast.show && (
         <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
@@ -396,7 +396,7 @@ function GerenciamentoArquivos() {
       )}
 
       {/* Header */}
-      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 bg-white min-h-[56px] md:h-20">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 bg-gray-900/50 backdrop-blur-md min-h-[56px] md:h-20">
         <button 
           onClick={() => navigate(-1)} 
           className="flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0"
@@ -410,7 +410,7 @@ function GerenciamentoArquivos() {
 
       {/* Content */}
       <main className="flex-1 w-full max-w-6xl mx-auto p-3 md:p-8">
-        <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8">
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-4 md:p-8 border border-white/20">
           {/* Breadcrumb Navigation */}
           <div className="mb-4 flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2 flex-wrap">
@@ -427,7 +427,7 @@ function GerenciamentoArquivos() {
                   <ChevronRight size={16} className="text-gray-400" />
                   <button
                     onClick={() => handleNavigateToBreadcrumb(index)}
-                    className={`px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${index === getBreadcrumbs().length - 1 ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100'}`}
+                    className={`px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${index === getBreadcrumbs().length - 1 ? 'bg-[#57B952]/20 text-[#6BC962]' : 'text-gray-300 hover:bg-gray-700/50'}`}
                   >
                     {folder}
                   </button>
@@ -438,7 +438,7 @@ function GerenciamentoArquivos() {
             {currentPath && (
               <button
                 onClick={handleNavigateUp}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-sm font-medium text-gray-700"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors text-sm font-medium text-gray-300"
               >
                 <ArrowLeft size={16} />
                 <span className="hidden sm:inline">Voltar</span>
@@ -448,7 +448,7 @@ function GerenciamentoArquivos() {
 
           {/* Actions Bar */}
           <div className="mb-6 md:mb-8 flex flex-wrap gap-3">
-            <label className="flex-1 min-w-[200px] flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#57B952] transition-colors bg-gray-50 hover:bg-green-50">
+            <label className="flex-1 min-w-[200px] flex flex-col items-center justify-center h-32 border-2 border-dashed border-white/30 rounded-xl cursor-pointer hover:border-[#57B952] transition-colors bg-white/5 hover:bg-[#57B952]/10">
               <div className="flex flex-col items-center justify-center">
                 <Upload className="w-8 h-8 mb-2 text-gray-400" />
                 <p className="text-xs text-gray-500">
@@ -494,7 +494,7 @@ function GerenciamentoArquivos() {
                     </button>
                     <button
                       onClick={() => { setIsCreatingFolder(false); setNewFolderName(''); }}
-                      className="flex-1 px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-xs font-semibold"
+                      className="flex-1 px-3 py-1.5 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 text-xs font-semibold"
                     >
                       Cancelar
                     </button>
@@ -551,7 +551,7 @@ function GerenciamentoArquivos() {
                           </button>
                           <button
                             onClick={() => setRenamingItem(null)}
-                            className="flex-1 px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-semibold"
+                            className="flex-1 px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs font-semibold"
                           >
                             Cancelar
                           </button>
@@ -572,7 +572,7 @@ function GerenciamentoArquivos() {
                                 e.stopPropagation(); 
                                 startRename(folder); 
                               }}
-                              className="p-2 text-blue-600 hover:bg-blue-200 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center bg-white shadow-sm"
+                              className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center bg-white/10 shadow-sm backdrop-blur-sm"
                               title="Renomear pasta"
                             >
                               <Edit2 size={16} />
@@ -582,7 +582,7 @@ function GerenciamentoArquivos() {
                                 e.stopPropagation(); 
                                 openDeleteConfirm('folder', folder.fullPath); 
                               }}
-                              className="p-2 text-red-600 hover:bg-red-200 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center bg-white shadow-sm hover:shadow-md"
+                              className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center bg-white/10 shadow-sm hover:shadow-md backdrop-blur-sm"
                               title="Excluir pasta e todo conteúdo"
                             >
                               <Trash2 size={16} />
@@ -605,7 +605,7 @@ function GerenciamentoArquivos() {
                 {files.map((file, idx) => (
                   <div 
                     key={`file-${idx}`} 
-                    className="border border-gray-200 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow bg-white"
+                    className="border border-white/20 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow bg-white/10 backdrop-blur-xl"
                   >
                     {renamingItem?.fullPath === file.fullPath ? (
                       <div className="space-y-2">
@@ -626,7 +626,7 @@ function GerenciamentoArquivos() {
                           </button>
                           <button
                             onClick={() => setRenamingItem(null)}
-                            className="flex-1 px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-semibold"
+                            className="flex-1 px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs font-semibold"
                           >
                             Cancelar
                           </button>
@@ -684,7 +684,7 @@ function GerenciamentoArquivos() {
       {/* Modal de Confirmação de Exclusão */}
       {confirmDelete.show && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-fade-in">
+          <div className="bg-gray-800 backdrop-blur-xl rounded-xl shadow-2xl max-w-md w-full p-6 animate-fade-in border border-gray-700">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                 <Trash2 size={24} className="text-red-600" />
@@ -703,7 +703,7 @@ function GerenciamentoArquivos() {
             <div className="flex gap-3">
               <button
                 onClick={closeDeleteConfirm}
-                className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold transition-colors"
+                className="flex-1 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg font-semibold transition-colors"
               >
                 Cancelar
               </button>

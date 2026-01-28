@@ -63,7 +63,7 @@ function InstallPWA() {
   if (!showInstallPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 z-50 animate-slide-up">
+    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-gray-800 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-700 p-4 z-50 animate-slide-up">
       <button
         onClick={handleClose}
         className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
@@ -77,7 +77,7 @@ function InstallPWA() {
         </div>
         
         <div className="flex-1">
-          <h3 className="font-bold text-gray-900 mb-1">
+          <h3 className="font-bold text-white mb-1">
             Instale o NoraHub
           </h3>
           <p className="text-sm text-gray-600 mb-3">

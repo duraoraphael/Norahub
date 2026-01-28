@@ -61,7 +61,7 @@ function FavoriteButton({ itemId, itemType, itemData, size = 20, className = '',
       onClick={handleToggle}
       disabled={loading}
       aria-pressed={favorited}
-      className={`p-1.5 rounded-lg transition-all hover:scale-110 active:scale-95 ${favorited ? 'bg-yellow-50' : 'bg-gray-50 hover:bg-yellow-50'} ${loading ? 'opacity-70 cursor-not-allowed' : ''} ${className}`}
+      className={`p-1.5 rounded-lg transition-all hover:scale-110 active:scale-95 ${favorited ? 'bg-yellow-500/20 backdrop-blur-sm' : 'bg-white/10 backdrop-blur-sm hover:bg-yellow-500/20'} ${loading ? 'opacity-70 cursor-not-allowed' : ''} ${className}`}
       title={favorited ? '⭐ Favoritado! Clique para remover' : '☆ Adicionar aos favoritos'}
     >
       <Star

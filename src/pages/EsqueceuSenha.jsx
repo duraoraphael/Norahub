@@ -10,6 +10,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 
 function EsqueceuSenha() {
   const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -58,23 +59,32 @@ function EsqueceuSenha() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+      </div>
       
       {/* ThemeToggle removed */}
 
-        <header className="w-full flex justify-center py-8 md:py-12 shrink-0">
+        <header className="relative w-full flex justify-center py-8 md:py-12 shrink-0 z-10">
         <Link to="/">
-          <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo Normatel" className="w-40 md:w-48 h-auto object-contain" />
+          <img 
+            src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+            alt="Logo Normatel" 
+            className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
+          />
         </Link>
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center p-3 md:p-4">
+      <main className="relative z-10 flex-grow flex flex-col items-center justify-center p-3 md:p-4">
         
-        <div className="w-full max-w-sm bg-white p-4 md:p-8 rounded-xl shadow-2xl border border-gray-200">
+        <div className="w-full max-w-sm bg-white/10 backdrop-blur-xl p-4 md:p-8 rounded-xl shadow-2xl border border-white/20">
           
           <div className="text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Recuperar Senha</h2>
-            {!success && <p className="text-sm text-gray-600 mb-6">Digite seu e-mail para enviarmos o link de recuperação.</p>}
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Recuperar Senha</h2>
+            {!success && <p className="text-sm text-gray-300 mb-6">Digite seu e-mail para enviarmos o link de recuperação.</p>}
           </div>
 
           {success ? (
@@ -83,7 +93,7 @@ function EsqueceuSenha() {
               <div className="bg-green-100 p-4 rounded-full mb-4">
                 <CheckCircle size={48} className="text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">E-mail Enviado!</h3>
+              <h3 className="text-xl font-bold text-white mb-2">E-mail Enviado!</h3>
               
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6 w-full">
                 <div className="flex items-center justify-center gap-2 text-yellow-700 font-semibold mb-1">
@@ -113,7 +123,7 @@ function EsqueceuSenha() {
             // Formulário
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email</label>
                 <div className="relative mt-1">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                     <Mail className="h-5 w-5 text-gray-400" />
@@ -124,7 +134,7 @@ function EsqueceuSenha() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="seu.email@normatel.com.br"
-                    className="w-full pl-10 pr-4 py-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-white/10 text-white border border-white/20 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
                     required
                   />
                 </div>
@@ -158,12 +168,12 @@ function EsqueceuSenha() {
       {/* TOAST NOTIFICATION */}
       {toast.show && (
         <div className="fixed top-8 right-8 z-[200] animate-fade-in">
-          <div className="bg-white border-l-4 border-red-500 rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px]">
+          <div className="bg-white/10 backdrop-blur-md border-l-4 border-red-400 rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px]">
             <div className="bg-red-100 p-2 rounded-full">
               <X size={24} className="text-red-500" />
             </div>
             <div>
-              <p className="font-bold text-gray-900">Erro!</p>
+              <p className="font-bold text-white">Erro!</p>
               <p className="text-sm text-gray-600">{toast.message}</p>
             </div>
           </div>

@@ -295,17 +295,26 @@ function SelecaoProjeto() {
     };
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gray-50 transition-colors duration-200 text-black">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200 text-white">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+      </div>
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
-        <button onClick={() => navigate('/')} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10">
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 min-h-[56px] md:h-20 bg-gray-900/50 backdrop-blur-md z-20">
+        <button onClick={() => navigate('/')} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-300 hover:text-[#57B952] hover:bg-white/5 px-4 py-2 rounded-lg transition-all font-semibold text-xs md:text-sm shrink-0 z-10 backdrop-blur-sm">
              <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
         </button>
             <div className="flex items-center gap-2 md:gap-4">
-            <img src="/img/NoraHub.png" alt="Logo Nora" className="h-6 md:h-10 w-auto object-contain" />
-            <span className="text-gray-600 text-lg md:text-2xl font-light">|</span>
-            <img src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} alt="Logo Normatel" className="h-6 md:h-10 w-auto object-contain" />
+            <img src="/img/Designer (6).png" alt="Logo Nora" className="h-10 sm:h-12 md:h-14 w-auto object-contain drop-shadow-lg" />
+            <span className="text-gray-500 text-lg md:text-2xl font-light">|</span>
+            <img 
+              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+              alt="Logo Normatel" 
+              className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
+            />
         </div>
         
         {currentUser && (
@@ -313,7 +322,7 @@ function SelecaoProjeto() {
                 <NotificationCenter />
                 <button 
                     onClick={() => navigate('/perfil')} 
-                    className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-700 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
                 >
                     {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
                 </button>
@@ -322,12 +331,12 @@ function SelecaoProjeto() {
         )}
       </header>
 
-      <main className="flex-grow flex flex-col items-center p-3 md:p-8">
+      <main className="flex-grow flex flex-col items-center p-3 md:p-8 relative z-10">
         <div className="w-full max-w-6xl">
             <div className="flex flex-col md:flex-row justify-between items-end mb-4 md:mb-8 gap-4">
                 <div className="flex-1">
-                    <h1 className="text-xl md:text-3xl font-bold text-gray-900">Seleção de projetos</h1>
-                    <p className="text-sm md:text-base text-gray-500 mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
+                    <h1 className="text-xl md:text-3xl font-bold text-white">Seleção de projetos</h1>
+                    <p className="text-sm md:text-base text-gray-300 mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
                 </div>
                 
                 <div className="flex gap-3 flex-wrap">
@@ -361,51 +370,51 @@ function SelecaoProjeto() {
             </div>
 
             {/* Filtros e Busca */}
-            <div className="mb-6 bg-white rounded-xl shadow-md border border-gray-200 p-4">
+            <div className="mb-6 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 p-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">Buscar</label>
                   <input
                     type="text"
                     placeholder="Buscar por nome ou descrição..."
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none"
+                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white placeholder-gray-400 backdrop-blur-sm transition-all hover:bg-white/15"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">Status</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none"
+                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/15"
                   >
-                    <option value="all">Todos</option>
-                    <option value="active">Ativos</option>
-                    <option value="inactive">Inativos</option>
+                    <option value="all" className="bg-gray-900">Todos</option>
+                    <option value="active" className="bg-gray-900">Ativos</option>
+                    <option value="inactive" className="bg-gray-900">Inativos</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">Ordenar por</label>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none"
+                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/15"
                   >
-                    <option value="name">Nome (A-Z)</option>
-                    <option value="date">Data de Criação</option>
-                    <option value="recent">Modificados Recentemente</option>
-                    <option value="favorites">Favoritos</option>
+                    <option value="name" className="bg-gray-900">Nome (A-Z)</option>
+                    <option value="date" className="bg-gray-900">Data de Criação</option>
+                    <option value="recent" className="bg-gray-900">Modificados Recentemente</option>
+                    <option value="favorites" className="bg-gray-900">Favoritos</option>
                   </select>
                 </div>
               </div>
             </div>
 
             {loading ? (
-                <div className="text-center py-20 text-gray-500">Carregando bases...</div>
+                <div className="text-center py-20 text-gray-300">Carregando bases...</div>
             ) : getFilteredAndSortedProjects().length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-xl shadow border border-gray-200">
-                    <p className="text-gray-500 mb-4">
+                <div className="text-center py-20 bg-white/10 backdrop-blur-md rounded-xl shadow border border-white/20">
+                    <p className="text-gray-200 mb-4">
                       {projetos.length === 0 ? 'Nenhuma base cadastrada ainda.' : 'Nenhum projeto encontrado com os filtros aplicados.'}
                     </p>
                     {canManageProjects && projetos.length === 0 && (
@@ -420,12 +429,12 @@ function SelecaoProjeto() {
                         <div 
                             key={projeto.id} 
                             onClick={() => handleSelectProject(projeto)} 
-                            className="group bg-white p-4 md:p-8 rounded-xl shadow-md hover:shadow-xl border border-gray-200 text-left transition-all hover:-translate-y-1 flex flex-col h-full relative cursor-pointer"
+                            className="group bg-white/10 backdrop-blur-md p-4 md:p-8 rounded-xl shadow-lg hover:shadow-xl border border-white/20 hover:border-white/40 text-left transition-all hover:-translate-y-1 flex flex-col h-full relative cursor-pointer"
                         >
                             <div className="flex items-start justify-between mb-3 md:mb-4">
-                                <div className="bg-green-100 p-2 md:p-3 rounded-lg text-[#57B952]"><Briefcase size={20} className="md:w-6 md:h-6" /></div>
+                                <div className="bg-[#57B952]/20 p-2 md:p-3 rounded-lg text-[#57B952] border border-[#57B952]/50"><Briefcase size={20} className="md:w-6 md:h-6" /></div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Base Ativa</span>
+                                    <span className="text-[10px] md:text-xs font-bold text-gray-300 uppercase tracking-wider">Base Ativa</span>
                                     <FavoriteButton 
                                         itemId={projeto.id}
                                         itemType="project"
@@ -442,7 +451,7 @@ function SelecaoProjeto() {
                                     {canEditProject(projeto.id) && (
                                         <button 
                                             onClick={(e) => handleDeleteProject(e, projeto.id)}
-                                            className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                            className="p-1.5 text-gray-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             title="Excluir Base"
                                         >
                                             <Trash2 size={14} className="md:w-4 md:h-4" />
@@ -450,9 +459,9 @@ function SelecaoProjeto() {
                                     )}
                                 </div>
                             </div>
-                            <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-[#57B952] transition-colors">{projeto.nome}</h3>
-                            <p className="text-sm text-gray-500 mb-6 flex-grow">{projeto.descricao || 'Acesso ao portal.'}</p>
-                            <div className="mt-auto w-full py-2 rounded-lg bg-gray-50 text-center text-sm font-medium text-gray-400 group-hover:bg-[#57B952] group-hover:text-white transition-colors">Acessar Projeto</div>
+                            <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-[#57B952] transition-colors">{projeto.nome}</h3>
+                            <p className="text-sm text-gray-200 mb-6 flex-grow">{projeto.descricao || 'Acesso ao portal.'}</p>
+                            <div className="mt-auto w-full py-2 rounded-lg bg-white/10 text-center text-sm font-medium text-white group-hover:bg-[#57B952] group-hover:text-white transition-colors backdrop-blur-sm border border-white/20 group-hover:border-[#57B952]/50">Acessar Projeto</div>
                         </div>
                     ))}
                 </div>
@@ -462,52 +471,52 @@ function SelecaoProjeto() {
 
       {/* MODAL (criar/editar base) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 animate-fade-in my-8 max-h-[90vh] flex flex-col">
-                <div className="flex justify-between items-center p-6 border-b border-gray-100 flex-shrink-0">
-                    <h2 className="text-xl font-bold text-gray-900">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-white/20 animate-fade-in my-8 max-h-[90vh] flex flex-col">
+                <div className="flex justify-between items-center p-6 border-b border-white/10 flex-shrink-0">
+                    <h2 className="text-xl font-bold text-white">
                         {editingProject ? 'Editar Base' : 'Adicionar Nova Base'}
                     </h2>
-                    <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-500 transition-colors"><X size={20} /></button>
+                    <button onClick={() => setIsModalOpen(false)} className="text-gray-300 hover:text-red-400 transition-colors"><X size={20} /></button>
                 </div>
                 <form onSubmit={handleSaveProject} className="flex-1 overflow-y-auto p-6 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Nome do Projeto</label>
-                        <input type="text" placeholder="Ex: Projeto 743 - Facilities" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none" required />
+                        <label className="block text-sm font-medium text-gray-200 mb-1">Nome do Projeto</label>
+                        <input type="text" placeholder="Ex: Projeto 743 - Facilities" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none placeholder-gray-400 backdrop-blur-sm transition-all hover:bg-white/15" required />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2"><FileText size={14} /> Link do Forms (Solicitação)</label>
-                        <input type="url" placeholder="https://forms..." value={urlForms} onChange={(e) => setUrlForms(e.target.value)} className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none" required />
+                        <label className="block text-sm font-medium text-gray-200 mb-1 flex items-center gap-2"><FileText size={14} /> Link do Forms (Solicitação)</label>
+                        <input type="url" placeholder="https://forms..." value={urlForms} onChange={(e) => setUrlForms(e.target.value)} className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none placeholder-gray-400 backdrop-blur-sm transition-all hover:bg-white/15" required />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2"><Share size={14} /> Link do SharePoint (Aprovação)</label>
-                        <input type="url" placeholder="https://sharepoint..." value={urlSharePoint} onChange={(e) => setUrlSharePoint(e.target.value)} className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none" required />
+                        <label className="block text-sm font-medium text-gray-200 mb-1 flex items-center gap-2"><Share size={14} /> Link do SharePoint (Aprovação)</label>
+                        <input type="url" placeholder="https://sharepoint..." value={urlSharePoint} onChange={(e) => setUrlSharePoint(e.target.value)} className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none placeholder-gray-400 backdrop-blur-sm transition-all hover:bg-white/15" required />
                     </div>
 
                     <div className="pt-2">
                         <div className="flex items-center justify-between mb-2">
-                            <label className="block text-sm font-medium text-gray-700">Cards adicionais (opcional)</label>
+                            <label className="block text-sm font-medium text-gray-300">Cards adicionais (opcional)</label>
                             <button type="button" onClick={addExtraField} className="text-sm text-[#57B952] hover:text-green-700 font-semibold flex items-center gap-1">
                                 <Plus size={14} /> Adicionar card
                             </button>
                         </div>
                         <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
                             {extraFields.map((field, idx) => (
-                                <div key={idx} className="border border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50">
+                                <div key={idx} className="border border-white/20 rounded-lg p-3 space-y-2 bg-white/5 backdrop-blur-sm">
                                     <input
                                         type="text"
                                         placeholder="Nome do Card"
                                         value={field.name}
                                         onChange={(e) => updateExtraField(idx, 'name', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                                        className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none text-sm placeholder-gray-400"
                                     />
                                     
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-600 mb-1">Tipo de Card</label>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Tipo de Card</label>
                                         <select
                                             value={field.type || 'link'}
                                             onChange={(e) => updateExtraField(idx, 'type', e.target.value)}
-                                            className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                                            className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
                                         >
                                             <option value="link">🔗 Link Externo</option>
                                             <option value="documents">📁 Pasta de Documentos</option>
@@ -527,14 +536,14 @@ function SelecaoProjeto() {
                                         placeholder="Descrição (opcional)"
                                         value={field.description}
                                         onChange={(e) => updateExtraField(idx, 'description', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                                        className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none text-sm placeholder-gray-400"
                                     />
                                     <input
                                         type="url"
                                         placeholder="URL (https://...)"
                                         value={field.url}
                                         onChange={(e) => updateExtraField(idx, 'url', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:ring-2 focus:ring-[#57B952] outline-none text-sm"
+                                        className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:ring-2 focus:ring-[#57B952] outline-none text-sm placeholder-gray-400"
                                     />
                                     <button
                                         type="button"
@@ -571,7 +580,7 @@ function SelecaoProjeto() {
       {/* TOAST NOTIFICATION */}
       {toast.show && (
         <div className="fixed top-8 right-8 z-[200] animate-fade-in">
-          <div className={`border-l-4 ${toast.type === 'error' ? 'bg-white border-red-500' : 'bg-white border-[#57B952]'} rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px]`}>
+          <div className={`border-l-4 ${toast.type === 'error' ? 'bg-red-500/20 border-red-500' : 'bg-green-500/20 border-[#57B952]'} rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px] text-white`}>
             <div className={`${toast.type === 'error' ? 'bg-red-100' : 'bg-green-100'} p-2 rounded-full`}>
               {toast.type === 'error' ? (
                 <X size={24} className="text-red-500" />
@@ -580,8 +589,8 @@ function SelecaoProjeto() {
               )}
             </div>
             <div>
-              <p className="font-bold text-gray-900">{toast.type === 'error' ? 'Erro!' : 'Sucesso!'}</p>
-              <p className="text-sm text-gray-600">{toast.message}</p>
+              <p className="font-bold text-white">{toast.type === 'error' ? 'Erro!' : 'Sucesso!'}</p>
+              <p className="text-sm text-gray-100">{toast.message}</p>
             </div>
           </div>
         </div>
@@ -590,13 +599,13 @@ function SelecaoProjeto() {
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete.open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[300]">
-          <div className="bg-white rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Confirmar exclusão</h3>
-            <p className="text-sm text-gray-600 mb-6">Tem certeza que deseja remover esta base? Esta ação não pode ser desfeita.</p>
+          <div className="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4 border border-gray-700 text-white">
+            <h3 className="text-lg font-bold text-white mb-2">Confirmar exclusão</h3>
+            <p className="text-sm text-gray-200 mb-6">Tem certeza que deseja remover esta base? Esta ação não pode ser desfeita.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDelete({ open: false, projetoId: null })}
-                className="flex-1 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold transition-colors"
+                className="flex-1 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition-colors border border-white/20"
               >
                 Cancelar
               </button>
@@ -611,7 +620,7 @@ function SelecaoProjeto() {
         </div>
       )}
 
-      <footer className="w-full py-6 text-center text-gray-500 text-xs shrink-0 border-t border-gray-200 bg-white">&copy; 2025 Parceria Petrobras & Normatel Engenharia</footer>
+      <footer className="w-full py-6 text-center text-gray-300 text-xs shrink-0 border-t border-gray-700 bg-gray-900/50 backdrop-blur-md z-20">&copy; 2025 Parceria Petrobras & Normatel Engenharia</footer>
     </div>
   );
 }

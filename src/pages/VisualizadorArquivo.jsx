@@ -152,7 +152,7 @@ function VisualizadorArquivo() {
 
   if (!fileUrl) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="text-center">
           <p className="text-gray-600 mb-4">Nenhum arquivo para visualizar</p>
           <button 
@@ -242,9 +242,9 @@ function VisualizadorArquivo() {
       {/* Modal de Resultados */}
       {analysisResult && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden">
+          <div className="bg-gray-800 backdrop-blur-xl rounded-xl shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden border border-gray-700">
             <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-white">
                 {analysisResult.type === 'summary' && '📄 Resumo do Documento'}
                 {analysisResult.type === 'ocr' && '🔍 Texto Extraído (OCR)'}
                 {analysisResult.type === 'analysis' && '📊 Análise de Dados'}
@@ -261,7 +261,7 @@ function VisualizadorArquivo() {
                 {analysisResult.data}
               </pre>
             </div>
-            <div className="p-4 border-t bg-gray-50 flex justify-end gap-2">
+            <div className="p-4 border-t border-gray-700 bg-gray-800/50 flex justify-end gap-2">
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(analysisResult.data);

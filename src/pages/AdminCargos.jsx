@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Trash2, Edit2, Save, X, User, Briefcase, CheckCircle, Crown, Users, FolderOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { db } from '../services/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
 
 function AdminCargos() {
   const { currentUser, userProfile } = useAuth();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const navigate = useNavigate();
   const [cargos, setCargos] = useState([]);
   const [projetos, setProjetos] = useState([]);
@@ -29,7 +32,7 @@ function AdminCargos() {
     admin: { label: 'Administrador', color: 'bg-red-100 text-red-700', icon: Crown },
     'gerente-usuario': { label: 'Gerente de Usuário', color: 'bg-purple-100 text-purple-700', icon: Users },
     'gerente-projeto': { label: 'Gerente de Projeto', color: 'bg-blue-100 text-blue-700', icon: FolderOpen },
-    colaborador: { label: 'Colaborador', color: 'bg-gray-100 text-gray-700', icon: User }
+    colaborador: { label: 'Colaborador', color: 'bg-gray-700 text-gray-200', icon: User }
   };
 
   const PERMISSOES = [
@@ -322,17 +325,21 @@ function AdminCargos() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-600">Carregando...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <p className="text-gray-300">Carregando...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50">
-      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 bg-white shadow-sm border-b border-gray-200 min-h-[56px]">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200 relative text-white">
+      <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 bg-gray-900/50 shadow-sm border-b border-gray-700 min-h-[56px]">
         <Link to="/admin">
-          <img src="/img/Normatel Engenharia_PRETO.png" alt="Logo" className="h-6 md:h-8 w-auto object-contain" />
+          <img 
+            src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+            alt="Logo" 
+            className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
+          />
         </Link>
         <div className="flex items-center gap-3">
           <Link 
@@ -350,16 +357,16 @@ function AdminCargos() {
             <div>
               <Link 
                 to="/admin" 
-                className="inline-flex items-center gap-2 text-gray-600 hover:text-[#57B952] mb-4 transition-colors text-sm"
+                className="inline-flex items-center gap-2 text-gray-300 hover:text-[#57B952] mb-4 transition-colors text-sm"
               >
                 <ArrowLeft size={18} className="md:w-5 md:h-5" />
                 Voltar
               </Link>
-              <h1 className="text-xl md:text-3xl font-bold text-gray-900 flex items-center gap-2 md:gap-3">
+              <h1 className="text-xl md:text-3xl font-bold text-white flex items-center gap-2 md:gap-3">
                 <Briefcase size={32} className="text-purple-600" />
                 Gerenciar Cargos
               </h1>
-              <p className="text-gray-600 mt-2">Crie e gerencie cargos com permissões por projeto</p>
+              <p className="text-gray-200 mt-2">Crie e gerencie cargos com permissões por projeto</p>
             </div>
             <div className="flex items-center gap-3">
               <button 
@@ -380,16 +387,16 @@ function AdminCargos() {
           </div>
 
           {/* Lista de Cargos */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl shadow-md border border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-900/50 border-b border-gray-700">
                   <tr>
-                    <th className="p-4 text-left text-sm font-semibold text-gray-700">Cargo</th>
-                    <th className="p-4 text-left text-sm font-semibold text-gray-700">Tipo</th>
-                    <th className="p-4 text-left text-sm font-semibold text-gray-700">Projetos com Acesso</th>
-                    <th className="p-4 text-left text-sm font-semibold text-gray-700">Permissões</th>
-                    <th className="p-4 text-center text-sm font-semibold text-gray-700">Ações</th>
+                    <th className="p-4 text-left text-sm font-semibold text-gray-300">Cargo</th>
+                    <th className="p-4 text-left text-sm font-semibold text-gray-300">Tipo</th>
+                    <th className="p-4 text-left text-sm font-semibold text-gray-300">Projetos com Acesso</th>
+                    <th className="p-4 text-left text-sm font-semibold text-gray-300">Permissões</th>
+                    <th className="p-4 text-center text-sm font-semibold text-gray-300">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -404,9 +411,9 @@ function AdminCargos() {
                       const tipoInfo = TIPOS_CARGO[cargo.tipo || 'colaborador'];
                       const IconComponent = tipoInfo.icon;
                       return (
-                      <tr key={cargo.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <tr key={cargo.id} className="border-b border-gray-700 hover:bg-gray-700/50">
                         <td className="p-4">
-                          <span className="font-semibold text-gray-900">{cargo.nome}</span>
+                          <span className="font-semibold text-white">{cargo.nome}</span>
                         </td>
                         <td className="p-4">
                           <span className={`flex items-center gap-2 w-fit px-3 py-1 rounded-full text-xs font-medium ${tipoInfo.color}`}>
@@ -427,7 +434,7 @@ function AdminCargos() {
                               })}
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-sm">Nenhum projeto atribuído</span>
+                            <span className="text-gray-600 text-sm">Nenhum projeto atribuído</span>
                           )}
                         </td>
                         <td className="p-4">
@@ -448,7 +455,7 @@ function AdminCargos() {
                               <span className="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded font-medium">Cards</span>
                             )}
                             {!cargo.canManageUsers && !cargo.canManagePermissions && !cargo.canCreateCargos && !cargo.canCreateProjetos && !cargo.canEditCardsProjetos && (
-                              <span className="text-gray-400 text-xs">Nenhuma</span>
+                              <span className="text-gray-600 text-xs">Nenhuma</span>
                             )}
                           </div>
                         </td>
@@ -460,7 +467,7 @@ function AdminCargos() {
                               className={`p-2 rounded-lg transition-colors ${
                                 canEditCargo(cargo)
                                   ? 'bg-blue-100 hover:bg-blue-200 text-blue-600'
-                                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                  : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                               }`}
                               title={canEditCargo(cargo) ? 'Editar' : 'Você não pode editar este cargo'}
                             >
@@ -472,7 +479,7 @@ function AdminCargos() {
                               className={`p-2 rounded-lg transition-colors ${
                                 canEditCargo(cargo)
                                   ? 'bg-red-100 hover:bg-red-200 text-red-600'
-                                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                  : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                               }`}
                               title={canEditCargo(cargo) ? 'Excluir' : 'Você não pode deletar este cargo'}
                             >
@@ -494,9 +501,9 @@ function AdminCargos() {
       {/* MODAL CREATE/EDIT */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <div className="bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] border border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-700 flex-shrink-0">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                 <Briefcase size={24} className="text-purple-600" />
                 {editingCargo ? 'Editar Cargo' : 'Novo Cargo'}
               </h2>
@@ -508,7 +515,7 @@ function AdminCargos() {
             <form onSubmit={handleSaveCargo} className="flex flex-col flex-1 overflow-hidden">
               <div className="overflow-y-auto flex-1 p-6 space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Cargo Pré-Pronto</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Cargo Pré-Pronto</label>
                   <select
                     onChange={(e) => {
                       const cargoSelecionado = e.target.value;
@@ -576,7 +583,7 @@ function AdminCargos() {
                         setCanEditCardsProjetos(config.canEditCardsProjetos);
                       }
                     }}
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                   >
                     <option value="">Selecione um cargo pré-pronto...</option>
                     <option value="Administrador Geral">Administrador Geral (Acesso Total)</option>
@@ -590,13 +597,13 @@ function AdminCargos() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Nome do Cargo *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Nome do Cargo *</label>
                   <input
                     type="text"
                     value={novoCargo}
                     onChange={(e) => setNovoCargo(e.target.value)}
                     placeholder="Ex: Gerente, Coordenador, etc."
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#57B952] focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400"
                     required
                   />
                 </div>
@@ -604,7 +611,7 @@ function AdminCargos() {
 
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Projetos com Permissão de Edição ({projetosSelecionados.length} selecionados)
                   </label>
                   <p className="text-xs text-gray-500 mb-3">
@@ -617,7 +624,7 @@ function AdminCargos() {
                       projetos.map(projeto => (
                         <label 
                           key={projeto.id} 
-                          className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
                         >
                           <input
                             type="checkbox"
@@ -625,7 +632,7 @@ function AdminCargos() {
                             onChange={() => toggleProjeto(projeto.id)}
                             className="w-4 h-4 text-[#57B952] border-gray-300 rounded focus:ring-[#57B952]"
                           />
-                          <span className="text-gray-900 font-medium">{projeto.nome}</span>
+                          <span className="text-white font-medium">{projeto.nome}</span>
                         </label>
                       ))
                     )}
@@ -634,7 +641,7 @@ function AdminCargos() {
 
                 <div className="border-t pt-6 space-y-4">
                   <div>
-                    <p className="text-sm font-semibold text-gray-700 mb-3">Permissões Customizáveis</p>
+                    <p className="text-sm font-semibold text-gray-300 mb-3">Permissões Customizáveis</p>
                     <p className="text-xs text-gray-500 mb-4">Selecione as permissões específicas que este cargo terá no sistema:</p>
                   </div>
                   
@@ -670,7 +677,7 @@ function AdminCargos() {
                             className="w-4 h-4 border-gray-300 rounded focus:ring-2"
                           />
                           <div>
-                            <p className="font-medium text-gray-900">{perm.label}</p>
+                            <p className="font-medium text-white">{perm.label}</p>
                             <p className="text-xs text-gray-600">{perm.description}</p>
                           </div>
                         </label>
@@ -680,7 +687,7 @@ function AdminCargos() {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-gray-200 flex gap-3 flex-shrink-0">
+              <div className="p-6 border-t border-gray-700 flex gap-3 flex-shrink-0">
                 <button 
                   type="button" 
                   onClick={() => setIsModalOpen(false)} 
@@ -709,7 +716,7 @@ function AdminCargos() {
       {/* TOAST NOTIFICATION */}
       {toast.show && (
         <div className="fixed top-8 right-8 z-[200] animate-fade-in">
-          <div className={`border-l-4 ${toast.type === 'error' ? 'bg-white border-red-500' : 'bg-white border-[#57B952]'} rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px]`}>
+          <div className={`border-l-4 ${toast.type === 'error' ? 'bg-red-500/20 border-red-500' : 'bg-green-500/20 border-[#57B952]'} rounded-lg shadow-2xl p-4 flex items-center gap-3 min-w-[300px] text-white`}>
             <div className={`${toast.type === 'error' ? 'bg-red-100' : 'bg-green-100'} p-2 rounded-full`}>
               {toast.type === 'error' ? (
                 <X size={24} className="text-red-500" />
@@ -718,7 +725,7 @@ function AdminCargos() {
               )}
             </div>
             <div>
-              <p className="font-bold text-gray-900">{toast.type === 'error' ? 'Erro!' : 'Sucesso!'}</p>
+              <p className="font-bold text-white">{toast.type === 'error' ? 'Erro!' : 'Sucesso!'}</p>
               <p className="text-sm text-gray-600">{toast.message}</p>
             </div>
           </div>
@@ -728,15 +735,15 @@ function AdminCargos() {
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete.open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[300]">
-          <div className="bg-white rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Confirmar exclusão</h3>
+          <div className="bg-gray-800 rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4 border border-gray-700 text-white">
+            <h3 className="text-lg font-bold text-white mb-2">Confirmar exclusão</h3>
             <p className="text-sm text-gray-600 mb-6">
               Tem certeza que deseja remover o cargo <span className="font-semibold">{confirmDelete.cargoNome}</span>? Esta ação não pode ser desfeita.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDelete({ open: false, cargoId: null, cargoNome: '' })}
-                className="flex-1 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold transition-colors"
+                className="flex-1 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors"
               >
                 Cancelar
               </button>
@@ -751,7 +758,7 @@ function AdminCargos() {
         </div>
       )}
 
-      <footer className="w-full py-6 text-center text-gray-500 text-xs shrink-0 border-t border-gray-200 bg-white">
+      <footer className="w-full py-6 text-center text-gray-300 text-xs shrink-0 border-t border-gray-700 bg-gray-900/50">
         &copy; 2025 Parceria Petrobras & Normatel Engenharia
       </footer>
     </div>

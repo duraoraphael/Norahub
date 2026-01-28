@@ -120,10 +120,10 @@ function Dashboard() {
   };
 
   const StatCard = ({ icon: Icon, label, value, color, bgColor }) => (
-    <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 md:p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-md border border-white/20 p-4 md:p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500 mb-1">{label}</p>
+          <p className="text-sm text-gray-400 mb-1">{label}</p>
           <p className={`text-2xl md:text-3xl font-bold ${color}`}>{value}</p>
         </div>
         <div className={`${bgColor} p-3 md:p-4 rounded-xl`}>
@@ -134,24 +134,29 @@ function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gray-50">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#008542]/10 rounded-full blur-3xl"></div>
+      </div>
       {/* Header */}
-      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-200 min-h-[56px] md:h-20 bg-white">
+      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-white/10 min-h-[56px] md:h-20 bg-gray-900/50 backdrop-blur-md z-20">
         <button 
           onClick={() => navigate('/selecao-projeto')} 
-          className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-500 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10"
+          className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-300 hover:text-[#57B952] transition-colors font-medium text-xs md:text-sm shrink-0 z-10"
         >
           <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> 
           <span className="hidden sm:inline">Voltar</span>
         </button>
         
         <div className="flex items-center gap-2 md:gap-4">
-          <img src="/img/NoraHub.png" alt="Logo Nora" className="h-6 md:h-10 w-auto object-contain" />
-          <span className="text-gray-600 text-lg md:text-2xl font-light">|</span>
+          <img src="/img/Designer (6).png" alt="Logo Nora" className="h-10 sm:h-12 md:h-14 w-auto object-contain drop-shadow-lg" />
+          <span className="text-gray-400 text-lg md:text-2xl font-light">|</span>
           <img 
             src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
             alt="Logo Normatel" 
-            className="h-6 md:h-10 w-auto object-contain" 
+            className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
           />
         </div>
         
@@ -160,15 +165,15 @@ function Dashboard() {
             <NotificationCenter />
             <button 
               onClick={() => navigate('/perfil')} 
-              className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-200 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
+              className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-700 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
             >
               {fotoURL ? (
                 <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" />
               ) : (
-                <User size={16} className="md:w-5 md:h-5 text-gray-500" />
+                <User size={16} className="md:w-5 md:h-5 text-gray-400" />
               )}
             </button>
-            <span className="text-xs md:text-base lg:text-lg font-semibold text-gray-800 truncate max-w-[60px] sm:max-w-[100px] md:max-w-none">
+            <span className="text-xs md:text-base lg:text-lg font-semibold text-white truncate max-w-[60px] sm:max-w-[100px] md:max-w-none">
               <span className="hidden md:inline">Olá, </span>{primeiroNome}
             </span>
           </div>
@@ -180,11 +185,11 @@ function Dashboard() {
         <div className="max-w-7xl mx-auto">
           {/* Título */}
           <div className="mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-2xl md:text-4xl font-bold text-white flex items-center gap-3">
               <BarChart3 size={32} className="md:w-10 md:h-10 text-[#57B952]" />
               Dashboard
             </h1>
-            <p className="text-sm md:text-base text-gray-500 mt-2">
+            <p className="text-sm md:text-base text-gray-400 mt-2">
               Visão geral das estatísticas do sistema
             </p>
           </div>
@@ -192,7 +197,7 @@ function Dashboard() {
           {loading ? (
             <div className="text-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952] mx-auto"></div>
-              <p className="text-gray-500 mt-4">Carregando dados...</p>
+              <p className="text-gray-400 mt-4">Carregando dados...</p>
             </div>
           ) : (
             <>
@@ -243,8 +248,8 @@ function Dashboard() {
               </div>
 
               {/* Atividade Recente */}
-              <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 md:p-6">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className="bg-white/10 backdrop-blur-xl rounded-xl shadow-xl border border-white/20 p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-bold text-white mb-4 flex items-center gap-2">
                   <Clock size={20} className="md:w-6 md:h-6" />
                   Atividade Recente
                 </h2>
@@ -256,7 +261,7 @@ function Dashboard() {
                     {recentActivity.map((activity) => (
                       <div 
                         key={activity.id}
-                        className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors text-white"
                       >
                         <div className={`p-2 rounded-lg ${
                           activity.type === 'form_response' ? 'bg-blue-100' :
@@ -270,7 +275,7 @@ function Dashboard() {
                            <Activity size={18} className="text-gray-600" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900">{activity.title || activity.action || 'Atividade'}</p>
+                          <p className="text-sm font-medium text-white">{activity.title || activity.action || 'Atividade'}</p>
                           <p className="text-xs text-gray-500 mt-1">{activity.message || activity.description || 'Sem descrição'}</p>
                           <p className="text-xs text-gray-400 mt-1">{formatTimestamp(activity.timestamp || activity.createdAt)}</p>
                         </div>

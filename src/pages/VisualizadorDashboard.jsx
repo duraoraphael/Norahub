@@ -10,7 +10,7 @@ function VisualizadorDashboard() {
 
   if (!dashboardUrl) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="text-center">
           <p className="text-gray-500 mb-4">Nenhum dashboard selecionado</p>
           <button 
@@ -25,7 +25,7 @@ function VisualizadorDashboard() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gray-900">
+    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       {/* Header */}
       <header className="w-full flex items-center justify-between py-3 md:py-4 px-3 md:px-8 border-b border-gray-700 bg-gray-800 min-h-[56px]">
         <button 

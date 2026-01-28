@@ -21,7 +21,7 @@ function SolicitacaoCompras() {
   }, [targetUrl]);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-white text-gray-500 font-[Inter]">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300 font-[Inter]">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952] mx-auto mb-4"></div>
         <p>Redirecionando para o SharePoint do Projeto...</p>
