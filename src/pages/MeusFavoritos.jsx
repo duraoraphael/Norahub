@@ -43,7 +43,7 @@ function MeusFavoritos() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen w-full flex flex-col font-[Outfit,Poppins] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="container mx-auto px-4 py-6 md:p-8 max-w-7xl flex-grow">
         <div className="relative flex justify-center items-center pb-6 mb-8">
           <Link to="/" className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white/10 backdrop-blur-xl text-white hover:bg-[#57B952] px-4 py-2 rounded-lg shadow border border-white/20 hover:border-[#57B952] transition-all">

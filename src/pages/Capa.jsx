@@ -16,7 +16,7 @@ function Capa() {
     }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200">
+    <div className="min-h-screen w-full flex flex-col font-[Outfit,Poppins] overflow-x-hidden relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200">
       {/* Background decorativo com gradiente */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#57B952]/5 rounded-full blur-3xl"></div>
@@ -58,12 +58,12 @@ function Capa() {
             </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6 sm:gap-8 md:gap-10 justify-center items-stretch w-full max-w-sm sm:max-w-2xl md:max-w-5xl px-2">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 md:gap-8 justify-center items-stretch w-full max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-5xl px-2">
             
             {/* Card PETROBRAS */}
             <Link 
                 to="/tutoriais" 
-                className="group relative w-full md:w-96 h-80 md:h-96 rounded-2xl sm:rounded-3xl overflow-hidden no-underline transition-all duration-500 hover:-translate-y-2 focus:outline-none focus:ring-2 focus:ring-[#008542] focus:ring-offset-2 focus:ring-offset-gray-900"
+                className="group relative w-full lg:w-96 h-64 sm:h-80 md:h-96 lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden no-underline transition-all duration-500 hover:-translate-y-2 focus:outline-none focus:ring-2 focus:ring-[#008542] focus:ring-offset-2 focus:ring-offset-gray-900"
             >
                 {/* Gradient Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#008542] via-[#006b38] to-[#005030]"></div>
@@ -91,7 +91,7 @@ function Capa() {
             {/* Card NORMATEL */}
             <Link 
                 to="/login" 
-                className="group relative w-full md:w-96 h-80 md:h-96 rounded-2xl sm:rounded-3xl overflow-hidden text-white no-underline transition-all duration-500 hover:-translate-y-2 focus:outline-none focus:ring-2 focus:ring-[#57B952] focus:ring-offset-2 focus:ring-offset-gray-900"
+                className="group relative w-full lg:w-96 h-64 sm:h-80 md:h-96 lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden text-white no-underline transition-all duration-500 hover:-translate-y-2 focus:outline-none focus:ring-2 focus:ring-[#57B952] focus:ring-offset-2 focus:ring-offset-gray-900"
             >
                 {/* Gradient Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#57B952] via-[#4a9c46] to-[#3d8c38]"></div>

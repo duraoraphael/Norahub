@@ -180,7 +180,7 @@ function Login() {
   if (authLoading) return <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-white to-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#57B952]"></div></div>;
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200">
+    <div className="min-h-screen w-full flex flex-col font-[Outfit,Poppins] overflow-x-hidden relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200">
       {/* Background decorativo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/3 w-96 h-96 bg-[#57B952]/10 rounded-full blur-3xl"></div>
@@ -217,17 +217,17 @@ function Login() {
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div className="space-y-2">
               <label className="block text-xs sm:text-sm font-semibold text-gray-200 ml-1">Email</label>
-              <div className="relative">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400 text-white text-sm sm:text-base outline-none backdrop-blur-sm transition-all hover:bg-white/15" placeholder="seu.nome@normatel.com.br" required />
+              <div className="relative flex items-center">
+                <Mail size={18} className="absolute left-3 sm:left-4 text-gray-400 flex-shrink-0 pointer-events-none z-10" />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-12 sm:pl-14 pr-4 py-2.5 sm:py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-[#57B952] focus:border-transparent text-white text-sm sm:text-base outline-none backdrop-blur-sm transition-all hover:bg-white/15" style={{paddingLeft: '2.75rem'}} placeholder="seu.nome@normatel.com.br" required />
               </div>
             </div>
             
             <div className="space-y-2">
               <label className="block text-xs sm:text-sm font-semibold text-gray-200 ml-1">Senha</label>
-              <div className="relative">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
-                <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-[#57B952] focus:border-transparent placeholder-gray-400 text-white text-sm sm:text-base outline-none backdrop-blur-sm transition-all hover:bg-white/15" placeholder="••••••" required />
+              <div className="relative flex items-center">
+                <Lock size={18} className="absolute left-3 sm:left-4 text-gray-400 flex-shrink-0 pointer-events-none z-10" />
+                <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full pl-12 sm:pl-14 pr-4 py-2.5 sm:py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-[#57B952] focus:border-transparent text-white text-sm sm:text-base outline-none backdrop-blur-sm transition-all hover:bg-white/15" style={{paddingLeft: '2.75rem'}} placeholder="••••••" required />
               </div>
             </div>
             
@@ -261,7 +261,7 @@ function Login() {
 
         </div>
       </main>
-      <footer className="w-full py-4 sm:py-6 text-center text-gray-300 text-xs shrink-0 bg-white/50 backdrop-blur-md border-t border-gray-700 px-2 z-20">
+      <footer className="w-full py-4 sm:py-6 text-center text-gray-300 text-xs shrink-0 bg-gray-900/50 backdrop-blur-md border-t border-gray-700 px-2 z-20">
         &copy; 2025 Normatel Engenharia
       </footer>
     </div>

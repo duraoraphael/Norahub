@@ -98,7 +98,7 @@ function KeyboardShortcuts() {
                       <div className="flex items-center gap-1">
                         {shortcut.keys.map((key, k) => (
                           <span key={k} className="flex items-center gap-1">
-                            <kbd className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-md text-sm font-mono shadow-sm">
+                            <kbd className="px-3 py-1.5 bg-gray-900 border border-gray-600 rounded-md text-sm font-mono shadow-sm text-white">
                               {key}
                             </kbd>
                             {k < shortcut.keys.length - 1 && (
@@ -118,7 +118,7 @@ function KeyboardShortcuts() {
         {/* Footer */}
         <div className="border-t border-gray-700 p-4 bg-gray-900/50 backdrop-blur-md">
           <p className="text-xs text-center text-gray-500">
-            Pressione <kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded text-xs">?</kbd> para abrir esta ajuda a qualquer momento
+            Pressione <kbd className="px-2 py-1 bg-gray-900 border border-gray-600 rounded text-xs text-white">?</kbd> para abrir esta ajuda a qualquer momento
           </p>
         </div>
       </div>

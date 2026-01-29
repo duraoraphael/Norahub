@@ -332,7 +332,7 @@ function AdminCargos() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200 relative text-white">
+    <div className="min-h-screen w-full flex flex-col font-[Outfit,Poppins] overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-colors duration-200 relative text-white">
       <header className="w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 bg-gray-900/50 shadow-sm border-b border-gray-700 min-h-[56px]">
         <Link to="/admin">
           <img 
