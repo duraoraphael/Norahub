@@ -303,50 +303,54 @@ function SelecaoProjeto() {
       </div>
     {/* ThemeToggle removed */}
 
-      <header className="relative w-full flex items-center justify-center py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 min-h-[56px] md:h-20 bg-gray-900/50 backdrop-blur-md z-20">
-        <button onClick={() => navigate('/')} className="absolute left-3 md:left-8 flex items-center gap-1 md:gap-2 text-gray-300 hover:text-[#57B952] hover:bg-white/5 px-4 py-2 rounded-lg transition-all font-semibold text-xs md:text-sm shrink-0 z-10 backdrop-blur-sm">
-             <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
-        </button>
-            <div className="flex items-center gap-2 md:gap-4">
-            <img src="/img/Designer (6).png" alt="Logo Nora" className="h-10 sm:h-12 md:h-14 w-auto object-contain drop-shadow-lg" />
-            <span className="text-gray-500 text-lg md:text-2xl font-light">|</span>
-            <img 
-              src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
-              alt="Logo Normatel" 
-              className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-lg" 
-            />
+      <header className="relative w-full flex items-center justify-between py-3 md:py-6 px-3 md:px-8 border-b border-gray-700 min-h-[56px] md:h-20 bg-gray-900/50 backdrop-blur-md z-20">
+        <div className="flex items-center min-w-[44px]">
+          <button onClick={() => navigate('/')} className="flex items-center gap-1 md:gap-2 text-gray-300 hover:text-[#57B952] hover:bg-white/5 px-3 sm:px-4 py-2 rounded-lg transition-all font-semibold text-xs md:text-sm shrink-0 backdrop-blur-sm">
+            <ArrowLeft size={16} className="md:w-[18px] md:h-[18px]" /> <span className="hidden sm:inline">Voltar</span>
+          </button>
+        </div>
+        <div className="flex-1 flex items-center justify-center gap-2 md:gap-4 px-2">
+          <img src="/img/Designer (6).png" alt="Logo Nora" className="h-9 sm:h-10 md:h-14 w-auto object-contain drop-shadow-lg" />
+          <span className="text-gray-500 text-lg md:text-2xl font-light">|</span>
+          <img 
+            src={isDark ? "/img/Normatel Engenharia_BRANCO.png" : "/img/Normatel Engenharia_PRETO.png"} 
+            alt="Logo Normatel" 
+            className="h-5 sm:h-6 md:h-10 w-auto object-contain drop-shadow-lg" 
+          />
         </div>
         
         {currentUser && (
-            <div className="absolute right-3 md:right-8 flex items-center gap-2 md:gap-3 shrink-0">
-                <NotificationCenter />
-                <button 
-                    onClick={() => navigate('/perfil')} 
-                    className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-700 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
-                >
-                    {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
-                </button>
-                <span className="text-xs md:text-base lg:text-lg font-semibold text-white truncate max-w-[60px] sm:max-w-[100px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
-            </div>
+          <div className="flex items-center gap-2 md:gap-3 min-w-[80px] justify-end shrink-0">
+            <NotificationCenter />
+            <button 
+              onClick={() => navigate('/perfil')} 
+              className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#57B952] bg-gray-700 flex items-center justify-center hover:border-green-600 transition-colors cursor-pointer shrink-0"
+            >
+              {fotoURL ? <img src={fotoURL} className="w-full h-full object-cover" alt="Avatar" /> : <User size={16} className="md:w-5 md:h-5 text-gray-500" />}
+            </button>
+            <span className="hidden sm:inline text-xs md:text-base lg:text-lg font-semibold text-white truncate max-w-[60px] sm:max-w-[100px] md:max-w-none"><span className="hidden md:inline">Olá, </span>{primeiroNome}</span>
+          </div>
         )}
       </header>
 
-      <main className="flex-grow flex flex-col items-center p-3 md:p-8 relative z-10">
+      <main className="flex-grow flex flex-col items-center p-2 sm:p-3 md:p-8 relative z-10">
         <div className="w-full max-w-6xl">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-4 md:mb-8 gap-4">
-                <div className="flex-1">
-                    <h1 className="text-xl md:text-3xl font-bold text-white">Seleção de projetos</h1>
-                    <p className="text-sm md:text-base text-gray-300 mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-3 md:mb-8 gap-3 md:gap-4">
+                <div className="flex-1 w-full">
+                    <h1 className="text-lg sm:text-xl md:text-3xl font-bold text-white">Seleção de projetos</h1>
+                    <p className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 md:mt-2">Escolha o projeto para acessar o ambiente de trabalho.</p>
                 </div>
                 
-                <div className="flex gap-3 flex-wrap">
+                <div className="flex gap-2 flex-wrap w-full md:w-auto justify-start md:justify-end">
                     {/* BOTÃO ADMIN - Apenas para Administrador */}
                     {isAdmin && (
                         <Link 
                             to="/admin" 
-                            className="bg-purple-100 text-purple-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-purple-200"
+                            className="bg-purple-100 text-purple-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold flex items-center gap-1.5 sm:gap-2 shadow transition-transform hover:scale-105 text-xs sm:text-sm border border-purple-200"
                         >
-                            <Shield size={18} /> Admin
+                          <Shield size={16} className="sm:w-[18px] sm:h-[18px]" />
+                          <span className="hidden sm:inline">Administrador</span>
+                          <span className="sm:hidden">Adm</span>
                         </Link>
                     )}
 
@@ -354,40 +358,42 @@ function SelecaoProjeto() {
                     {(isAdmin || canAccessAdmin) && (
                         <Link 
                             to="/gerencia" 
-                            className="bg-orange-100 text-orange-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm border border-orange-200"
+                            className="bg-orange-100 text-orange-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold flex items-center gap-1.5 sm:gap-2 shadow transition-transform hover:scale-105 text-xs sm:text-sm border border-orange-200"
                         >
-                            <Shield size={18} /> Gerência
+                          <Shield size={16} className="sm:w-[18px] sm:h-[18px]" />
+                          <span className="hidden sm:inline">Gerência</span>
+                          <span className="sm:hidden">Ger</span>
                         </Link>
                     )}
 
                     {/* Botão Novo Projeto */}
                     {canManageProjects && (
-                        <button onClick={openCreateModal} className="bg-[#57B952] hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow transition-transform hover:scale-105 text-sm">
-                            <Plus size={18} /> Novo Projeto
+                        <button onClick={openCreateModal} className="bg-[#57B952] hover:bg-green-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold flex items-center gap-1.5 sm:gap-2 shadow transition-transform hover:scale-105 text-xs sm:text-sm">
+                            <Plus size={16} className="sm:w-[18px] sm:h-[18px]" /> <span className="hidden xs:inline">Novo Projeto</span><span className="xs:hidden">Novo</span>
                         </button>
                     )}
                 </div>
             </div>
 
             {/* Filtros e Busca */}
-            <div className="mb-6 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 p-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-200 mb-2">Buscar</label>
+            <div className="mb-4 md:mb-6 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 p-3 md:p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div className="sm:col-span-2 md:col-span-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 md:mb-2">Buscar</label>
                   <input
                     type="text"
-                    placeholder="Buscar por nome ou descrição..."
+                    placeholder="Buscar por nome..."
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white placeholder-gray-400 backdrop-blur-sm transition-all hover:bg-white/15"
+                    className="w-full px-3 py-2 text-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white placeholder-gray-400 backdrop-blur-sm transition-all hover:bg-white/15"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">Status</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 md:mb-2">Status</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/15"
+                    className="w-full px-3 py-2 text-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/15"
                   >
                     <option value="all" className="bg-gray-900">Todos</option>
                     <option value="active" className="bg-gray-900">Ativos</option>
@@ -395,11 +401,11 @@ function SelecaoProjeto() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">Ordenar por</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 md:mb-2">Ordenar por</label>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/15"
+                    className="w-full px-3 py-2 text-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-[#57B952] outline-none bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/15"
                   >
                     <option value="name" className="bg-gray-900">Nome (A-Z)</option>
                     <option value="date" className="bg-gray-900">Data de Criação</option>
@@ -424,22 +430,22 @@ function SelecaoProjeto() {
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                     {getFilteredAndSortedProjects().map((projeto) => (
                         <div 
                             key={projeto.id} 
                             onClick={() => handleSelectProject(projeto)} 
-                            className="group bg-white/10 backdrop-blur-md p-4 md:p-8 rounded-xl shadow-lg hover:shadow-xl border border-white/20 hover:border-white/40 text-left transition-all hover:-translate-y-1 flex flex-col h-full relative cursor-pointer"
+                            className="group bg-white/10 backdrop-blur-md p-4 sm:p-5 md:p-8 rounded-xl shadow-lg hover:shadow-xl border border-white/20 hover:border-white/40 text-left transition-all hover:-translate-y-1 flex flex-col h-full relative cursor-pointer"
                         >
-                            <div className="flex items-start justify-between mb-3 md:mb-4">
-                                <div className="bg-[#57B952]/20 p-2 md:p-3 rounded-lg text-[#57B952] border border-[#57B952]/50"><Briefcase size={20} className="md:w-6 md:h-6" /></div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] md:text-xs font-bold text-gray-300 uppercase tracking-wider">Base Ativa</span>
+                            <div className="flex items-start justify-between mb-2 sm:mb-3 md:mb-4">
+                                <div className="bg-[#57B952]/20 p-2 rounded-lg text-[#57B952] border border-[#57B952]/50"><Briefcase size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" /></div>
+                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                    <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-300 uppercase tracking-wider">Base Ativa</span>
                                     <FavoriteButton 
                                         itemId={projeto.id}
                                         itemType="project"
                                         itemData={{ name: projeto.nome }}
-                                        size={18}
+                                        size={16}
                                         onChange={(next) => {
                                             setFavIds(prev => {
                                                 const s = new Set(prev);
@@ -451,17 +457,17 @@ function SelecaoProjeto() {
                                     {canEditProject(projeto.id) && (
                                         <button 
                                             onClick={(e) => handleDeleteProject(e, projeto.id)}
-                                            className="p-1.5 text-gray-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                            className="p-1 sm:p-1.5 text-gray-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             title="Excluir Base"
                                         >
-                                            <Trash2 size={14} className="md:w-4 md:h-4" />
+                                            <Trash2 size={13} className="sm:w-[14px] sm:h-[14px] md:w-4 md:h-4" />
                                         </button>
                                     )}
                                 </div>
                             </div>
-                            <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-[#57B952] transition-colors">{projeto.nome}</h3>
-                            <p className="text-sm text-gray-200 mb-6 flex-grow">{projeto.descricao || 'Acesso ao portal.'}</p>
-                            <div className="mt-auto w-full py-2 rounded-lg bg-white/10 text-center text-sm font-medium text-white group-hover:bg-[#57B952] group-hover:text-white transition-colors backdrop-blur-sm border border-white/20 group-hover:border-[#57B952]/50">Acessar Projeto</div>
+                            <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-1.5 sm:mb-2 group-hover:text-[#57B952] transition-colors line-clamp-2">{projeto.nome}</h3>
+                            <p className="text-xs sm:text-sm text-gray-200 mb-4 sm:mb-5 md:mb-6 flex-grow line-clamp-2">{projeto.descricao || 'Acesso ao portal.'}</p>
+                            <div className="mt-auto w-full py-2 rounded-lg bg-white/10 text-center text-xs sm:text-sm font-medium text-white group-hover:bg-[#57B952] group-hover:text-white transition-colors backdrop-blur-sm border border-white/20 group-hover:border-[#57B952]/50">Acessar Projeto</div>
                         </div>
                     ))}
                 </div>

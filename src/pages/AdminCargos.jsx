@@ -593,7 +593,7 @@ function AdminCargos() {
                     <option value="Gerente de Cargos">Gerente de Cargos (Criar/Editar Cargos)</option>
                     <option value="Colaborador">Colaborador (Sem Permissões)</option>
                   </select>
-                  <p className="text-xs text-gray-500 mt-2">Selecione um cargo pré-configurado ou personalize abaixo</p>
+                  <p className="text-xs text-gray-300 mt-2">Selecione um cargo pré-configurado ou personalize abaixo</p>
                 </div>
 
                 <div>
@@ -639,21 +639,21 @@ function AdminCargos() {
                   </div>
                 </div>
 
-                <div className="border-t pt-6 space-y-4">
+                  <div className="border-t pt-6 space-y-4">
                   <div>
                     <p className="text-sm font-semibold text-gray-300 mb-3">Permissões Customizáveis</p>
-                    <p className="text-xs text-gray-500 mb-4">Selecione as permissões específicas que este cargo terá no sistema:</p>
+                    <p className="text-xs text-gray-300 mb-4">Selecione as permissões específicas que este cargo terá no sistema:</p>
                   </div>
                   
                   <div className="space-y-2 max-h-80 overflow-y-auto">
                     {PERMISSOES.map(perm => {
                       const value = eval(perm.id);
                       const colorMap = {
-                        'canManageUsers': 'bg-blue-50 border-blue-200',
-                        'canManagePermissions': 'bg-green-50 border-green-200',
-                        'canCreateCargos': 'bg-purple-50 border-purple-200',
-                        'canCreateProjetos': 'bg-indigo-50 border-indigo-200',
-                        'canEditCardsProjetos': 'bg-amber-50 border-amber-200'
+                        'canManageUsers': 'bg-blue-500/15 border-blue-400/30',
+                        'canManagePermissions': 'bg-green-500/15 border-green-400/30',
+                        'canCreateCargos': 'bg-purple-500/15 border-purple-400/30',
+                        'canCreateProjetos': 'bg-indigo-500/15 border-indigo-400/30',
+                        'canEditCardsProjetos': 'bg-amber-500/15 border-amber-400/30'
                       };
 
                       return (
@@ -678,7 +678,7 @@ function AdminCargos() {
                           />
                           <div>
                             <p className="font-medium text-white">{perm.label}</p>
-                            <p className="text-xs text-gray-600">{perm.description}</p>
+                            <p className="text-xs text-gray-300">{perm.description}</p>
                           </div>
                         </label>
                       );

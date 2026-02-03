@@ -1023,6 +1023,13 @@ body {
     align-items: center;
     justify-content: center;
   }
+
+  /* Evita centralização automática nos cards de gerência */
+  .gerencia-card {
+    display: block;
+    min-width: 0;
+    min-height: 0;
+  }
 }
 
 /* ===== PRINT STYLES ===== */
