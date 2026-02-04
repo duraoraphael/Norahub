@@ -1,5 +1,13 @@
 // Bump cache version to force clients to fetch newest assets (avoid old JS using v1beta endpoint)
 const CACHE_NAME = 'norahub-v4';
+const ALLOWED_ORIGINS = [
+  self.location.origin,
+  'https://norahub-2655f.firebaseapp.com',
+  'https://norahub-2655f.web.app',
+  'https://firebasestorage.googleapis.com',
+  'https://www.gstatic.com'
+];
+
 const urlsToCache = [
   '/',
   '/index.html',
@@ -41,6 +49,17 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Ignorar requisições que não são GET (POST, PUT, DELETE, etc.)
   if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Validação de origem - apenas URLs permitidas
+  const requestUrl = new URL(event.request.url);
+  const isAllowedOrigin = ALLOWED_ORIGINS.some(origin => 
+    requestUrl.origin === new URL(origin).origin
+  );
+
+  if (!isAllowedOrigin) {
+    console.warn('Blocked request to unauthorized origin:', requestUrl.origin);
     return;
   }
 

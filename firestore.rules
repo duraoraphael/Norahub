@@ -27,11 +27,39 @@ service cloud.firestore {
       );
     }
     
+    // Função para validar tamanho de string
+    function isValidStringLength(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+    
+    // Função para validar que não há script tags ou código malicioso
+    function isSafeString(value) {
+      return value is string && 
+             !value.matches('.*<script.*') && 
+             !value.matches('.*javascript:.*') &&
+             !value.matches('.*onerror.*') &&
+             !value.matches('.*onclick.*');
+    }
+    
+    // Função para validar tamanho de documento
+    function isValidDocumentSize() {
+      return request.resource.size() < 1048576; // 1MB max
+    }
+    
     // Coleção de usuários - NOVA (usuarios)
     match /usuarios/{userId} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin() || isManager());
+      allow create: if isSignedIn() && 
+                      request.auth.uid == userId &&
+                      isValidDocumentSize() &&
+                      request.resource.data.keys().hasAll(['nome', 'email', 'funcao']) &&
+                      isValidStringLength(request.resource.data.nome, 2, 100) &&
+                      isSafeString(request.resource.data.nome);
+      allow update: if isSignedIn() && 
+                      (request.auth.uid == userId || isAdmin() || isManager()) &&
+                      isValidDocumentSize() &&
+                      (!('funcao' in request.resource.data) || isAdmin()) && // Apenas admin pode mudar função
+                      (isSafeString(request.resource.data.get('nome', '')) || !('nome' in request.resource.data));
       allow delete: if isAdmin();
     }
     
@@ -48,21 +76,42 @@ service cloud.firestore {
     // Coleção de projetos
     match /projetos/{projectId} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && (isAdmin() || isManager());
-      allow update: if isSignedIn();
+      allow create: if isSignedIn() && 
+                      (isAdmin() || isManager()) &&
+                      isValidDocumentSize() &&
+                      isValidStringLength(request.resource.data.nome, 2, 200) &&
+                      isSafeString(request.resource.data.nome);
+      allow update: if isSignedIn() &&
+                      isValidDocumentSize();
       allow delete: if isAdmin();
     }
     
     // Coleção de cargos
     match /cargos/{cargoId} {
       allow read: if isSignedIn();
-      allow write: if isAdmin();
+      allow write: if isAdmin() && 
+                     isValidDocumentSize() &&
+                     isSafeString(request.resource.data.get('nome', ''));
     }
     
     // Coleção de formulários
     match /formularios/{formId} {
       allow read: if isSignedIn();
-      allow create, update: if isSignedIn();
+      allow create, update: if isSignedIn() &&
+                              isValidDocumentSize();
+      allow delete: if isAdmin();
+    }
+    
+    // Coleção de security_logs (apenas escrita por Cloud Functions, leitura apenas admin)
+    match /security_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false; // Apenas Cloud Functions podem escrever via Admin SDK
+    }
+    
+    // Coleção de rate_limits (apenas Cloud Functions)
+    match /rate_limits/{limitId} {
+      allow read, write: if false; // Apenas Cloud Functions via Admin SDK
+    }
       allow delete: if isAdmin() || isManager();
     }
     
