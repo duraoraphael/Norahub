@@ -334,6 +334,7 @@ function ConstrutorFormulario() {
     { value: 'email', label: 'E-mail' },
     { value: 'tel', label: 'Telefone' },
     { value: 'date', label: 'Data' },
+    { value: 'link', label: 'Link (com texto customizável)' },
     { value: 'file', label: 'Upload de Arquivo/Foto' },
     { value: 'select', label: 'Seleção única' },
     { value: 'checkbox', label: 'Múltipla escolha' },
@@ -705,6 +706,42 @@ function ConstrutorFormulario() {
                                 </div>
                               </div>
                             ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : field.type === 'link' ? (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-2">URL/Endereço</label>
+                          <input 
+                            type="text"
+                            placeholder="https://exemplo.com ou /pagina-interna"
+                            value={currentResponse[field.id]?.url || ''}
+                            onChange={(e) => setCurrentResponse({...currentResponse, [field.id]: {...(currentResponse[field.id] || {}), url: e.target.value}})}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#57B952] outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-2">Texto do Link</label>
+                          <input 
+                            type="text"
+                            placeholder="Ex: Clique aqui, Ver mais, Acessar portal"
+                            value={currentResponse[field.id]?.text || ''}
+                            onChange={(e) => setCurrentResponse({...currentResponse, [field.id]: {...(currentResponse[field.id] || {}), text: e.target.value}})}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#57B952] outline-none"
+                          />
+                        </div>
+                        {(currentResponse[field.id]?.url || currentResponse[field.id]?.text) && (
+                          <div className="p-3 bg-[#57B952]/10 rounded-lg border border-[#57B952]/30">
+                            <p className="text-xs text-gray-400 mb-2">Prévia do link:</p>
+                            <a 
+                              href={currentResponse[field.id]?.url || '#'} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-[#57B952] hover:text-green-400 underline break-all"
+                            >
+                              {currentResponse[field.id]?.text || currentResponse[field.id]?.url || 'Link'}
+                            </a>
                           </div>
                         )}
                       </div>

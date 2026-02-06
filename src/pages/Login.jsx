@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import Alert from '../components/Alert';
+import { useRecaptcha } from '../components/RecaptchaLoader';
 import { auth, db } from '../services/firebase';
 import { signInWithEmailAndPassword, signOut, OAuthProvider, signInWithPopup, signInWithRedirect, updateProfile } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
@@ -16,6 +17,7 @@ function Login() {
   const { currentUser, userProfile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { executeRecaptcha } = useRecaptcha();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
@@ -101,9 +103,23 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); setLoading(true); setAlertInfo(null);
-    if (!email.endsWith('@normatel.com.br')) { setAlertInfo({ message: "Use email corporativo.", type: 'error' }); setLoading(false); return; }
+    e.preventDefault(); 
+    setLoading(true); 
+    setAlertInfo(null);
+    
+    if (!email.endsWith('@normatel.com.br')) { 
+      setAlertInfo({ message: "Use email corporativo.", type: 'error' }); 
+      setLoading(false); 
+      return; 
+    }
+    
     try {
+      // Executar reCAPTCHA antes do login
+      const recaptchaToken = await executeRecaptcha('login');
+      if (!recaptchaToken) {
+        console.warn('reCAPTCHA não disponível, continuando login');
+      }
+
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       
       // Verificação específica para senha (mantém a regra de pendente)
